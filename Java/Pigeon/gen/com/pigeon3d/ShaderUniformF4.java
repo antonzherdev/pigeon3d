@@ -1,0 +1,22 @@
+package com.pigeon3d;
+
+import objd.lang.*;
+import com.pigeon3d.gl.gl;
+
+public class ShaderUniformF4 {
+    public final int handle;
+    private float _last;
+    public void applyF4(final float f4) {
+        if(!(f4.equals(this._last))) {
+            gl.glUniform1fLocationF(this.handle, f4);
+            this._last = f4;
+        }
+    }
+    public ShaderUniformF4(final int handle) {
+        this.handle = handle;
+        this._last = ((float)(0));
+    }
+    public String toString() {
+        return String.format("ShaderUniformF4(%d)", this.handle);
+    }
+}
