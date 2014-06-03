@@ -1,0 +1,57 @@
+package com.pigeon3d
+
+class Sprite(val visible : React<bool> = true, val material : React<ColorSource>, val position : React<vec3>,
+    val rect : React<Rect> = rectReact(material, anchor = vec2(0, 0)))
+{
+    static def apply(visible : React<bool> = true, material : React<ColorSource>, position : React<vec3>, anchor : vec2) : Sprite =
+        Sprite(visible, material, position, rect = rectReact(material, anchor))
+    static def rectReact(material : React<ColorSource>, anchor : vec2) : React<Rect> =
+        material.map{m ->
+            val s = m.texture.get.size/Director.current.scale
+            Rect(s*((anchor + 1)/-2), s)
+        }
+
+    static val vbDesc = VertexBufferDesc<BillboardBufferData>(BillboardBufferData.type,
+        position = 0, uv = 9*4, normal = -1, color = 5*4, model = 3*4)
+
+    private val vb = VBO.mut(vbDesc, GL_DYNAMIC_DRAW)
+    private var vao : VertexArray<ColorSource>?
+
+    private var _changed = ReactFlag(initial = true, [material.map(_.texture), position, rect, context.viewSize])
+    private var _materialChanged = ReactFlag(initial = true, [material])
+
+    def draw {
+        if(!visible.value) return nil
+        if(_materialChanged.value) {
+            vao = Mesh(vb, EmptyIndexSource.triangleStrip).vao(BillboardShaderSystem.projectionSpace, material.value, false)
+            _materialChanged.clear
+        }
+        if(_changed.value) {
+            val vertexes = Pointer(BillboardBufferData.type, 4)
+            val m = material.value
+            D2D.writeSprite(vertexes, m, position.value, (rect.value/context.scaledViewSize.value*2).stripQuad,
+                m.texture?.uv.getOr(Rect(0, 0, 1, 1)).upsideDownStripQuad)
+            vb.set(vertexes, 4)
+            vertexes.free
+            _changed.clear
+        }
+        context.cullFace.disabled {
+            vao?.draw
+        }
+    }
+
+    def rectInViewport : Rect = {
+        val pp = matrix.value.wcp.mul(vec4(position.value, 1))
+        (rect.value/context.scaledViewSize.value*2) + pp.xy
+    }
+    def containsViewport(vec2 : vec2) : bool = visible.value && rectInViewport.contains(vec2)
+
+    val tap = Signal<void>()
+    def tap(event : Event) : bool =
+        if(containsViewport(event.locationInViewport)) {
+            tap.post
+            true
+        } else false
+
+    def recognizer : Recognizer<Void> = Recognizer(Tap(), tap(_))
+}

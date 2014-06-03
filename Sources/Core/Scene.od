@@ -1,0 +1,219 @@
+package com.pigeon3d
+
+trait Camera {
+    def cullFace : uint = GL_NONE
+
+    def matrixModel : MatrixModel
+
+    def viewportRatio : float //width/height
+}
+
+
+class Scene(val backgroundColor : vec4, val controller : Controller, val layers : Layers, val soundPlayer : SoundPlayer?) {
+    static def apply(sceneView : SceneView) = Scene(vec4(1, 1, 1, 1), sceneView, Layers(Layer(sceneView, sceneView)), nil)
+
+    def prepareWith(viewSize : vec2) {
+        layers.prepare
+    }
+
+    def reshapeWith(viewSize : vec2) {
+        layers.reshapeWith(viewSize)
+    }
+
+    def drawWith(viewSize : vec2) {
+        layers.draw
+    }
+
+    def complete {
+        layers.complete
+    }
+
+    def recognizersTypes : Set<RecognizerType> = layers.recognizersTypes
+    def process<P>(event : Event<P>) : bool = layers.process(event)
+
+    def updateWith(delta : float) : Future<void> = Future {
+        controller.updateWith(delta)
+        layers.updateWith(delta)
+        soundPlayer?.updateWith(delta)
+    }
+
+    def start {
+        soundPlayer?.start
+        controller.start
+    }
+
+    def stop {
+        soundPlayer?.stop
+        controller.stop
+    }
+
+    private val pauseObserve = Director.current.isPaused.observe{p ->
+        if(p) soundPlayer?.pause
+        else soundPlayer?.resume
+    }
+}
+
+abstract class Layers {
+    static def apply(layer : Layer) = SingleLayer(layer)
+
+    def layers : [Layer]
+
+    def viewportsWith(viewSize : vec2) : [(Layer, Rect)]
+    private var _viewports : [(Layer, Rect)] = []
+    private var _viewportsRevers : [(Layer, Rect)] = []
+    def prepare {
+        _viewports.for{p -> p.a.prepareWith(viewport = p.b)}
+    }
+    def draw {
+        _viewports.for{p -> p.a.drawWith(viewport = p.b)}
+    }
+    def complete {
+        _viewports.for{p -> p.a.completeWith(viewport = p.b)}
+    }
+    def recognizersTypes : Set<RecognizerType<_, _>>
+        = layers.chain
+            .mapOpt<InputProcessor>(_.inputProcessor)
+            .flatMap<Recognizer<_>>(_.recognizers.items)
+            .map(_.tp).toSet
+
+    def process<P>(event : Event<P>) : bool = {
+        var r = false
+        _viewportsRevers.for{p -> r = (r || p.a.process(event, viewport = p.b))}
+        r
+    }
+
+    def updateWith(delta : float) {
+        layers.for(_.updateWith(delta))
+    }
+
+    def reshapeWith(viewSize : vec2) {
+        _viewports = viewportsWith(viewSize)
+        _viewportsRevers = _viewports.chain.reverse.toArray
+        _viewports.for{p -> p.a.reshapeWith(viewport = p.b)}
+    }
+}
+
+class SingleLayer(val layer : Layer) extends Layers {
+    override val layers = [layer]
+    override def viewportsWith(viewSize : vec2) = [(layer, layer.view.viewportWith(viewSize))]
+}
+
+class Layer(val view : LayerView, val inputProcessor : InputProcessor?) extends Updatable {
+    static def apply(view : LayerView) : Layer = Layer(view, view.as<InputProcessor>)
+    private val iOS6 : bool = egPlatform.os.isIOSLess("7")
+
+    def prepareWith(viewport : Rect) {
+        egPushGroupMarker("Prepare $(view.name)")
+        val env = view.environment
+        context.environment = env
+        val camera = view.camera
+        val cullFace = camera.cullFace
+        context.cullFace.set(cullFace)
+
+
+        context.renderTarget = SceneRenderTarget()
+        context.set(viewport = viewport)
+        matrix.value = camera.matrixModel
+        view.prepare
+        egPopGroupMarker
+
+        if(egPlatform.shadows) {
+            env.lights.for{light ->
+                if(light.hasShadows) {
+                    egPushGroupMarker("Shadow $(view.name)")
+                    context.cullFace.inverted {
+                        drawShadowFor(camera, light)
+                    }
+                    egPopGroupMarker
+                }
+            }
+            if(iOS6) glFinish
+        }
+
+        egCheckError
+    }
+
+    def reshapeWith(viewport : Rect) {
+        context.set(viewport = viewport)
+        view.reshapeWith(viewport)
+    }
+
+    def drawWith(viewport : Rect) {
+        egPushGroupMarker(view.name)
+        val env = view.environment
+        context.environment = env
+        val camera = view.camera
+        context.cullFace.set(camera.cullFace)
+        context.renderTarget = SceneRenderTarget()
+        context.set(viewport = viewport)
+        matrix.value = camera.matrixModel
+//          if(!env.lights.isEmpty) env.lights.head.shadowMap.draw
+        view.draw
+        egCheckError
+        egPopGroupMarker
+    }
+
+    def completeWith(viewport : Rect) {
+        view.complete
+    }
+
+    def drawShadowFor(camera : Camera, light : Light) {
+        context.renderTarget = ShadowRenderTarget(light)
+        matrix.value = light.shadowMatrix(camera.matrixModel)
+        light.shadowMap.biasDepthCp = ShadowMap.biasMatrix *matrix.value.cp
+        if(context.redrawShadows) {
+            light.shadowMap{
+                glClear(GL_DEPTH_BUFFER_BIT)
+    //            val cullFace = camera.cullFace
+    //            if(cullFace != GL_NONE) glCullFace(if(cullFace == GL_BACK) GL_FRONT else GL_BACK)
+                view.draw
+            }
+        }
+        egCheckError
+    }
+
+    private val recognizerState = RecognizersState(inputProcessor?.recognizers.getOr(Recognizers([])))
+    def process<P>(event : Event<P>, viewport : Rect) : bool = {
+        if(inputProcessor?.isProcessorActive.getOr(false)) {
+            val camera = view.camera
+            matrix.value = camera.matrixModel
+            recognizerState.process(CameraEvent(event, camera.matrixModel, viewport))
+        } else false
+    }
+
+    override def updateWith(delta : float) {
+        view.updateWith(delta)
+    }
+
+    static def viewportWith(viewSize : vec2, viewportLayout : Rect, viewportRatio : float4) : Rect = {
+        val size = viewSize*viewportLayout.size
+        val vpSize =
+            if(size.x == 0 && size.y == 0) vec2(viewSize.x, viewSize.y)
+            else if(size.x == 0) vec2(viewSize.x, size.y)
+            else if(size.y == 0) vec2(size.x, viewSize.y)
+            else if(size.x/size.y < viewportRatio) vec2(size.x, size.x/viewportRatio)
+            else vec2(size.y*viewportRatio, size.y)
+        val po = viewportLayout.p/2 + 0.5
+        Rect((viewSize - vpSize) * po, vpSize)
+    }
+}
+
+trait LayerView extends Updatable {
+    def name : string
+
+    def camera : Camera
+
+    def prepare {}
+    def draw
+    def complete {}
+    override def updateWith(delta : float) {}
+
+    def environment = Environment.default
+
+
+    def reshapeWith(viewport : Rect) {}
+
+    def viewportWith(viewSize : vec2) : Rect = Layer.viewportWith(viewSize, viewportLayout = Rect(0, 0, 1, 1), camera.viewportRatio)
+}
+
+trait SceneView extends LayerView with Controller with InputProcessor

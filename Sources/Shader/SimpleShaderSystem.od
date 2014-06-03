@@ -1,0 +1,86 @@
+package com.pigeon3d
+
+class SimpleShaderSystem extends ShaderSystem<ColorSource> {
+    static val instance = SimpleShaderSystem()
+    static def colorShader : Shader<ColorSource> = instance.shaderFor(ColorSource(vec4(0, 0, 0, 1)), context.renderTarget)
+
+    override def shaderFor(param : ColorSource, renderTarget : RenderTarget) : Shader<ColorSource> =
+        if(renderTarget.is<ShadowRenderTarget>) ShadowShaderSystem.instance.shaderFor(param)
+        else {
+            val t = param.texture != nil
+            val key = SimpleShaderKey(t, t && param.texture?.is<TextureRegion>.getOr(false), param.blendMode)
+            shaders(key, orUpdateWith = SimpleShader(key))
+        }
+
+    private static val shaders = MHashMap<SimpleShaderKey, SimpleShader>()
+}
+
+
+case class SimpleShaderKey(val texture : bool, val region : bool, val blendMode : BlendMode) extends ShaderTextBuilder {
+    def vertex =
+       "$vertexHeader
+        $ain highp vec3 position;
+        uniform mat4 mvp;
+
+       $if(texture)
+        $ain mediump vec2 vertexUV;
+        $out mediump vec2 UV;
+       $endif
+       $if(region)
+        uniform mediump vec2 uvShift;
+        uniform mediump vec2 uvScale;
+       $endif
+
+        void main(void) {
+            gl_Position = mvp * vec4(position, 1);
+       $if(texture && region)
+            UV = uvScale*vertexUV + uvShift;
+       $else
+            UV = vertexUV; $when(texture)
+       $endif
+        }"
+    val fragment =
+       "$fragmentHeader
+       $if(texture)
+        $in mediump vec2 UV;
+        uniform lowp sampler2D txt;
+       $endif
+        uniform lowp vec4 color;
+
+        void main(void) {
+           $fragColor = $blend(blendMode, "color", "$texture2D\(txt, UV)");
+        }"
+
+    def program = ShaderProgram("Simple", vertex, fragment)
+}
+
+
+class SimpleShader(val key : SimpleShaderKey) extends Shader<ColorSource>(key.program) {
+    val uvSlot : ShaderAttribute? = if(key.texture) attributeFor("vertexUV") else nil
+    val positionSlot : ShaderAttribute = attributeFor("position")
+    val mvpUniform = uniformMat4("mvp")
+    val colorUniform = uniformVec4Opt("color")
+    val uvScale : ShaderUniformVec2? = if(key.region) uniformVec2("uvScale") else nil
+    val uvShift : ShaderUniformVec2? = if(key.region) uniformVec2("uvShift") else nil
+
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        positionSlot.setFromBufferWith(vbDesc.stride, valuesCount = 3, GL_FLOAT, vbDesc.position)
+        if(key.texture) {
+            uvSlot?.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, vbDesc.uv)
+        }
+    }
+    override def loadUniforms(param : ColorSource) {
+        mvpUniform(matrix.value.mwcp)
+        colorUniform?.apply(param.color)
+        if(key.texture) {
+            param.texture.for{ tex ->
+                context.bindTexture(tex)
+                if(key.region) {
+                    val r = tex.cast<TextureRegion>.uv
+                    uvShift?.apply(vec2 = r.p)
+                    uvScale?.apply(vec2 = r.size)
+                }
+            }
+        }
+    }
+}

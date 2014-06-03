@@ -1,0 +1,26 @@
+package com.pigeon3d
+
+stub class DynamicWorld<T>(val gravity : vec3) extends PhysicsWorld<T> with Updatable {
+    override def bodies : [RigidBody<T>]
+    override def add(body : RigidBody<T>)
+    override def remove(body : RigidBody<T>) : bool
+    def collisions : Iterable<DynamicCollision<T>>
+    def newCollisions : Iterable<DynamicCollision<T>>
+    override def bodyFor(item : T) : RigidBody<T>?
+}
+
+stub class RigidBody<T>(override val data : T, override val shape : CollisionShape, override val isKinematic : bool, val mass : float4)
+    extends PhysicsBody<T>
+{
+    var friction : float4
+    var bounciness : float4
+    override var matrix : mat4
+    var velocity : vec3
+    var angularVelocity : vec3
+
+    val isDynamic = !isKinematic && mass > 0
+    val isStatic = !isKinematic && mass <= 0
+    static def kinematic<T>(data : T, shape : CollisionShape) = RigidBody<T>(data, shape, true, 0)
+    static def dynamic<T>(data : T, shape : CollisionShape, mass : float4) = RigidBody<T>(data, shape, false, mass)
+    static def statical<T>(data : T, shape : CollisionShape) = RigidBody<T>(data, shape, false, 0)
+}

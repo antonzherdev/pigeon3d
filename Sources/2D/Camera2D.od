@@ -1,0 +1,15 @@
+package com.pigeon3d
+
+import core.math._
+
+
+class Camera2D(val size : vec2) extends Camera {
+    override val viewportRatio : float = size.x/size.y
+
+    override val matrixModel : MatrixModel = ImMatrixModel(
+        m = mat4.identity,
+        w = mat4.identity,
+        c = mat4.identity,
+        p = mat4.ortho(0, size.x, 0, size.y, -1, 1)
+    )
+}

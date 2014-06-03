@@ -1,0 +1,140 @@
+package com.pigeon3d
+
+abstract class Buffer<T>(val dataType : PType<T>, val bufferType : uint4, val handle : uint4) {
+    def length : uint
+    def count : uint
+
+    override def dealloc {
+        context.deleteBuffer(handle)
+    }
+
+    def bind {
+        glBindBuffer(bufferType, handle)
+    }
+
+    def stride : uint4 = dataType.size
+}
+
+
+abstract class MutableBuffer<T>(dataType : PType<T>, bufferType : uint4, handle : uint4, val usage : uint4)
+    extends Buffer<T>(dataType, bufferType, handle)
+{
+    private var _length : uint = 0
+    private var _count : uint = 0
+    override def length : uint = _length
+    override def count : uint = _count
+    def isEmpty = _count > 0
+
+    def set(data : PArray<T>) : self = {
+        bind
+        glBufferData(bufferType, data.length, data.bytes, usage)
+        egCheckError
+        _length = data.length
+        _count = data.count
+        self
+    }
+
+
+    def set(array : Pointer<T>, count : uint4) : self = {
+        bind
+        _length = count * dataType.size
+        glBufferData(bufferType, _length, array, usage)
+        egCheckError
+        _count = count
+        self
+    }
+
+    def write(count : uint4, f : Pointer<T> -> void) {
+        map(count, GL_WRITE_ONLY, f)
+    }
+
+
+    def map(count : uint4, access : uint4, f : Pointer<T> -> void) {
+        if(mappedData != nil) return nil
+        bind
+        _count = count
+        _length = count * dataType.size
+        glBufferData(bufferType, _length, Pointer.null<T>, usage)
+        egMapBuffer<T>(bufferType, access).for(f)
+        egUnmapBuffer(bufferType)
+        egCheckError
+//        glMap
+    }
+
+    def beginWrite(count : uint4) : MappedBufferData<T>? = {
+        map(count, GL_WRITE_ONLY)
+    }
+    private var mappedData : MappedBufferData<T>?
+    def map(count : uint4, access : uint4) : MappedBufferData<T>? = {
+        if(mappedData != nil) return nil
+        bind
+        _count = count
+        _length = count * dataType.size
+        glBufferData(bufferType, _length, Pointer.null<T>, usage)
+        mappedData = egMapBuffer<T>(bufferType, access).map(MappedBufferData<T>(self, _))
+        egCheckError
+        mappedData
+    }
+
+
+    def _finishMapping {
+        bind
+        egUnmapBuffer(bufferType)
+        egCheckError
+        mappedData = nil
+    }
+}
+
+class MappedBufferData<T>(val buffer : MutableBuffer<T>, val pointer : Pointer<T>) {
+    private val lock : ConditionLock = ConditionLock(0)
+    private var finished = false
+    private var updated = false
+
+    def wasUpdated : bool = updated
+    def beginWrite : bool =
+        if(finished) false
+        else {
+            lock.lock
+            if(finished) {
+                lock.unlock
+                false
+            } else true
+        }
+
+    def endWrite {
+        updated = true
+        lock.unlockWith(condition = 1)
+    }
+
+    inline def write(f : Pointer<T> -> void) {
+        if(beginWrite) {
+            f(pointer)
+            endWrite
+        }
+    }
+
+    def finish {
+        lock.lockWhen(condition = 1)
+        buffer._finishMapping
+        finished = true
+        lock.unlock
+    }
+}
+
+class BufferRing<T, B extends MutableBuffer<T>>(val ringSize : uint4, val creator : () -> B) {
+    private val _ring = MQueue<B>()
+
+    def next : B = {
+        val buffer = if(_ring.count >= ringSize) _ring.dequeue.get else creator()
+        _ring.enqueue(buffer)
+        buffer
+    }
+
+    def write(count : uint4, f : Pointer<T> -> void) {
+        next.write(count, f)
+    }
+
+    def map(count : uint4, access : uint4, f : Pointer<T> -> void) {
+        next.map(count, access, f)
+    }
+}

@@ -1,0 +1,41 @@
+package com.pigeon3d
+
+case class BMFont(val name : string) extends Font {
+    override val texture = FileTexture(name, TextureFileFormat.PNG, TextureFormat.RGBA8, 1.0, TextureFilter.nearest)
+    private val symbols : Map<char, FontSymbolDesc>
+    override val height : uint
+    override val size : uint
+    def init {
+        val charMap = MHashMap<char, FontSymbolDesc>()
+        val ts = texture.size
+        height = 1
+        size = 1
+        Bundle.readToString("$(name).fnt").split("\n").for{line ->
+            line.tuple(" ").for{ t ->
+                val name = t.a
+                val map : [string : string] = t.b.split(" ").chain.mapOpt(_.tuple("=")).toMap
+                if(name == "info") {
+                    size = map("size").get.toUInt
+                } else if(name == "common") {
+                    height = map("lineHeight").get.toUInt
+                } else if(name == "char") {
+                    val code : char = map("id").get.toInt.cast<char>
+                    val width : float4 = map("xadvance").get.toFloat
+                    val offset =  vec2i(map("xoffset").get.toInt, map("yoffset").get.toInt)
+                    val r = Rect(map("x").get.toFloat, map("y").get.toFloat, map("width").get.toFloat, map("height").get.toFloat)
+                    charMap.set(code, value = FontSymbolDesc(width, offset, r.size, r/ts, isNewLine = false))
+                }
+            }
+        }
+        symbols = charMap
+    }
+
+    private def parse(_rect : string) : Rect = {
+        val parts = _rect.split(" ").chain.toArray
+        val y = parts[1].toFloat
+        val h = parts[3].toFloat
+        Rect(parts[0].toFloat, y, parts[2].toFloat, h)
+    }
+
+    override def symbolOpt(smb : char) : FontSymbolDesc? = symbols(smb)
+}

@@ -1,0 +1,14 @@
+package com.pigeon3d
+
+
+stub class TTFFont(val name : string, override val size : uint) extends Font {
+    private var symbols = MHashMap<char, FontSymbolDesc>()
+
+    override def symbolOpt(smb : char) : FontSymbolDesc? = symbols(smb, orUpdateWith = symbol(smb))
+
+    def symbol(smb : char) : FontSymbolDesc
+
+    override def texture : React<Texture>
+
+    private def generateTexture : Texture
+}

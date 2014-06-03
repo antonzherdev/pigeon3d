@@ -1,0 +1,16 @@
+package com.pigeon3d.geometry
+
+import objd.test._
+
+@Test
+class PerlinTest extends TestCase {
+    @Test
+    def testMain {
+        val noise = Perlin1(2, 10, 1)
+
+        val a = 1.to(100).chain.map{i -> noise(i/100.0)}.toArray
+        a.for{v -> assertTrue(v.between(-1, 1))}
+        val s = a.chain.fold(0.0, (r, i) -> r + i)
+        assertTrue(s != 0)
+    }
+}

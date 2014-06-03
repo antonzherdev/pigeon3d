@@ -1,0 +1,18 @@
+package objd.date
+
+stub package object {
+    val prefix = "CN"
+}
+
+@ObjC
+@GenName("NSDate")
+stub class DateTime {
+    def tillNow : float8 //seconds
+    def sinceNow : float8 //seconds
+}
+
+@Java
+stub class DateTime {
+    def tillNow : float8 //seconds
+    def sinceNow : float8 //seconds
+}

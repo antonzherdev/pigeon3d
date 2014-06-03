@@ -1,0 +1,66 @@
+package com.pigeon3d
+
+
+abstract class Material {
+    def shaderSystem : ShaderSystem<self>
+    def draw(mesh : Mesh<_>) {
+        shaderSystem.draw(self, mesh.vertex, mesh.index)
+    }
+
+    def draw(vertex : VertexBuffer<_>, index : IndexSource) {
+        shaderSystem.draw(self, vertex, index)
+    }
+    def shader : Shader<self> = shaderSystem.shaderFor(self)
+
+    static def apply(color : vec4) : Material = StandardMaterial(diffuse = color)
+    static def apply(texture : Texture) : Material = StandardMaterial(diffuse = texture)
+}
+
+enum BlendMode(val blend : (string, string) -> string) {
+    first((a, b) -> a)
+    second((a, b) -> b)
+    multiply((a, b) -> "$a * $b")
+    darken((a, b) -> "min($a, $b)")
+}
+
+
+class ColorSource(val color : vec4, val texture : Texture?, val blendMode : BlendMode, val alphaTestLevel : float4) extends Material {
+    static def apply(color : vec4, texture : Texture) : ColorSource = ColorSource(color, texture, BlendMode.multiply, -1)
+    static def apply(color : vec4, texture : Texture, alphaTestLevel : float4) : ColorSource =
+        ColorSource(color, texture, BlendMode.multiply, alphaTestLevel)
+    static def apply(color : vec4, texture : Texture, blendMode : BlendMode) : ColorSource =
+        ColorSource(color, texture, blendMode, -1)
+    static def apply(color : vec4) : ColorSource = ColorSource(color, nil, BlendMode.first, -1)
+    static def apply(texture : Texture) : ColorSource = ColorSource(vec4(1, 1, 1, 1), texture, BlendMode.second, -1)
+    override def shaderSystem : ShaderSystem<self> = SimpleShaderSystem.instance
+
+    def set(color : vec4) = ColorSource(color, texture, blendMode, alphaTestLevel)
+    def uv : Rect = texture?.uv.getOr(Rect(0, 0, 1, 1))
+}
+
+
+class StandardMaterial(val diffuse : ColorSource, val specularColor : vec4, val specularSize : float, val normalMap : NormalMap?)  extends Material {
+    static def apply(diffuse : ColorSource) : StandardMaterial = StandardMaterial(diffuse,
+        specularColor = vec4(0, 0, 0, 1), specularSize = 0, normalMap = nil)
+    override def shaderSystem : ShaderSystem<self> = StandardShaderSystem.instance
+}
+
+class NormalMap(val texture : Texture, val tangent : bool)
+
+class BlendFunction(val source : uint4, val destination : uint4) {
+    static val standard : BlendFunction = BlendFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    static val premultiplied : BlendFunction = BlendFunction(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+
+    inline def apply(draw : () -> void) {
+        context.blend.enabled {
+            context.blendFunction = self
+            draw()
+        }
+    }
+
+    def bind {
+        glBlendFunc(source, destination)
+    }
+}
+
+

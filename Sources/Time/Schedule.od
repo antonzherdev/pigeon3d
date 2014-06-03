@@ -1,0 +1,187 @@
+package com.pigeon3d
+
+
+class ScheduleEvent(val time : float, val f : () -> void) extends Comparable<ScheduleEvent> {
+    override def compare(to : ScheduleEvent) : int = time.compare(to.time)
+}
+class ImSchedule(val events : ImList<ScheduleEvent>, val time : uint)
+
+class MSchedule {
+    private var _events = ImList<ScheduleEvent>()
+    private var _current = 0.0
+    private var _next = -1.0
+
+    def schedule(after : float, weak event : () -> void) {
+        _events = _events.insert(ScheduleEvent(_current + after, event))
+        _next = _events.head.get.time
+    }
+
+    def updateWith(delta : float) {
+        _current += delta
+        while(_next >= 0 && _current > _next) {
+            val e = _events.head
+            _events = _events.tail
+            e?.f()
+            updateNext
+        }
+    }
+    def time : float = _current
+    def isEmpty : bool = _next < 0.0
+    def imCopy : ImSchedule = ImSchedule(_events, _current)
+
+    def assign(imSchedule : ImSchedule) {
+        _events = imSchedule.events
+        _current = imSchedule.time
+        updateNext
+    }
+
+    private def updateNext {
+        _next = _events.head?.time.getOr(-1)
+    }
+}
+
+abstract class Counter extends Updatable {
+    def isRunning : React<bool>
+    def time : Var<float>
+    def restart
+    def finish
+
+    def finished : self = {
+        finish
+        self
+    }
+
+    inline def for(f : float -> void) {
+        if(isRunning.value) f(time.value)
+    }
+    override def updateWith(delta : float)
+
+    static def stopped(length : float) : Counter = {
+        LengthCounter(length)
+    }
+    static def apply(length : float) : Counter = LengthCounter(length)
+    static def apply(length : float, weak finish : void -> void) : Counter = Finisher(LengthCounter(length), finish)
+    static def apply : Counter = EmptyCounter()
+
+    def on(time : float, weak event : void -> void) : Counter = EventCounter(self, time, event)
+    def onEnd(weak event : void -> void) : Counter = Finisher(self, event)
+}
+
+final class EmptyCounter extends Counter {
+    static val instance : EmptyCounter = EmptyCounter()
+
+    override def isRunning : React<bool> = Val<bool>(false)
+    override def time : Var<float> = Var<float>(1.0)
+    override def updateWith(delta : float) {}
+    override def restart{}
+    override def finish{}
+}
+
+final class LengthCounter(val length : float) extends Counter {
+    override val time = Var<float>(0.0)
+    override val isRunning : React<bool> = time.map(_ < 1.0)
+
+    override def updateWith(delta : float) {
+        if(isRunning.value) {
+            var t = time.value
+            t += delta/length
+            if(t >= 1.0) {
+                time.value = 1.0
+            } else {
+                time.value = t
+            }
+        }
+    }
+    override def restart{
+        time.set(0.0)
+    }
+    override def finish {
+        time.set(1.0)
+    }
+}
+
+final class Finisher(val counter : Counter, val onFinish : void -> void) extends Counter {
+    override def isRunning : React<bool> = counter.isRunning
+    override def time : Var<float> = counter.time
+    private val obs = counter.isRunning.observe{r ->
+        if(!r) onFinish()
+    }
+    override def updateWith(delta : float) {
+        counter.updateWith(delta)
+    }
+    override def restart {
+        counter.restart
+    }
+    override def finish {
+        counter.finish
+    }
+}
+
+final class EventCounter(val counter : Counter, val eventTime : float, val event : void -> void) extends Counter {
+    override def isRunning : React<bool> = counter.isRunning
+    override def time : Var<float> = counter.time
+    private var executed = false
+    private val obs = counter.time.observe{time ->
+        if(!executed) {
+            if(counter.time.value > eventTime) {
+                event()
+                executed = true
+            }
+        } else if(counter.time.value < eventTime) {
+            executed = false
+        }
+    }
+
+    override def updateWith(delta : float) {
+        counter.updateWith(delta)
+    }
+    override def restart {
+        executed = false
+        counter.restart
+    }
+    override def finish {
+        executed = true
+        counter.finish
+    }
+}
+
+final class CounterData<T>(val counter : Counter, val data : T) extends Counter {
+    override def isRunning : React<bool> = counter.isRunning
+    override def time : Var<float> = counter.time
+
+    override def updateWith(delta : float) {
+        counter.updateWith(delta)
+    }
+    override def restart {
+        counter.restart
+    }
+    override def finish {
+        counter.finish
+    }
+}
+
+class MutableCounterArray<T> extends Updatable {
+    private var _counters : [CounterData<T>] = []
+
+    def counters : [CounterData<T>] = _counters
+    def append(counter : CounterData<T>) {
+        _counters += counter
+    }
+
+    def append(counter : Counter, data : T) {
+        _counters += CounterData<T>(counter, data)
+    }
+
+    override def updateWith(delta : float) {
+        var hasDied = false
+        _counters.for{counter ->
+            counter.updateWith(delta)
+            if(!counter.isRunning.value) hasDied = true
+        }
+        if(hasDied) _counters = _counters.chain.filter(!_.isRunning.value).toArray
+    }
+
+    def for(each : (CounterData<T>) -> void) {
+        _counters.for(each)
+    }
+}

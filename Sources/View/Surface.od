@@ -1,0 +1,110 @@
+package com.pigeon3d
+
+abstract class Surface(val size : vec2i) {
+    inline def apply(draw : () -> void) {
+        bind
+        draw()
+        unbind
+    }
+
+    def bind
+
+    def unbind
+
+    def frameBuffer : int4
+
+//    def init {
+//        if(size.x <= 0 || size.y <= 0) throw "Invalid surface size"
+//    }
+}
+
+
+abstract class SurfaceRenderTarget(val size : vec2i) {
+    def link
+}
+
+class SurfaceRenderTargetTexture(val texture : Texture, size : vec2i) extends SurfaceRenderTarget(size) {
+    static def apply(size : vec2i) : SurfaceRenderTargetTexture = {
+        val t = EmptyTexture(size)
+        context.bindTexture(t)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pointer.null<void>)
+        SurfaceRenderTargetTexture(t, size)
+    }
+
+    override def link {
+        egFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.id, 0)
+    }
+}
+
+class SurfaceRenderTargetRenderBuffer(val renderBuffer : uint4, size : vec2i) extends SurfaceRenderTarget(size) {
+    static def apply(size : vec2i) : SurfaceRenderTargetRenderBuffer = {
+        val buf = egGenRenderBuffer
+        context.bindRenderBuffer(buf)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, size.x, size.y)
+        SurfaceRenderTargetRenderBuffer(buf, size)
+    }
+
+    override def link {
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderBuffer)
+    }
+
+    override def dealloc {
+        context.deleteRenderBuffer(renderBuffer)
+    }
+}
+
+
+abstract class RenderTargetSurface(val renderTarget : SurfaceRenderTarget) extends Surface(renderTarget.size) {
+    def texture : Texture = renderTarget.cast<SurfaceRenderTargetTexture>.texture
+    def renderBuffer : uint4 = renderTarget.cast<SurfaceRenderTargetRenderBuffer>.renderBuffer
+}
+
+
+class SimpleSurface(renderTarget : SurfaceRenderTarget, val depth : bool) extends RenderTargetSurface(renderTarget) {
+    static def toTexture(size : vec2i, depth : bool) : SimpleSurface = SimpleSurface(SurfaceRenderTargetTexture(size), depth)
+    static def toRenderBuffer(size : vec2i, depth : bool) : SimpleSurface = SimpleSurface(SurfaceRenderTargetRenderBuffer(size), depth)
+
+    override val frameBuffer = egGenFrameBuffer
+    private val depthRenderBuffer : uint4 = if(depth) egGenRenderBuffer else 0
+    def init {
+        glGetError
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer)
+        renderTarget.link
+        if(glGetError != 0) {
+            val e = "Error in texture creation for surface with size $(size.x)x$(size.y)"
+            throw e
+        }
+
+        val status = glCheckFramebufferStatus(GL_FRAMEBUFFER)
+        if(status != GL_FRAMEBUFFER_COMPLETE) throw "Error in frame buffer color attachment: $status"
+        if(depth) {
+            context.bindRenderBuffer(depthRenderBuffer)
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.x, size.y)
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBuffer)
+            val status2 = glCheckFramebufferStatus(GL_FRAMEBUFFER)
+            if(status2 != GL_FRAMEBUFFER_COMPLETE) throw "Error in frame buffer depth attachment: $status"
+        }
+    }
+
+    override def dealloc {
+        val fb = frameBuffer
+        Director.current.onGLThread{
+            egDeleteFrameBuffer(fb)
+        }
+        if(depth) context.deleteRenderBuffer(depthRenderBuffer)
+    }
+
+    override def bind {
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer)
+        context.set(viewport = RectI(0, 0, size.x, size.y))
+    }
+
+    override def unbind {
+    }
+
+}
+

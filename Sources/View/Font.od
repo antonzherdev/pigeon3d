@@ -1,0 +1,162 @@
+package com.pigeon3d
+
+struct TextAlignment(val x : float4, val y : float4, val baseline : bool, val shift : vec2) {
+    static def apply(x : float4, y : float4) = TextAlignment(x, y, false, vec2(0, 0))
+    static def apply(x : float4, y : float4, shift : vec2) = TextAlignment(x, y, false, shift)
+    static def baseline(x : float4) = TextAlignment(x, 0, true, vec2(0, 0))
+    static val left = TextAlignment(-1, 0, true, vec2(0, 0))
+    static val right = TextAlignment(1, 0, true, vec2(0, 0))
+    static val center = TextAlignment(0, 0, true, vec2(0, 0))
+}
+
+abstract class Font {
+    def texture : Texture
+    val symbolsChanged = Signal<void>()
+
+    static val newLineDesc = FontSymbolDesc(0, vec2(0, 0), vec2(0, 0), Rect(0, 0, 0, 0), true)
+    static val zeroDesc = FontSymbolDesc(0, vec2(0, 0), vec2(0, 0), Rect(0, 0, 0, 0), false)
+
+    def height : uint
+    def size : uint
+
+    //return size of text in pixels
+    def measureInPoints(text : string) : vec2 = {
+        val pair = buildSymbolArray(hasGL = false, text)
+        val symbolsArr = pair.a
+        val newLines = pair.b
+
+        var fullWidth = 0
+        var lineWidth = 0
+        symbolsArr.for{s ->
+            if(s.isNewLine) {
+                if(lineWidth > fullWidth) fullWidth = lineWidth
+                lineWidth = 0
+            } else {
+                lineWidth += s.width
+            }
+        }
+        if(lineWidth > fullWidth) fullWidth = lineWidth
+        vec2(fullWidth, height.cast<float4>*(newLines + 1))/Director.current.scale
+    }
+
+    def symbolOpt(smb : char) : FontSymbolDesc?
+
+
+    //return size of text in projection space
+    def measureP(text : string) : vec2 = measureInPoints(text)*2.0/context.scaledViewSize.value
+    def measureC(text : string) : vec2 = matrix.p.divBySelf(vec4(measureP(text), 0, 0)).xy
+
+    static val vbDesc = VertexBufferDesc(FontPrintData.type, position = 0, uv = 2*4, normal = -1, color = -1, model = -1)
+
+    def resymbol(hasGL : bool) : bool = false
+
+    private def buildSymbolArray(hasGL : bool, text : string) : ([FontSymbolDesc], int) = synchronized(self) {
+        var newLines = 0
+        var symbolsArr = text.chain.mapOpt<FontSymbolDesc>{s ->
+            if(s == 10) {
+                newLines++
+                newLineDesc
+            } else symbolOpt(s)
+        }.toArray
+        if(resymbol(hasGL)) {
+            symbolsArr = text.chain.mapOpt<FontSymbolDesc>{s ->
+                if(s == 10) newLineDesc else symbolOpt(s)
+            }.toArray
+        }
+        (symbolsArr, newLines)
+    }
+
+    def vao(text : string, at : vec3, alignment : TextAlignment) : SimpleVertexArray<FontShaderParam> = {
+        val pos = matrix.wcp.mul(vec4(at, 1)).xy + (alignment.shift/context.scaledViewSize.value*2)
+        val pair = buildSymbolArray(hasGL = true, text)
+        val symbolsArr = pair.a
+        val newLines = pair.b
+        val symbolsCount = symbolsArr.count - newLines
+        val vertexes = Pointer(FontPrintData.type, symbolsCount * 4)
+        val indexes = Pointer<uint4>(UInt4.type, symbolsCount * 6)
+        val vpSize = context.viewport.size/2.0
+
+        var vp = vertexes
+        var ip = indexes
+        var n : uint4 = 0
+
+        var linesWidth = MArray<int>()
+        var linesWidthIterator : Iterator<int>?
+        var x = pos.x
+        if(alignment.x != -1) {
+            var lineWidth = 0
+            symbolsArr.for{s ->
+            if(s.isNewLine) {
+                linesWidth.append(lineWidth)
+                lineWidth = 0
+            } else {
+                lineWidth += s.width
+            }
+            }
+            linesWidth.append(lineWidth)
+            linesWidthIterator = linesWidth.iterator
+            x = pos.x - linesWidthIterator.get.next/vpSize.x*(alignment.x/2 + 0.5)
+        }
+        val hh = height.cast<float4>/vpSize.y
+        var y =
+            if(alignment.baseline) pos.y + size.cast<float4>/vpSize.y
+            else pos.y - hh*(newLines + 1)*(alignment.y/2 - 0.5)
+
+        symbolsArr.for {s ->
+        if(s.isNewLine) {
+            x = if(alignment.x == -1) pos.x
+            else pos.x - linesWidthIterator.get.next/vpSize.x*(alignment.x/2 + 0.5)
+            y -= hh
+        } else {
+            val size = s.size/vpSize
+            val tr = s.textureRect
+            val v0 = vec2(x + s.offset.x/vpSize.x, y - s.offset.y/vpSize.y)
+
+            vp.position = v0
+            vp.uv = tr.p
+            vp++
+            vp.position = vec2(v0.x, v0.y - size.y)
+            vp.uv = tr.ph
+            vp++
+            vp.position = vec2(v0.x + size.x, v0.y - size.y)
+            vp.uv = tr.phw
+            vp++
+            vp.position = vec2(v0.x + size.x, v0.y)
+            vp.uv = tr.pw
+            vp++
+
+            ip.set(0, n)
+            ip.set(1, n + 1)
+            ip.set(2, n + 2)
+            ip.set(3, n + 2)
+            ip.set(4, n + 3)
+            ip.set(5, n)
+            ip += 6
+            x += s.width/vpSize.x
+            n += 4
+        }
+        }
+        val vb = VBO(vbDesc, vertexes, symbolsCount * 4)
+        val ib = IBO(indexes, symbolsCount * 6)
+        vertexes.free
+        indexes.free
+        FontShader.instance.vao(vb, ib)
+    }
+
+    def draw(text : string, at : vec3, alignment : TextAlignment, color : vec4) {
+        val vao = vao(text, at, alignment)
+        context.cullFace.disabled {
+            vao.draw(FontShaderParam(texture, color, shift = vec2(0, 0)))
+        }
+    }
+
+    def beReadyFor(text : string) : Font = {
+        text.chain.for{s ->
+            symbolOpt(s)
+        }
+        self
+    }
+}
+
+case class FontSymbolDesc(val width : float4, val offset : vec2, val size : vec2, val textureRect : Rect, val isNewLine : bool)
+struct FontPrintData(var position : vec2, var uv : vec2)

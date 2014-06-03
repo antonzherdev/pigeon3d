@@ -1,0 +1,48 @@
+package objd.chain
+
+trait ChainLink<A, B>{
+    def build(yield : Yield<B>) : Yield<A>
+}
+
+class Yield<T>(val begin : (uint -> Go)? = nil, val yield : (T -> Go)? = nil, val end : (Go -> Go)? = nil, val all : ((Yield<T>, Traversable<T>) -> Go)? = nil) {
+    static def make<T>(begin : (uint -> Go)? = nil, yield : (T -> Go)? = nil, end : (Go -> Go)? = nil, all : ((Yield<T>, Traversable<T>) -> Go)? = nil) : Yield<T> =
+        Yield<T>(begin, yield, end, all)
+    static def decorate<T, A>(base : Yield<A>, begin : (uint -> Go)? = nil, yield : (T -> Go)? = nil, end : (Go -> Go)? = nil, all : ((Yield<T>, Traversable<T>) -> Go)? = nil) : Yield<T> =
+        Yield<T>(
+            begin = begin.getOr{size : uint -> base.beginYieldWith(size)},
+            yield = yield.getOr{item : T -> base.yield(item.cast<A>)},
+              end = end.getOr{result : Go -> base.endYieldWith(result)},
+              all = all)
+    def beginYieldWith(size : uint) : Go =
+        if(begin == nil) Go.Continue
+        else begin.apply(size)
+
+    def yield(item : T) : Go =
+        if(yield == nil) Go.Continue
+        else yield.apply(item)
+
+    def endYieldWith(result : Go) : Go =
+        if(end == nil) result
+        else end(result)
+
+    def yieldAll(items : Traversable<T>) : Go =
+        if(all != nil) all(self, items)
+        else stdYieldAll(items)
+
+    def stdYieldAll(items : Traversable<T>) : Go = {
+        var result : Go = Go.Continue
+        if(items.is<Array<T>>) {
+            val _items = items.cast<Array<T>>
+            if(beginYieldWith(size = _items.count) == Go.Continue) result = _items.go{item -> yield(item)}
+        } else if(items.is<HashMap<T>>) {
+            val _items = items.cast<Iterable<T>>
+            if(beginYieldWith(size = _items.count) == Go.Continue) result = items.go{item -> yield(item)}
+        } else if(items.is<Iterable<T>>) {
+            val _items = items.cast<Iterable<T>>
+            if(beginYieldWith(size = _items.count) == Go.Continue) result = _items.go{item -> yield(item)}
+        } else {
+            if(beginYieldWith(size = 0) == Go.Continue) result = items.go{item -> yield(item)}
+        }
+        endYieldWith(result)
+    }
+}

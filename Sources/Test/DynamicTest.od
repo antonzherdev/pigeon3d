@@ -1,0 +1,52 @@
+package com.pigeon3d
+
+import objd.test._
+
+@Test
+class DynamicTest extends TestCase {
+    def runSecondIn(world : DynamicWorld<_>) {
+        30.range.for(world.updateWith(delta = 1.0/30.0))
+    }
+
+    @Test
+    def testSimple {
+        val world = DynamicWorld<int>(vec3(0, -10, 0))
+        val shape = CollisionBox(1, 1, 1)
+        val body = RigidBody.dynamic<int>(1, shape, 1)
+        world.add(body)
+        body.matrix = mat4.identity.translate(0, 5, 0)
+
+        var m = body.matrix
+        assertTrue(m.array[13] == 5)
+
+        var v = body.velocity
+        assertEquals(v, vec3(0, 0, 0))
+
+        runSecondIn(world)
+        m = body.matrix
+        assertTrue(m.array[13].between(-0.1, 0.1))
+
+        v = body.velocity
+        assertTrue(v.x == 0)
+        assertTrue(v.y.between(-10.01, -9.99))
+        assertTrue(v.z == 0)
+    }
+
+    @Test
+    def testFriction {
+        val world = DynamicWorld<int>(vec3(0, -10, 0))
+        val plane = RigidBody.statical<int>(1, CollisionPlane(vec3(0, 1, 0), 0))
+        world.add(plane)
+        val body = RigidBody.dynamic<int>(2, CollisionBox(1, 1, 1), 1)
+        world.add(body)
+        body.matrix = mat4.identity.translate(0, 0.5, 0)
+        body.velocity = vec3(10, 0, 0)
+
+        runSecondIn(world)
+//        val m = body.matrix
+        val v = body.velocity
+        if(!v.x.between(7.4, 7.6)) fail("$(v.x) is not between 7.4 and 7.6")
+        assertTrue(v.y.between(-0.1, 0.1))
+        assertTrue(v.z.between(-0.1, 0.1))
+    }
+}

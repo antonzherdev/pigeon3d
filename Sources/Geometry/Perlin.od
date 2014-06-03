@@ -1,0 +1,19 @@
+package com.pigeon3d.geometry
+
+stub class Perlin1(val octaves : uint, val frequency : float, val amplitude : float, val seed : uint4) {
+    def apply(x : float) : float
+    static def apply(octaves : uint, frequency : float, amplitude : float) : Perlin1
+    static def apply : Perlin1
+}
+
+stub class Perlin2(val octaves : uint, val frequency : float, val amplitude : float, val seed : uint4) {
+    def apply(vec2 : vec2) : float
+    static def apply(octaves : uint, frequency : float, amplitude : float) : Perlin2
+    static def apply : Perlin2
+}
+
+stub class Perlin3(val octaves : uint, frequency : float, val amplitude : float, val seed : uint4) {
+    def apply(vec3 : vec3) : float
+    static def apply(octaves : uint, frequency : float, amplitude : float) : Perlin3
+    static def apply : Perlin3
+}

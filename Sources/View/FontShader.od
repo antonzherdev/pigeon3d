@@ -1,0 +1,48 @@
+package com.pigeon3d
+
+
+case class FontShaderParam(val texture : Texture, val color : vec4, val shift : vec2)
+
+class FontShaderBuilder extends ShaderTextBuilder {
+    def vertex =
+       "$vertexHeader
+        uniform highp vec2 shift;
+        $ain highp vec2 position;
+        $ain mediump vec2 vertexUV;
+
+        $out mediump vec2 UV;
+
+        void main(void) {
+            gl_Position = vec4(position.x + shift.x, position.y + shift.y, 0, 1);
+            UV = vertexUV;
+        }"
+    def fragment =
+       "$fragmentHeader
+        $in mediump vec2 UV;
+        uniform lowp sampler2D txt;
+        uniform lowp vec4 color;
+
+        void main(void) {
+            $fragColor = color * $texture2D\(txt, UV);
+        }"
+
+    def program = ShaderProgram("Font", vertex, fragment)
+}
+
+class FontShader extends Shader<FontShaderParam>(FontShaderBuilder().program) {
+    static val instance = FontShader()
+
+    val uvSlot : ShaderAttribute = attributeFor("vertexUV")
+    val positionSlot : ShaderAttribute = attributeFor("position")
+    val colorUniform = uniformVec4("color")
+    val shiftSlot = uniformVec2("shift")
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        positionSlot.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, vbDesc.position)
+        uvSlot.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, vbDesc.uv)
+    }
+    override def loadUniforms(param : FontShaderParam) {
+        context.bindTexture(param.texture)
+        colorUniform(vec4 = param.color)
+        shiftSlot(vec2 = matrix.p.mul(vec4(param.shift, 0, 0)).xy)
+    }
+}

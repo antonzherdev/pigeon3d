@@ -1,0 +1,141 @@
+package com.pigeon3d
+
+abstract class VertexArray<P> {
+    def draw(param : P, start : uint, end : uint)
+    def draw(param : P)
+
+    def draw
+    def syncWait
+    def syncSet
+    def sync(f : () -> void)
+    def vertexBuffers : [VertexBuffer<_>]
+    def index : IndexSource
+
+    lazy val mutableVertexBuffer : MutableVertexBuffer<_>? = vertexBuffers.find(_.is<MutableVertexBuffer>).cast<MutableVertexBuffer<_>?>
+    def vertexWrite<T>(count : uint4, f : Pointer<T> -> void) {
+        mutableVertexBuffer?.cast<MutableVertexBuffer<T>>?.write(count, f)
+    }
+}
+
+class RouteVertexArray<P>(val standard : VertexArray<P>, val shadow : VertexArray<P>) extends VertexArray<P> {
+    def mesh : VertexArray<P> =
+        if(context.renderTarget.is<ShadowRenderTarget>) shadow
+        else standard
+
+    override def draw(param : P) {
+        mesh.draw(param)
+    }
+
+    override def draw(param : P, start : uint, end : uint) {
+        mesh.draw(param, start, end)
+    }
+
+    override def draw {
+        mesh.draw
+    }
+    override def sync(f : () -> void) {
+        mesh.sync(f)
+    }
+
+    override def syncWait {
+        mesh.syncWait
+    }
+    override def syncSet {
+        mesh.syncSet
+    }
+
+    override def vertexBuffers : [VertexBuffer<_>] = mesh.vertexBuffers
+    override def index : IndexSource = mesh.index
+}
+
+
+class SimpleVertexArray<P>(val handle : uint4, val shader : Shader<P>, override val vertexBuffers : [VertexBuffer<_>],
+    override val index : IndexSource)
+    extends VertexArray<P>
+{
+    static def apply<P>(shader : Shader<P>, buffers : [VertexBuffer<_>], index : IndexSource) : SimpleVertexArray<P> =
+        SimpleVertexArray<P>(egGenVertexArray, shader, buffers, index)
+    val isMutable = index.isMutable || vertexBuffers.chain.find(_.isMutable) != nil
+
+    def bind {
+        context.bindVertexArray(handle, vertexBuffers.head?.count.getOr(0), isMutable)
+    }
+
+    def unbind {
+        context.bindDefaultVertexArray
+    }
+
+    override def dealloc {
+        context.deleteVertexArray(handle)
+    }
+
+    def count = vertexBuffers.head?.count.getOr(0)
+
+    override def draw(param : P) {
+        if(!index.isEmpty) shader.draw(param, self)
+    }
+
+    override def draw(param : P, start : uint, end : uint) {
+        if(!index.isEmpty) shader.draw(param, self, start, end)
+    }
+
+    override def draw {
+        throw "No default material"
+    }
+
+    private val fence = Fence("VAO")
+    override def sync(f : () -> void) {
+        fence.sync(f)
+    }
+
+    override def syncWait {
+        fence.clientWait
+    }
+    override def syncSet {
+        fence.set
+    }
+}
+
+class MaterialVertexArray<P>(val vao : VertexArray<P>, val material : P) extends VertexArray<P> {
+    override def draw {
+        vao.draw(material)
+    }
+
+    override def draw(param : P) {
+        vao.draw(param)
+    }
+
+    override def draw(param : P, start : uint, end : uint) {
+        vao.draw(param, start, end)
+    }
+
+    override def sync(f : () -> void) {
+        vao.sync(f)
+    }
+    override def syncWait {
+        vao.syncWait
+    }
+    override def syncSet {
+        vao.syncSet
+    }
+
+    override def vertexBuffers : [VertexBuffer<_>] = vao.vertexBuffers
+    override def index : IndexSource = vao.index
+}
+
+class VertexArrayRing<P>(val ringSize : uint4, val creator : (uint4) -> VertexArray<P>) {
+    private val _ring = MQueue<VertexArray<P>>()
+
+    def next : VertexArray<P> = {
+        val buffer = if(_ring.count >= ringSize) _ring.dequeue.get else creator(_ring.count)
+        _ring.enqueue(buffer)
+        buffer
+    }
+
+    def sync(f : VertexArray<P> -> void) {
+        val vao = next
+        next.sync {
+            f(vao)
+        }
+    }
+}

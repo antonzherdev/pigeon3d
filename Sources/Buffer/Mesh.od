@@ -1,0 +1,164 @@
+package com.pigeon3d
+
+struct MeshData(var uv : vec2, var normal : vec3, var position : vec3) {
+    def mul(mat4 : mat4) : MeshData =
+        MeshData(uv, (mat4 * vec4(normal, 0)).xyz, (mat4 * vec4(position, 1)).xyz)
+
+    def uvAdd(vec2 : vec2) = MeshData(uv + vec2, normal, position)
+}
+
+class MeshDataModel(val vertex : PArray<MeshData>, val index : PArray<uint4>)
+
+class Mesh(val vertex : VertexBuffer<_>, val index : IndexSource) {
+    static def vec2(vertexData : PArray<vec2>, indexData : PArray<uint4>) : Mesh = Mesh(
+            vertex = VBO.vec2(vertexData),
+            index = IBO(indexData))
+
+    static def apply(vertexData : PArray<MeshData>, indexData : PArray<uint4>) : Mesh = Mesh(
+            vertex = VBO.mesh(vertexData),
+            index = IBO(indexData))
+
+    static def apply<T>(desc : VertexBufferDesc<T>, vertexData : PArray<T>, indexData : PArray<uint4>) : Mesh = Mesh(
+            vertex = VBO<T>(desc, vertexData),
+            index = IBO(indexData))
+
+    def vao<N>(shader : Shader<N>) : VertexArray<N> = shader.vao(vertex, index.cast<IndexBuffer>)
+    def vaoShadow : VertexArray<ColorSource> = vao(ShadowShaderSystem.instance, ColorSource(vec4(1, 1, 1, 1)), false)
+    def vaoShadow(material : ColorSource) : VertexArray<ColorSource> = vao(ShadowShaderSystem.instance, material, false)
+    def vao<N extends Material>(material : N, shadow : bool) : VertexArray<N> = {
+        val std = MaterialVertexArray(material.shader.vao(vertex, index.cast<IndexBuffer>), material)
+        if(shadow && egPlatform.shadows) RouteVertexArray(std,
+            MaterialVertexArray(material.shaderSystem.shaderFor(material,
+                ShadowRenderTarget.default).vao(vertex, index.cast<IndexBuffer>), material))
+        else std
+    }
+    def vao<N>(shaderSystem : ShaderSystem<N>, material : N, shadow : bool) : VertexArray<N> = {
+        val std = MaterialVertexArray(shaderSystem.shaderFor(material).vao(vertex, index.cast<IndexBuffer>), material)
+        if(shadow && egPlatform.shadows) RouteVertexArray(std,
+            MaterialVertexArray(shaderSystem.shaderFor(material,
+                ShadowRenderTarget.default).vao(vertex, index.cast<IndexBuffer>), material))
+        else std
+    }
+
+    def draw(material : Material) {
+        material.draw(self)
+    }
+}
+
+class MeshModel(val arrays : [VertexArray<Material>]) {
+    static def apply(meshes : [(Mesh, Material)]) : MeshModel = MeshModel(false, meshes)
+    static def apply(shadow : bool, meshes : [(Mesh, Material)]) : MeshModel = MeshModel(arrays = meshes.chain.map{p ->
+        p.a.vao(p.b, shadow)
+    }.toArray)
+    def draw {
+        arrays.for(_.draw)
+    }
+
+    def draw(only : uint4) {
+        if(only == 0) return nil
+        var o = only
+        arrays.go {a ->
+            a.draw
+            o--
+            if(o > 0) Go.Continue else Go.Break
+        }
+    }
+}
+
+
+
+class MeshUnite(val vertexSample : PArray<MeshData>, val indexSample : PArray<uint4>, val createVao : Mesh -> VertexArray<_>) {
+    static def apply(meshModel : MeshDataModel, createVao : Mesh -> VertexArray<_>) : MeshUnite =
+        MeshUnite(meshModel.vertex, meshModel.index, createVao)
+
+    private val vbo = VBO.mutMesh(GL_DYNAMIC_DRAW)
+    private val ibo = IBO.mut(GL_DYNAMIC_DRAW)
+    val mesh = Mesh(vbo, ibo)
+    val vao = createVao(mesh)
+    private var _count :  uint4 = 0
+
+    def write(count : uint4, f : MeshWriter -> void) {
+        val w = writer(count)
+        f(w)
+        w.flush
+    }
+
+    def write(mat4Array : Iterable<mat4>) {
+        val w = writer(mat4Array.count)
+        mat4Array.for(w.write(_))
+        w.flush
+    }
+
+    def writer(count : uint4) = {
+        _count = count
+        MeshWriter(vbo, ibo, count, vertexSample, indexSample)
+    }
+
+    def draw {
+        if(_count > 0) {
+            matrix.identity{
+                vao.draw
+            }
+        }
+    }
+}
+
+class MeshWriter(val vbo : MutableVertexBuffer<MeshData>, val ibo : MutableIndexBuffer,
+    val count : uint4, val vertexSample : PArray<MeshData>, val indexSample : PArray<uint4>)
+{
+    private val vertex = Pointer(MeshData.type, vertexSample.count * count)
+    private val index = Pointer<uint4>(UInt4.type, indexSample.count * count)
+    private var _vp = vertex
+    private var _ip = index
+    private var _indexShift : uint4 = 0
+    def write(mat4 : mat4) {
+        write(vertexSample, indexSample, mat4)
+    }
+
+    def write(vertex : PArray<MeshData>, mat4 : mat4) {
+        write(vertex, indexSample, mat4)
+    }
+
+    def write(vertex : PArray<MeshData>, index : PArray<uint4>, mat4 : mat4) {
+        vertex.forRef{ r ->
+            _vp.set(r.get<MeshData> * mat4)
+            _vp++
+        }
+        index.forRef {r ->
+            _ip.set(uInt4 = r.get<uint4> + _indexShift)
+            _ip++
+        }
+        _indexShift += vertex.count
+    }
+
+    def write(map : MeshData -> MeshData) {
+        write(vertexSample, indexSample, map)
+    }
+
+    def write(vertex : PArray<MeshData>, map : MeshData -> MeshData) {
+        write(vertex, indexSample, map)
+    }
+
+    def write(vertex : PArray<MeshData>, index : PArray<uint4>, map : MeshData -> MeshData) {
+        vertex.forRef{ r ->
+            _vp.set(map(r.get<MeshData>))
+            _vp++
+        }
+        index.forRef {r ->
+            _ip.set(uInt4 = r.get<uint4> + _indexShift)
+            _ip++
+        }
+        _indexShift += vertex.count
+    }
+
+    def flush {
+        vbo.set(vertex, vertexSample.count * count)
+        ibo.set(index, indexSample.count * count)
+    }
+
+    override def dealloc {
+        vertex.free
+        index.free
+    }
+}
+

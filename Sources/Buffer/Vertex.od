@@ -1,0 +1,74 @@
+package com.pigeon3d
+
+
+class VertexBufferDesc<T>(val dataType : PType<T>, val position : int4, val uv : int4, val normal : int4, val color : int4, val model : int4)
+{
+    def stride : uint4 = dataType.size
+
+    static def Vec2 = VertexBufferDesc<vec2>(vec2.type, -1, 0, -1, -1, 0)
+    static def Vec3 = VertexBufferDesc<vec3>(vec3.type, 0, 0, 0, -1, 0)
+    static def Vec4 = VertexBufferDesc<vec4>(vec4.type, 0, 0, 0, 0, 0)
+    static def mesh = VertexBufferDesc<MeshData>(MeshData.type, position = 5*4, uv = 0, normal = 2*4, color = -1, model = -1)
+}
+
+object VBO {
+    static def apply<T>(desc : VertexBufferDesc<T>, array : Pointer<T>, count : uint4) : VertexBuffer<T> = {
+        val len = count*desc.dataType.size
+        val vb = ImmutableVertexBuffer<T>(desc, egGenBuffer, len, count)
+        vb.bind
+        glBufferData(GL_ARRAY_BUFFER, len, array, GL_STATIC_DRAW)
+        vb
+    }
+
+    static def apply<T>(desc : VertexBufferDesc<T>, data : PArray<T>) : VertexBuffer<T> = {
+        val vb = ImmutableVertexBuffer<T>(desc, egGenBuffer, data.length, data.count)
+        vb.bind
+        glBufferData(GL_ARRAY_BUFFER, data.length, data.bytes, GL_STATIC_DRAW)
+        vb
+    }
+    static def vec4(data : PArray<vec4>) = VBO<vec4>(VertexBufferDesc.Vec4, data)
+    static def vec3(data : PArray<vec3>) = VBO<vec3>(VertexBufferDesc.Vec3, data)
+    static def vec2(data : PArray<vec2>) = VBO<vec2>(VertexBufferDesc.Vec2, data)
+    static def mesh(data : PArray<MeshData>) = VBO<MeshData>(VertexBufferDesc.mesh, data)
+
+    static def mut<T>(desc : VertexBufferDesc<T>, usage : uint4) : MutableVertexBuffer<T> = MutableVertexBuffer<T>(desc, egGenBuffer, usage)
+    static def ring<T>(size : uint4, desc : VertexBufferDesc<T>, usage : uint4) : VertexBufferRing<T> = VertexBufferRing<T>(size, desc, usage)
+    static def mutVec2(usage : uint4) : MutableVertexBuffer<vec2> = MutableVertexBuffer<vec2>(VertexBufferDesc.Vec2, egGenBuffer, usage)
+    static def mutVec3(usage : uint4) : MutableVertexBuffer<vec3> = MutableVertexBuffer<vec3>(VertexBufferDesc.Vec3, egGenBuffer, usage)
+    static def mutVec4(usage : uint4) : MutableVertexBuffer<vec4> = MutableVertexBuffer<vec4>(VertexBufferDesc.Vec4, egGenBuffer, usage)
+    static def mutMesh(usage : uint4) : MutableVertexBuffer<MeshData> = MutableVertexBuffer<MeshData>(VertexBufferDesc.mesh, egGenBuffer, usage)
+}
+
+
+trait VertexBuffer<T> {
+    def desc : VertexBufferDesc<T>
+    def count : uint
+    def handle : uint4
+    def isMutable = false
+    def bind
+}
+
+class ImmutableVertexBuffer<T>(override val desc : VertexBufferDesc<T>, handle : uint4, override val length : uint, override val count : uint)
+    extends Buffer<T>(desc.dataType, GL_ARRAY_BUFFER, handle)
+    with VertexBuffer<T>
+{
+    override def bind {
+        context.bindVertexBuffer(self)
+    }
+}
+
+
+class MutableVertexBuffer<T>(override val desc : VertexBufferDesc<T>, handle : uint4, usage : uint4)
+    extends MutableBuffer<T>(desc.dataType, GL_ARRAY_BUFFER, handle, usage)
+    with VertexBuffer<T>
+{
+    override def isMutable = true
+    override def bind {
+        context.bindVertexBuffer(self)
+    }
+    override def isEmpty = false
+}
+
+
+class VertexBufferRing<T>(ringSize : uint4, val desc : VertexBufferDesc<T>, val usage : uint4)
+    extends BufferRing<T, MutableVertexBuffer<T>>(ringSize, creator = MutableVertexBuffer(desc, egGenBuffer, usage))

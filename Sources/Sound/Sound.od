@@ -1,0 +1,120 @@
+package com.pigeon3d.sound
+
+import objd.concurrent._
+
+stub package object {
+    val prefix = "PG"
+    import objd.react._
+}
+
+abstract class Sound {
+    static def apply(file : string) : SimpleSound = SimpleSoundPlat(file)
+    static def apply(file : string, volume : float4) : SimpleSound = {
+        val s = SimpleSoundPlat(file)
+        s.volume = volume
+        s
+    }
+    static def par(limit : int, file : string, volume : float4 = 1.0) : ParSound =
+        ParSound(limit, create = Sound(file, volume))
+
+    def play
+    def play(loops : uint)
+    def playAlways
+    def stop
+
+    def isPlaying : bool
+    def pause
+    def resume
+}
+
+abstract class SimpleSound(val file : string) extends Sound {
+    def pan : float4 //stereo position
+    def set(pan : float4)
+    def volume : float4 //volume 1.0 - normal. You can only decrease sound
+    def set(volume : float4)
+    def time : float //current time in seconds
+    def set(time : float)
+
+    def duration : float //in seconds
+}
+
+final class ParSound(val limit : int, val create : void -> SimpleSound) extends Sound {
+    private val sounds  = MArray<SimpleSound>()
+
+    override def play {
+        DispatchQueue.default.async {
+            synchronized(self) {
+                sound?.play
+            }
+        }
+    }
+
+    override def play(loops : uint) {
+        DispatchQueue.default.async {
+            synchronized(self) {
+                sound?.play(loops)
+            }
+        }
+    }
+
+    override def playAlways {
+        DispatchQueue.default.async {
+            synchronized(self) {
+                sound?.playAlways
+            }
+        }
+    }
+
+    private val paused = MHashSet<Sound>()
+    override def pause {
+        DispatchQueue.default.async {
+            synchronized(self) {
+                sounds.for { sound ->
+                    if(sound.isPlaying) {
+                        sound.pause
+                        paused.append(sound)
+                    }
+                }
+            }
+        }
+    }
+    override def resume {
+        DispatchQueue.default.async {
+            synchronized(self) {
+                paused.for(_.resume)
+                paused.clear
+            }
+        }
+    }
+    override def isPlaying : bool = synchronized(self) {
+        sounds.exists(_.isPlaying)
+    }
+
+    override def stop {
+        synchronized(self) {
+            sounds.for(_.stop)
+        }
+    }
+
+    def playWith(volume : float4) {
+        DispatchQueue.default.async {
+            synchronized(self) {
+                sound.for{s ->
+                    s.volume = volume
+                    s.play
+                }
+            }
+        }
+    }
+
+    private def sound : SimpleSound? = {
+        val s = sounds.find(!_.isPlaying)
+        if(s != nil) s
+        else if(sounds.count >= limit) nil
+        else {
+            val newSound = create()
+            sounds.append(newSound)
+            newSound
+        }
+    }
+}

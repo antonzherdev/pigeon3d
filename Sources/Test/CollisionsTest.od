@@ -1,0 +1,63 @@
+package com.pigeon3d
+
+import objd.test._
+
+@Test
+class CollisionsTest extends TestCase {
+    @Test
+    def testCollisions {
+        val world = CollisionWorld<int>()
+        val box1 = CollisionBody<int>(1, CollisionBox(2, 2, 2), isKinematic = true)
+        val box2 = CollisionBody<int>(2, CollisionBox(2, 2, 2), isKinematic = false)
+        world.add(box1)
+        world.add(box2)
+        box1.translate(1.8, 1.8, 0)
+        assertTrue(world.detect.count == 1)
+        box1.translate(0.1, 0.1, 0)
+        assertTrue(world.detect.count == 1)
+
+        box1.translate(0.2, 0.2, 0)
+        assertTrue(world.detect.isEmpty)
+    }
+
+    @Test
+    def testCollisions2d {
+        val world = CollisionWorld<int>()
+        val box1 = CollisionBody<int>(1, CollisionBox2d(2, 2), isKinematic = true)
+        val box2 = CollisionBody<int>(2, CollisionBox2d(2, 2), isKinematic = false)
+        world.add(box1)
+        world.add(box2)
+        box1.translate(1.8, 1.8, 0)
+        assertTrue(world.detect.count == 1)
+        box1.translate(0.1, 0.1, 0)
+        assertTrue(world.detect.count == 1)
+
+        box1.translate(0.2, 0.2, 0)
+        assertTrue(world.detect.isEmpty)
+    }
+
+    @Test
+    def testRay {
+        val world = CollisionWorld<int>()
+        val box1 = CollisionBody<int>(1, CollisionBox2d(1, 1), isKinematic = false)
+        val box2 = CollisionBody<int>(2, CollisionBox2d(1, 1), isKinematic = true)
+        box1.translate(2, 2, 0)
+        world.add(box1)
+        world.add(box2)
+        val segment = Line3(vec3(2, 2, 2), vec3(0, 0, -10))
+
+        var r = world.crossPointsWith(segment)
+        val p1 = CrossPoint<int>(box1, vec3(2, 2, 0))
+        assertEquals(r, [p1])
+
+        box2.translate(2, 2, -1)
+        r = world.crossPointsWith(segment)
+        assertEquals(r, [p1, CrossPoint<int>(box2, vec3(2, 2, -1))])
+
+        assertEquals(world.closestCrossPointWith(segment).get, p1)
+
+        box2.translate(0, 0, -10)
+        r = world.crossPointsWith(segment)
+        assertEquals(r, [p1])
+    }
+}

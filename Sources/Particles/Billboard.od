@@ -1,0 +1,57 @@
+package com.pigeon3d
+
+struct BillboardBufferData(var position : vec3, var model : vec2, var color : vec4, var uv : vec2)
+
+struct BillboardParticle(var position : vec3, var uv : Quad, var model : Quad, var color : vec4)  {
+    inline def writeTo(array : Pointer<BillboardBufferData>) : Pointer<BillboardBufferData> = {
+        var pp = array
+        pp.position = position
+        pp.model = model.p0
+        pp.color = color
+        pp.uv = uv.p0
+        pp++
+
+        pp.position = position
+        pp.model = model.p1
+        pp.color = color
+        pp.uv = uv.p1
+        pp++
+
+        pp.position = position
+        pp.model = model.p2
+        pp.color = color
+        pp.uv = uv.p2
+        pp++
+
+        pp.position = position
+        pp.model = model.p3
+        pp.color = color
+        pp.uv = uv.p3
+        pp + 1
+    }
+}
+
+
+trait BillboardParticleSystem extends ParticleSystemIndexArray {
+    def vertexCount : uint4 = 4
+    override def indexCount : uint = 6
+
+    protected override def createIndexArray : Pointer<uint4> = {
+        val indexPointer = Pointer<uint4>(4, indexCount*maxCount)
+        var ia = indexPointer
+        var i = 0
+        var j : uint4 = 0
+        while(i < maxCount) {
+            ia.set(0, j)
+            ia.set(1, j + 1)
+            ia.set(2, j + 2)
+            ia.set(3, j + 2)
+            ia.set(4, j)
+            ia.set(5, j + 3)
+            ia += 6
+            i++
+            j += 4
+        }
+        indexPointer
+    }
+}

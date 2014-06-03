@@ -1,0 +1,76 @@
+package com.pigeon3d
+
+enum TextureFileFormat(val extension : string) {
+    PNG("png")
+    JPEG("jpg")
+    compressed("?")
+}
+
+enum TextureFormat {
+    RGBA8()
+    RGBA4()
+    RGB5A1()
+
+    RGB8()
+    RGB565()
+}
+
+enum TextureFilter(val magFilter : uint4, val minFilter : uint4) {
+    nearest(GL_NEAREST, GL_NEAREST)
+    linear(GL_LINEAR, GL_LINEAR)
+    mipmapNearest(GL_LINEAR, GL_LINEAR_MIPMAP_NEAREST)
+}
+
+
+abstract class Texture {
+    def id : uint4
+    def size : vec2
+    def scale : float = 1.0
+    def scaledSize : vec2 = size/scale
+
+    override def dealloc {
+        deleteTexture
+    }
+
+    def deleteTexture {
+        context.deleteTexture(id)
+    }
+
+    def saveTo(file : string) {
+        TextureService.egSaveTextureToFile(id, file)
+    }
+
+    def uv : Rect = Rect(0, 0, 1, 1)
+    def uv(rect : Rect) : Rect = rect/scaledSize
+    def uv(x : float4, y : float4, width : float4, height : float4) : Rect = uv(Rect(x, y, width, height))
+
+    def region(x : float4, y : float4, width : float, height : float4) = TextureRegion(self, Rect(x, y, width, height)/scaledSize)
+    def colorSource = ColorSource(texture = self)
+}
+
+case class EmptyTexture(override val size : vec2) extends Texture {
+    override val id : uint4 = egGenTexture
+}
+
+case class FileTexture(val name : string, val fileFormat : TextureFileFormat, val format : TextureFormat,
+    override val scale : float, val filter : TextureFilter)
+    extends Texture
+{
+    override val id : uint4 = egGenTexture
+    private var _size : vec2
+
+    def init {
+        _size = TextureService.egLoadTextureFromFile(id, name, fileFormat, scale, format, filter)
+    }
+
+    override def size : vec2 = _size
+}
+
+
+case class TextureRegion(val texture : Texture, override val uv : Rect) extends Texture {
+    static def apply(texture : Texture) : TextureRegion = TextureRegion(texture, Rect(0, 0, 1, 1))
+    override val id : uint4 = texture.id
+    override val size : vec2 = texture.size * uv.size
+    override def scale : float = texture.scale
+    override def deleteTexture {}
+}

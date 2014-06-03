@@ -1,0 +1,290 @@
+package com.pigeon3d
+
+
+
+class StandardShaderSystem extends ShaderSystem<StandardMaterial> {
+    static val instance = StandardShaderSystem()
+    override def shaderFor(param : StandardMaterial, renderTarget : RenderTarget) : Shader<Material> =
+        if(renderTarget.is<ShadowRenderTarget>)
+            if(ShadowShaderSystem.isColorShaderFor(param.diffuse)) StandardShadowShader.instanceForColor
+            else StandardShadowShader.instanceForTexture
+        else {
+            val lights = context.environment.lights
+            val directLightsWithShadowsCount = lights.chain.filter(_.is<DirectLight> && _.hasShadows).count
+            val directLightsWithoutShadowsCount = lights.chain.filter(_.is<DirectLight> && !_.hasShadows).count
+            val texture = param.diffuse.texture
+            val t = texture != nil
+            val region = t && texture?.is<TextureRegion>.getOr(false)
+            val spec = param.specularSize > 0
+            val normalMap = param.normalMap != nil
+            val key =
+                if(egPlatform.shadows && context.considerShadows)
+                    StandardShaderKey(directLightsWithShadowsCount, directLightsWithoutShadowsCount, t, param.diffuse.blendMode, region, spec, normalMap)
+                else StandardShaderKey(0, directLightsWithShadowsCount + directLightsWithoutShadowsCount, t, param.diffuse.blendMode, region, spec, normalMap)
+
+            shaders(key, orUpdateWith = key.shader)
+        }
+
+    private static val shaders = MHashMap<StandardShaderKey, StandardShader>()
+    static val settingsChangeObs = settings.shadowTypeChanged.observe(shaders.clear)
+}
+
+class StandardShadowShader(val shadowShader : ShadowShader) extends Shader<StandardMaterial>(shadowShader.program) {
+    static val instanceForColor = StandardShadowShader(ShadowShader.instanceForColor)
+    static val instanceForTexture = StandardShadowShader(ShadowShader.instanceForTexture)
+
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        shadowShader.loadAttributes(vbDesc)
+    }
+    override def loadUniforms(param : StandardMaterial) {
+        shadowShader.loadUniforms(param.diffuse)
+    }
+}
+
+case class StandardShaderKey(val directLightWithShadowsCount : uint, val directLightWithoutShadowsCount : uint, val texture : bool,
+    val blendMode : BlendMode,  val region : bool, val specular : bool, val normalMap : bool) extends ShaderTextBuilder
+{
+    val perPixel = normalMap
+//    val perPixel = true
+    val needUV = normalMap || texture
+    val directLightCount = directLightWithShadowsCount + directLightWithoutShadowsCount
+    def shader : StandardShader = {
+        val vertexShader =
+            "$vertexHeader
+            $if(!normalMap)
+             $ain mediump vec3 normal;
+            $endif
+
+             $ain highp vec3 position;
+             uniform highp mat4 mwcp;
+             uniform highp mat4 mwc;
+            $if(region)
+             uniform mediump vec2 uvShift;
+             uniform mediump vec2 uvScale;
+            $endif
+             $lightsVertexUniform
+
+            $if(needUV || normalMap)
+             $ain mediump vec2 vertexUV;
+             $out mediump vec2 UV;
+            $endif
+            $if(perPixel)
+             $out mediump vec3 eyeDirection;
+            $endif
+            $if(perPixel && !normalMap)
+                $out mediump vec3 normalMWC;
+            $endif
+             $lightsOut
+
+             void main(void) {
+             $if(!perPixel)vec3$endif eyeDirection = normalize(-(mwc * vec4(position, 1)).xyz);
+             $if(!normalMap || !perPixel)
+                $if(!perPixel)vec3$endif normalMWC = normalize((mwc * vec4(normal, 0)).xyz);
+             $endif
+                gl_Position = mwcp * vec4(position, 1);
+             $if(needUV && region)
+                UV = uvScale*vertexUV + uvShift;
+             $else
+                UV = vertexUV; $when(needUV)
+             $endif
+                $lightsCalculateVaryings
+             }"
+        val fragmentShader =
+            "$fragmentHeader
+             $shadowExt
+            $if(needUV)
+             $in mediump vec2 UV;
+             uniform lowp sampler2D diffuseTexture;
+            $endif
+            $if(normalMap)
+             uniform lowp sampler2D normalMap;
+            $endif
+             uniform lowp vec4 diffuseColor;
+             uniform lowp vec4 ambientColor;
+            $if(specular)
+             uniform lowp vec4 specularColor;
+             uniform lowp float specularSize;
+            $endif
+            $if(perPixel)
+             $in mediump vec3 eyeDirection;
+                $if(normalMap)
+                 uniform highp mat4 mwc;
+                $else
+                 $in mediump vec3 normalMWC;
+                $endif
+            $endif
+             $lightsIn
+             $lightsFragmentUniform
+
+             void main(void) {
+                highp float visibility;$when(directLightWithShadowsCount > 0)
+                lowp vec4 materialColor = $blend(blendMode, "diffuseColor", "$texture2D\(diffuseTexture, UV)");
+               $if(normalMap)
+                mediump vec3 normalMWC = normalize((mwc * vec4(2.0*$texture2D\(normalMap, UV).xyz - 1.0, 0)).xyz);
+               $endif
+                lowp vec4 color = ambientColor * materialColor;
+                $lightsDiffuse
+                $fragColor = color;
+             }"
+        StandardShader(self, ShaderProgram("Standard", vertexShader, fragmentShader))
+    }
+
+    def lightsVertexUniform : string = directLightCount.range.chain.map{i ->
+        "$if(!perPixel)
+         uniform mediump vec3 dirLightDirection$i;
+        $endif
+        $if(i < directLightWithShadowsCount)
+         uniform highp mat4 dirLightDepthMwcp$i;
+        $endif
+        "}.toString("\n")
+    def lightsIn : string = directLightCount.range.chain.map{i ->
+        "$if(!perPixel)
+         $in mediump float dirLightDirectionCos$i;
+        $endif
+        $if(specular && !perPixel)
+         $in mediump float dirLightDirectionCosA$i;
+        $endif
+        $if(i < directLightWithShadowsCount)
+         $in highp vec3 dirLightShadowCoord$i;
+        $endif
+        "}.toString("\n")
+    def lightsOut : string = directLightCount.range.chain.map{i ->
+        "$if(!perPixel)
+         $out mediump float dirLightDirectionCos$i;
+        $endif
+        $if(specular && !perPixel)
+         $out mediump float dirLightDirectionCosA$i;
+        $endif
+        $if(i < directLightWithShadowsCount)
+         $out highp vec3 dirLightShadowCoord$i;
+        $endif
+        "}.toString("\n")
+    def lightsCalculateVaryings : string = directLightCount.range.chain.map{i ->
+        "$if(!perPixel)
+         dirLightDirectionCos$i = max(dot(normalMWC, -dirLightDirection$i), 0.0);
+        $endif
+        $if(specular && !perPixel)
+         dirLightDirectionCosA$i = max(dot(eyeDirection, reflect(dirLightDirection$i, normalMWC)), 0.0);
+        $endif
+        $if(i < directLightWithShadowsCount)
+         dirLightShadowCoord$i = (dirLightDepthMwcp$i * vec4(position, 1)).xyz;
+         dirLightShadowCoord$i.z -= 0.0005;
+        $endif
+        "
+    }.toString("\n")
+
+
+    def lightsFragmentUniform : string = directLightCount.range.chain.map{i ->
+        "uniform lowp vec4 dirLightColor$i;
+        $if(perPixel)
+         uniform mediump vec3 dirLightDirection$i;
+        $endif
+        $if(i < directLightWithShadowsCount)
+         uniform highp $sampler2DShadow dirLightShadow$i;
+        $endif"}.toString("\n")
+    def lightsDiffuse : string =  directLightCount.range.chain.map{i ->
+        "
+        $if(perPixel)
+         mediump float dirLightDirectionCos$i = max(dot(normalMWC, -dirLightDirection$i), 0.0);
+        $endif
+        $if(specular && perPixel)
+         mediump float dirLightDirectionCosA$i = max(dot(eyeDirection, reflect(dirLightDirection$i, normalMWC)), 0.0);
+        $endif
+        $if(i < directLightWithShadowsCount)
+         visibility = $shadow2D("dirLightShadow$i", "dirLightShadowCoord$i");
+         color += visibility * dirLightDirectionCos$i * (materialColor * dirLightColor$i);
+        $else
+         color += dirLightDirectionCos$i * (materialColor * dirLightColor$i);
+        $endif
+        $if(specular && i < directLightWithShadowsCount)
+         color += max(visibility * specularColor * dirLightColor$i * pow(dirLightDirectionCosA$i, 5.0/specularSize), vec4(0, 0, 0, 0));
+        $else
+        $if(specular)
+         color += max(specularColor * dirLightColor$i * pow(dirLightDirectionCosA$i, 5.0/specularSize), vec4(0, 0, 0, 0));
+        $endif
+        $endif
+        "
+    }.toString("\n")
+
+}
+
+class StandardShader(val key : StandardShaderKey, program : ShaderProgram) extends Shader<StandardMaterial>(program) {
+    val positionSlot : ShaderAttribute = attributeFor("position")
+    val normalSlot : ShaderAttribute? = if(key.directLightCount > 0 && !key.normalMap) attributeFor("normal") else nil
+    val uvSlot : ShaderAttribute? = if(key.needUV) attributeFor("vertexUV") else nil
+
+    val diffuseTexture : ShaderUniformI4? = if(key.texture) uniformI4("diffuseTexture") else nil
+    val normalMap : ShaderUniformI4? = if(key.normalMap) uniformI4("normalMap") else nil
+    val uvScale : ShaderUniformVec2? = if(key.region) uniformVec2("uvScale") else nil
+    val uvShift : ShaderUniformVec2? = if(key.region) uniformVec2("uvShift") else nil
+    val ambientColor = uniformVec4("ambientColor")
+    val specularColor : ShaderUniformVec4? = if(key.directLightCount > 0 && key.specular) uniformVec4("specularColor") else nil
+    val specularSize : ShaderUniformF4? = if(key.directLightCount > 0 && key.specular) uniformF4("specularSize") else nil
+    val diffuseColorUniform = uniformVec4Opt("diffuseColor")
+    val mwcpUniform = uniformMat4("mwcp")
+    val mwcUniform : ShaderUniformMat4? = if(key.directLightCount > 0) uniformMat4("mwc") else nil
+
+    val directLightDirections : [ShaderUniformVec3] = key.directLightCount.range.chain.map{i -> uniformVec3("dirLightDirection$i")}.toArray
+    val directLightColors : [ShaderUniformVec4] = key.directLightCount.range.chain.map{i -> uniformVec4("dirLightColor$i")}.toArray
+    val directLightShadows : [ShaderUniformI4] = key.directLightWithShadowsCount.range.chain.map{i -> uniformI4("dirLightShadow$i")}.toArray
+    val directLightDepthMwcp : [ShaderUniformMat4] = key.directLightWithShadowsCount.range.chain.map{i -> uniformMat4("dirLightDepthMwcp$i")}.toArray
+
+
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        positionSlot.setFromBufferWith(vbDesc.stride, valuesCount = 3, GL_FLOAT, vbDesc.position)
+        if(key.needUV) {
+            uvSlot?.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, vbDesc.uv)
+        }
+        if(key.directLightCount > 0) {
+            normalSlot?.setFromBufferWith(vbDesc.stride, valuesCount = 3, GL_FLOAT, vbDesc.normal)
+        }
+    }
+
+    override def loadUniforms(param : StandardMaterial) {
+        mwcpUniform(matrix = matrix.value.mwcp)
+        if(key.texture) {
+            param.diffuse.texture.for{tex ->
+                context.bindTexture(tex)
+                diffuseTexture?.apply(i4 = 0)
+                if(key.region) {
+                    val r = tex.cast<TextureRegion>.uv
+                    uvShift?.apply(vec2 = r.p)
+                    uvScale?.apply(vec2 = r.size)
+                }
+            }
+        }
+        if(key.normalMap) {
+            normalMap?.apply(i4 = 1)
+            param.normalMap?.texture.for(context.bindTexture(GL_TEXTURE1, GL_TEXTURE_2D, _))
+        }
+        diffuseColorUniform?.apply(vec4 = param.diffuse.color)
+        val env = context.environment
+        ambientColor(vec4 = env.ambientColor)
+        if(key.directLightCount > 0) {
+            if(key.specular) {
+                specularColor?.apply(vec4 = param.specularColor)
+                specularSize?.apply(f4 = param.specularSize)
+            }
+            mwcUniform?.apply(matrix = context.matrixStack.value.mwc)
+            var i : uint4 = 0
+            if(key.directLightWithShadowsCount > 0) {
+                env.directLightsWithShadows.for { light ->
+                    val dir = matrix.value.wc.mul(vec3 = light.cast<DirectLight>.direction, 0).xyz
+                    directLightDirections[i].apply(vec3 = dir.normalize)
+                    directLightColors[i].apply(vec4 = light.color)
+                    directLightDepthMwcp[i].apply(matrix = light.shadowMap.biasDepthCp * matrix.mw)
+                    directLightShadows[i].apply(i4 = i + 2)
+                    context.bindTexture(GL_TEXTURE0 + i + 2, GL_TEXTURE_2D, light.shadowMap.texture)
+                    i++
+                }
+            }
+            if(key.directLightWithoutShadowsCount > 0) {
+                (if(context.considerShadows) env.directLightsWithoutShadows else env.directLights).for { light ->
+                    val dir = matrix.value.wc.mul(vec3 = light.cast<DirectLight>.direction, 0).xyz
+                    directLightDirections[i].apply(vec3 = dir.normalize)
+                    directLightColors[i].apply(vec4 = light.color)
+                }
+            }
+        }
+    }
+}

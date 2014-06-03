@@ -1,0 +1,6 @@
+package objd.lang
+
+stub struct Log {
+    static def info(text : string) : void
+    static def parInfo(text : string) : void
+}

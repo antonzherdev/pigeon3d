@@ -1,0 +1,199 @@
+package com.pigeon3d
+
+abstract class Director {
+    static private var _current : Director?
+    static def current : Director = _current.get
+
+    private var _scene : Scene? = nil
+    private var _isStarted = false
+    private val _isPaused = Var(false)
+    val isPaused : React<bool> = _isPaused
+
+    private var _lazyScene : (() -> Scene)? = nil
+    val time : Time = Time()
+    def scene = _scene
+    def set(scene : () -> Scene) {
+        _lazyScene = scene
+        _scene.for{ sc ->
+            sc.stop
+            _scene = nil
+            clearRecognizers
+        }
+        if(_isPaused.value) redraw
+    }
+
+    private def maybeNewScene {
+        _lazyScene.for { f ->
+            val sc = f()
+            _lazyScene = nil
+            _scene = sc
+            if(_lastViewSize != vec2(0, 0)) sc.reshapeWith(_lastViewSize)
+            sc.recognizersTypes.for(register(_))
+            sc.start
+        }
+    }
+
+    def clearRecognizers
+    def register(recognizerType : RecognizerType<_>)
+
+    def scale : float
+    def lock
+    def unlock
+    def redraw
+
+    def init {
+        _current = self
+    }
+
+    private var _lastViewSize : vec2 = vec2(0, 0)
+    def viewSize : vec2 = _lastViewSize
+
+    def reshapeWith(size : vec2) {
+        if(_lastViewSize != size) {
+//            log("reshape($size) {")
+            Memory.autoreleasePoolStart
+            context.viewSize.value = vec2i(size)
+            _lastViewSize = size
+            _scene?.reshapeWith(size)
+            Memory.autoreleasePoolEnd
+//            log("} reshape")
+        }
+    }
+
+    def drawFrame {
+        Memory.autoreleasePoolStart
+        prepare
+        draw
+        complete
+        Memory.autoreleasePoolEnd
+    }
+
+    def processFrame {
+        Memory.autoreleasePoolStart
+        prepare
+        draw
+        complete
+        tick
+        Memory.autoreleasePoolEnd
+    }
+
+    def prepare {
+        _updateFuture.waitResult(1.0)
+        executeDefers
+        if(_lastViewSize.x <= 0 || _lastViewSize.y <= 0) return nil
+        maybeNewScene
+        _scene.for{ sc ->
+            egPushGroupMarker("Prepare")
+            _current = self
+            context.clear
+            context.depthTest.enable
+            sc.prepareWith(_lastViewSize)
+            egCheckError
+            egPopGroupMarker
+        }
+    }
+
+    def draw {
+        if(_lastViewSize.x <= 0 || _lastViewSize.y <= 0) return nil
+//        log("draw {")
+        _scene.for{ sc ->
+            egPushGroupMarker("Draw")
+            context.clear
+            context.depthTest.enable
+            context.clearColor(sc.backgroundColor)
+            context.set(viewport = Rect(vec2(0, 0), _lastViewSize))
+            glClear(GL_COLOR_BUFFER_BIT + GL_DEPTH_BUFFER_BIT)
+            sc.drawWith(_lastViewSize)
+
+            _stat.for{ stat ->
+                context.depthTest.disable
+                stat.draw
+            }
+            egCheckError
+            egPopGroupMarker
+        }
+//        log("} draw")
+    }
+
+    def complete {
+        egPushGroupMarker("Complete")
+        _scene?.complete
+        egCheckError
+        egPopGroupMarker
+    }
+
+
+    def process(event : Event<_>) {
+        _scene?.process(event)
+    }
+
+    def isStarted = _isStarted
+    def start {
+        _isStarted = true
+        time.start
+    }
+    def stop {
+        _isStarted = false
+    }
+
+    def pause {
+        _isPaused.value = true
+        redraw
+    }
+
+    def becomeActive {
+    }
+
+    def resignActive {
+        _isPaused.value = true
+    }
+
+    def resume {
+        if(_isPaused.value) {
+            time.start
+            _isPaused.value = false
+        }
+    }
+
+    private var _timeSpeed = 1.0
+    def timeSpeed = _timeSpeed
+    def set(timeSpeed : float) {
+        if(_timeSpeed != timeSpeed) {
+            _timeSpeed = timeSpeed
+            SoundDirector.instance.timeSpeed = _timeSpeed
+        }
+    }
+
+    private var _updateFuture : Future<void> = Future.successful(nil)
+    def tick {
+//        log("tick {")
+        _current = self
+        time.tick
+        val dt = time.delta*_timeSpeed
+//        log("$dt")
+        _scene.for(_updateFuture = _.updateWith(dt))
+        _stat?.tickWith(time.delta)
+//        log("} tick")
+    }
+
+    private var _stat : Stat? = nil
+    def stat = _stat
+    def isDisplayingStats = _stat != nil
+    def displayStats {
+        _stat = Stat()
+    }
+    def cancelDisplayingStats {_stat = nil}
+
+    private val _defers = ConcurrentQueue<() -> void>()
+    def onGLThread(f : () -> void) {
+        _defers.enqueue(f)
+    }
+    private def executeDefers {
+        while(true) {
+            val f = _defers.dequeue
+            if(f == nil) break
+            val ff = f.get
+            ff()
+        }
+    }
+}

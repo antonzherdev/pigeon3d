@@ -1,0 +1,7 @@
+package com.pigeon3d.geometry
+
+stub package object {
+    val prefix = "PG"
+
+    import objd.math._
+}

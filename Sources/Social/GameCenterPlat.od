@@ -1,0 +1,24 @@
+package com.pigeon3d
+
+stub class GameCenter {
+    static def isSupported : bool
+    static val instance : GameCenter = GameCenter()
+    def authenticate
+
+    def achievement(name : string) : Achievement?
+    def completeAchievement(name : string)
+    def reportScore(leaderboard : string, value : int8)
+    def reportScore(leaderboard : string, value : int8, completed : (LocalPlayerScore) -> void)
+    def clearAchievements
+
+    def localPlayerScore(leaderboard : string, callback : LocalPlayerScore? -> void)
+    def showLeaderboard(name : string)
+}
+
+stub class Achievement(val name : string) {
+    def progress : float
+    def set(progress : float)
+    def complete {
+        set(progress = 1.0)
+    }
+}

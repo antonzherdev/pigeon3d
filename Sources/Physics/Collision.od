@@ -1,0 +1,78 @@
+package com.pigeon3d
+
+case class Collision<T>(val bodies : Pair<CollisionBody<T>>, val contacts : Iterable<Contact>)
+case class DynamicCollision<T>(val bodies : Pair<RigidBody<T>>, val contacts : Iterable<Contact>) {
+    def impulse : float4 = contacts.chain.map(_.impulse).max.getOr(0.0)
+}
+case class CrossPoint<T>(val body : CollisionBody<T>, val point : vec3)
+case class Contact(val a : vec3, val b : vec3, val distance : float4, val impulse : float4, val lifeTime : uint4)
+
+class IndexFunFilteredIterable<T>(val maxCount : uint, val f : uint -> T?) extends ImIterable<T> {
+    override def iterator : Iterator<T> = IndexFunFilteredIterator<T>(maxCount, f)
+}
+
+class IndexFunFilteredIterator<T>(val maxCount : uint, val f : uint -> T?) extends Iterator<T> {
+    private var i : uint = 0
+    private var _next : T? = roll
+
+    override def hasNext = _next != nil
+
+    override def next : T = {
+        val ret = _next.get
+        _next = roll
+        ret
+    }
+
+    private def roll : T? = {
+        var ret : T? = nil
+        while(ret == nil && i < maxCount ) {
+            ret = f(i)
+            i++
+        }
+        ret
+    }
+}
+
+trait PhysicsBody<T> {
+    def data : T
+    def shape : CollisionShape
+    def isKinematic : bool
+    def matrix : mat4
+    def set(matrix : mat4)
+}
+
+abstract class PhysicsWorld<T> {
+    private val _bodiesMap = MHashMap<T, PhysicsBody<T>>()
+    private var _bodies : [PhysicsBody<T>] = []
+
+    def add(body : PhysicsBody<T>) {
+        _bodies += body
+        _bodiesMap.set(key = body.data, value = body)
+        _add(body)
+    }
+
+    def _add(body : PhysicsBody<T>)
+
+    def remove(body : PhysicsBody<T>) {
+        _remove(body)
+        _bodiesMap.remove(key = body.data)
+        val bs = _bodies
+        _bodies = bs - body
+    }
+    def remove(item : T) : bool = {
+        _bodiesMap.remove(key = item).map{ body ->
+            remove(body)
+            true
+        }.getOr(false)
+    }
+    def _remove(body : PhysicsBody<T>)
+
+    def bodyFor(item : T) : PhysicsBody<T>? = _bodiesMap(item)
+    def clear {
+        _bodies.for{body -> _remove(body)}
+        _bodies = []
+        _bodiesMap.clear
+    }
+
+    def bodies : Iterable<PhysicsBody<T>> = _bodies
+}

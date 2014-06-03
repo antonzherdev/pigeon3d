@@ -1,0 +1,13 @@
+package com.pigeon3d
+
+stub class CollisionWorld<T> extends PhysicsWorld<T> {
+    override def add(body : CollisionBody<T>)
+    override def remove(body : CollisionBody<T>) : bool
+    override def remove(item : T) : bool
+    override def bodyFor(item : T) : CollisionBody<T>?
+
+    def detect : Iterable<Collision<T>>
+    def closestCrossPointWith(segment : Line3) : CrossPoint<T>?
+    def crossPointsWith(segment : Line3) : Iterable<CrossPoint<T>>
+}
+

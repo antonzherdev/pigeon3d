@@ -1,0 +1,341 @@
+package com.pigeon3d.geometry
+
+struct vec2(val x : float4, val y : float4) {
+    static def apply(vec2i : vec2i) = vec2(vec2i.x, vec2i.y)
+    static def apply(f : float) = vec2(f, f)
+    static def apply(f4 : float4) = vec2(f4, f4)
+    static def min = vec2(Float4.min, Float4.min)
+    static def max = vec2(Float4.max, Float4.max)
+
+    def add(vec2 : vec2) = vec2(x + vec2.x, y + vec2.y)
+    def add(f4 : float4) = vec2(x + f4, y + f4)
+    def add(f : float) = vec2(x + f, y + f)
+    def add(i : int) = vec2(x + i, y + i)
+
+    def sub(vec2 : vec2) = vec2(x - vec2.x, y - vec2.y)
+    def sub(f4 : float4) = vec2(x - f4, y - f4)
+    def sub(f : float) = vec2(x - f, y - f)
+    def sub(i : int) = vec2(x - i, y - i)
+
+    def mul(vec2 : vec2) = vec2(x*vec2.x, y*vec2.y)
+    def mul(f4 : float4) = vec2(x*f4, y*f4)
+    def mul(f : float) = vec2(x*f, y*f)
+    def mul(i : int) = vec2(x*i, y*i)
+
+    def div(vec2 : vec2) = vec2(x/vec2.x, y/vec2.y)
+    def div(f4 : float4) = vec2(x/f4, y/f4)
+    def div(f : float) = vec2(x/f, y/f)
+    def div(i : int) = vec2(x/i, y/i)
+
+    def negate = vec2(-x, -y)
+    def degreeAngle : float4 = 180.0 / M_PI * atan2(y, x)
+    def angle : float4 = atan2(y, x)
+    def dot(vec2 : vec2) : float4 = x*vec2.x + y*vec2.y
+    def cross(vec2 : vec2) : float4 = x*vec2.y - vec2.x*y
+    def lengthSquare : float4 = dot(self)
+    def length : float4 = sqrt(lengthSquare)
+
+    def mid(vec2 : vec2) = add(vec2).mul(0.5)
+    def distanceTo(vec2 : vec2) = sub(vec2).length
+    def set(length : float4) = mul(length/self.length)
+    def normalize = set(length = 1.0)
+
+    def compare(to : vec2) : int = {
+        val dX = x.compare(to.x)
+        if(dX != 0) dX else y.compare(to.y)
+    }
+
+    def rectTo(vec2 : vec2) : Rect = Rect(self, vec2.sub(self))
+    def rectInCenterWith(size : vec2) : Rect = Rect((size - self)*0.5, self)
+    static def rnd = vec2(Float4.rnd - 0.5, Float4.rnd - 0.5)
+    def isEmpty : bool = x == 0 && y == 0
+    def round : vec2i = vec2i(x.round, y.round)
+
+    def min(vec2 : vec2) = vec2(x.min(vec2.x), y.min(vec2.y))
+    def max(vec2 : vec2) = vec2(x.max(vec2.x), y.max(vec2.y))
+    def abs = vec2(x.abs, y.abs)
+    def ratio : float4 = x/y
+}
+
+struct vec2i(val x : int, val y : int) {
+    static def apply(vec2 : vec2) = vec2i(vec2.x.round, vec2.y.round)
+
+    def add(vec2 : vec2) = vec2(x + vec2.x, y + vec2.y)
+    def add(vec2i : vec2i) = vec2i(x + vec2i.x, y + vec2i.y)
+    def sub(vec2 : vec2) = vec2(x - vec2.x, y - vec2.y)
+    def sub(vec2i : vec2i) = vec2i(x - vec2i.x, y - vec2i.y)
+    def mul(i : int) = vec2i(x*i, y*i)
+    def mul(f : float) = vec2(x.cast<float4>*f, y.cast<float4>*f)
+    def mul(f4 : float4) = vec2(x.cast<float4>*f4, y.cast<float4>*f4)
+    def div(f4 : float4) = vec2(x.cast<float4>/f4, y.cast<float4>/f4)
+    def div(f : float) = vec2(x.cast<float4>/f, y.cast<float4>/f)
+    def div(i : int) = vec2i(x/i, y/i)
+    def negate = vec2i(-x, -y)
+
+    def compare(to : vec2i) : int = {
+        val dX = x.compare(to.x)
+        if(dX != 0) dX else y.compare(to.y)
+    }
+    def rectTo(vec2i : vec2i) : RectI = RectI(self, vec2i.sub(self))
+
+    def dot(vec2i : vec2i) : int = x*vec2i.x + y*vec2i.y
+    def lengthSquare : int = dot(self)
+    def length : float4 = sqrt(lengthSquare)
+    def ratio : float4 = x.cast<float4>/y.cast<float4>
+}
+
+struct vec3(val x : float4, val y : float4, val z : float4) {
+    static def apply(vec2 : vec2) = vec3(vec2.x, vec2.y, 0)
+    static def apply(vec2 : vec2, z : float4) = vec3(vec2.x, vec2.y, z)
+    static def apply(vec2i : vec2i, z : float4) = vec3(vec2i.x, vec2i.y, z)
+    static def apply(f4 : float4) : vec3 = vec3(f4, f4, f4)
+    static def apply(f : float) : vec3 = vec3(f, f, f)
+    def add(vec3 : vec3) = vec3(x + vec3.x, y + vec3.y, z + vec3.z)
+    def sub(vec3 : vec3) = vec3(x - vec3.x, y - vec3.y, z - vec3.z)
+    def sqr = mul(length)
+    def negate = vec3(-x, -y, -z)
+    def mul(k : float4) = vec3(k*x, k*y, k*z)
+    def dot(vec3 : vec3) : float4 = x*vec3.x + y*vec3.y + z*vec3.z
+    def cross(vec3 : vec3) : vec3 = vec3(y*vec3.z - z*vec3.y, x*vec3.z - vec3.x*z, x*vec3.y - vec3.x*y)
+    def lengthSquare : float4 = x*x + y*y + z*z
+    def length = sqrt(lengthSquare)
+    def set(length : float4) = mul(length/self.length)
+    def normalize = set(length = 1.0)
+    def xy = vec2(x, y)
+    static def rnd = vec3(Float4.rnd - 0.5, Float4.rnd - 0.5, Float4.rnd - 0.5)
+    def isEmpty : bool = x == 0 && y == 0 && z == 0
+}
+
+struct vec4(val x : float4, val y : float4, val z : float4, val w : float4) {
+    static def apply(f : float) = vec4(f, f, f, f)
+    static def apply(f4 : float4) = vec4(f4, f4, f4, f4)
+    static def apply(vec3 : vec3, w : float4) = vec4(vec3.x, vec3.y, vec3.z, w)
+    static def apply(vec2 : vec2, z : float4, w : float4) = vec4(vec2.x, vec2.y, z, w)
+    def add(vec2 : vec2) : vec4 = vec4(x + vec2.x, y + vec2.y, z, w)
+    def add(vec3 : vec3) : vec4 = vec4(x + vec3.x, y + vec3.y, z + vec3.z, w)
+    def add(vec4 : vec4) : vec4 = vec4(x + vec4.x, y + vec4.y, z + vec4.z, w + vec4.w)
+    def xyz = vec3(x, y, z)
+    def xy = vec2(x, y)
+    def mul(k : float4) = vec4(k*x, k*y, k*z, k*w)
+    def div(mat4 : mat4) :vec4 = mat4.divBySelf(vec4 = self)
+    def div(f4 : float4) = vec4(x/f4, y/f4, z/f4, w/f4)
+    def div(f : float) = vec4(x/f, y/f, z/f, w/f)
+    def div(i : int) = vec4(x/i, y/i, z/i, w/i)
+
+    def lengthSquare : float4 = x*x + y*y + z*z + w*w
+    def length = sqrt(lengthSquare)
+    def set(length : float4) = mul(length/self.length)
+    def normalize = set(length = 1.0)
+}
+
+struct Triangle(val p0 : vec2, val p1 : vec2, val p2 : vec2) {
+    def contains(vec2 : vec2) : bool = {
+        val r0 = p0 - vec2
+        val r1 = p1 - vec2
+        val r2 = p2 - vec2
+
+        val c0 = r0.cross(r1)
+        val c1 = r1.cross(r2)
+        val c2 = r2.cross(r0)
+
+        (c0 > 0 && c1 > 0 && c2 > 0)
+        || (c0 < 0 && c1 < 0 && c2 < 0)
+    }
+}
+
+struct Quad(val p0 : vec2, val p1 : vec2, val p2 : vec2, val p3 : vec2) {
+    static val identity : Quad = Quad(vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 1))
+    static def apply(size : float4) : Quad = Quad(vec2(-size, -size), vec2(size, -size), vec2(size, size), vec2(-size, size))
+
+    def add(vec2 : vec2) : Quad = Quad(p0 + vec2, p1 + vec2, p2 + vec2, p3 + vec2)
+    def add(x : float4, y : float4) : Quad = add(vec2(x, y))
+
+    def mul(value : float4) : Quad = Quad(p0 * value, p1 * value, p2 * value, p3 * value)
+    def mul(mat3 : Mat3) : Quad = Quad(mat3 * p0, mat3 * p1, mat3 * p2, mat3 * p3)
+
+    def quadrant :Quadrant = {
+        val x = (p1.x - p0.x)/2
+        val y = (p3.y - p0.y)/2
+        val q = self*0.5 + p0
+        Quadrant([q, q.add(x, 0), q.add(x, y), q.add(0, y)])
+    }
+    def apply(index : uint) : vec2 =
+        if(index == 0) p0
+        else if(index == 1) p1
+        else if(index == 2) p2
+        else if(index == 3) p3
+        else throw "Incorrect quad index"
+
+    def boundingRect : Rect = {
+        var minX = Float.max
+        var maxX = Float.min
+        var minY = Float.max
+        var maxY = Float.min
+        var i = 0
+        while(i < 4) {
+            val pp : vec2 = apply(i)
+            if(pp.x < minX) minX = pp.x
+            if(pp.x > maxX) maxX = pp.x
+            if(pp.y < minY) minY = pp.y
+            if(pp.y > maxY) maxY = pp.y
+            i++
+        }
+        vec2(minX, minY).rectTo(vec2(maxX, maxY))
+    }
+
+    def lines : [Line2] = [Line2(p0 = p0, p1 = p1), Line2(p0 = p1, p1 = p2), Line2(p0 = p2, p1 = p3), Line2(p0 = p3, p1 = p0)]
+    def ps : [vec2] = [p0, p1, p2, p3]
+
+    // It works valid only for quads without a inner point.
+    // For quads with a inner point it needs to make up the case with 3 projection points
+    def closestPointFor(vec2 : vec2) : vec2 = {
+        if(contains(vec2)) vec2
+        else {
+            var projs : [vec2] = lines.chain.mapOpt<vec2>(_.projectionOnSegment(vec2)).toArray
+            if(projs.isEmpty) projs = ps
+            projs.chain.sortBy.asc((_ - vec2).lengthSquare).endSort.head.getOr(p0)
+        }
+    }
+
+    def contains(vec2 : vec2) : bool = boundingRect.contains(vec2) &&
+        ( Triangle(p0, p1, p2).contains(vec2)
+        || Triangle(p2, p3, p0).contains(vec2))
+
+    def map(f : vec2 -> vec2) : Quad = Quad(f(p0), f(p1), f(p2), f(p3))
+    def center : vec2 =
+        Line2(p0 = p0, p1 = p2).crossPoint(Line2(p0 = p1, p1 = p3))
+            .or(Line2(p0 = p0, p1 = p1).crossPoint(Line2(p0 = p2, p1 = p3)))
+            .getOr(p0)
+}
+
+struct Quadrant(val quads : Quad[4]) {
+    def rndQuad = quads[UInt.rnd(3)]
+}
+
+struct Rect(val p : vec2, val size : vec2) {
+    static def apply(x : float4, y : float4, width : float4, height : float4) = Rect(vec2(x, y), vec2(width, height))
+    static def apply(x : float4, y : float4, size : vec2) = Rect(vec2(x, y), size)
+    static def apply(rectI : RectI) = Rect(rectI.p, rectI.size)
+
+    def x = p.x
+    def y = p.y
+    def x2 : float4 = p.x + size.x
+    def y2 : float4 = p.y + size.y
+    def width : float4 = size.x
+    def height : float4 = size.y
+    def contains(vec2 : vec2) : bool =
+        p.x <= vec2.x
+        && vec2.x <= p.x + size.x
+        && p.y <= vec2.y
+        && vec2.y <= p.y + size.y
+
+    def add(vec2 : vec2) = Rect(p + vec2, size)
+    def sub(vec2 : vec2) = Rect(p - vec2, size)
+    def mul(f : float) = Rect(p*f, size*f)
+    def mul(vec2 : vec2) = Rect(p*vec2, size*vec2)
+
+    def intersects(rect : Rect) : bool =
+        p.x <= rect.x2 && x2 >= rect.p.x &&
+        p.y <= rect.y2 && y2 >= rect.p.y
+
+    def thicken(halfSize : vec2) = Rect(p.sub(halfSize), size + halfSize*2)
+    def div(vec2 : vec2) = Rect(p/vec2, size/vec2)
+    def div(f : float) = Rect(p/f, size/f)
+    def div(f4 : float4) = Rect(p/f4, size/f4)
+
+    def ph = vec2(p.x, p.y + size.y)
+    def pw = vec2(p.x + size.x, p.y)
+    def phw = vec2(p.x + size.x, p.y + size.y)
+    def moveToCenterFor(size : vec2) = Rect((size - self.size)*0.5, self.size)
+    def quad = Quad(p, ph, phw, pw)
+    def stripQuad = Quad(p, ph, pw, phw)
+    def upsideDownStripQuad = Quad(ph, p, phw, pw)
+    def centerX = Rect(vec2(p.x - size.x/2, p.y), size)
+    def centerY = Rect(vec2(p.x, p.y - size.y/2), size)
+    def center = p + size/2
+    def closestPointFor(vec2 : vec2) = vec2.min(phw).max(p)
+    def p(x : float4, y : float4) : vec2 = vec2(p.x + size.x*x, p.y  + size.y*y)
+}
+struct RectI(val p : vec2i, val size : vec2i) {
+    static def apply(x : float4, y : float4, width : float4, height : float4) = RectI(vec2(x, y), vec2(width, height))
+    static def apply(rect : Rect) = RectI(rect.p, rect.size)
+    def x = p.x
+    def y = p.y
+    def x2 : int = p.x + size.x
+    def y2 : int = p.y + size.y
+    def width : int = size.x
+    def height : int = size.y
+    def moveToCenterFor(size : vec2) = RectI(size.sub(self.size).mul(0.5), self.size)
+}
+
+struct Line2(val p0 : vec2, val u : vec2) {
+    static def apply(p0 : vec2, p1 : vec2) : Line2 = Line2(p0 = p0, u = p1 - p0)
+    def r(t : float4) : vec2 = p0 + u*t
+    def crossPoint(line2 : Line2) : vec2? = {
+        val dot = line2.n.dot(u)
+        if(dot == 0) nil
+        else p0 + u*( line2.n.dot(line2.p0 - p0)/dot)
+    }
+
+
+    def angle = u.angle
+    def degreeAngle = u.degreeAngle
+
+    def set(length : float4) : Line2 = Line2(p0, u = u.set(length = length))
+    def normalize : Line2 = Line2(p0, u = u.normalize)
+    def mid : vec2  = p0 + u/2
+    def p1 : vec2 = p0 + u
+
+    def add(vec2 : vec2) = Line2(p0 + vec2, u = u)
+    def sub(vec2 : vec2) = Line2(p0 - vec2, u = u)
+
+    def n : vec2 = vec2(-u.y, u.x).normalize
+    def projection(vec2 : vec2) : vec2 = crossPoint(Line2(p0 = vec2, u = n)).get
+    def projectionOnSegment(vec2 : vec2) : vec2? = {
+        crossPoint(Line2(p0 = vec2, u = n)).flatMap{p ->
+            if(boundingRect.contains(p)) p else nil
+        }
+    }
+    def boundingRect : Rect = Rect(if(u.x > 0) p0.x else p0.x + u.x, if(u.y > 0) p0.y else p0.y + u.y, u.abs)
+    def positive : Line2 = if(u.x < 0 || u.x == 0 && u.y < 0) Line2(p0 = p1, u = u.negate) else self
+}
+
+
+struct Line3(val r0 : vec3, val u : vec3) {
+    def r(t : float4) = r0 + u*t
+
+    def r(plane : Plane) = r0 + u*( plane.n.dot(plane.p0 - r0)/plane.n.dot(u) )
+}
+
+struct Plane(val p0 : vec3, val n : vec3) {
+    def contains(vec3 : vec3) = n.dot(vec3 - p0) == 0
+
+    def add(vec3 : vec3) = Plane(p0 + vec3, n)
+
+    def mul(mat4 : mat4) = Plane(mat4 * p0, mat4.mul(n, 0).xyz)
+}
+
+struct PlaneCoord(val plane : Plane, val x : vec3, val y : vec3) {
+    static def apply(plane : Plane, x : vec3) : PlaneCoord = PlaneCoord(plane, x, x.cross(plane.n))
+
+    def p(vec2 : vec2) : vec3 = plane.p0 + x*vec2.x + y*vec2.y
+
+    def add(vec3 : vec3) = PlaneCoord(plane + vec3, x, y)
+
+    def set(x : vec3) = PlaneCoord(plane, x, y)
+    def set(y : vec3) = PlaneCoord(plane, x, y)
+
+    def mul(mat4 : mat4) = PlaneCoord(plane * mat4, mat4 * x, mat4 * y )
+}
+
+
+struct Quad3(val planeCoord : PlaneCoord, val quad : Quad) {
+    def p0 = planeCoord.p(quad.p0)
+    def p1 = planeCoord.p(quad.p1)
+    def p2 = planeCoord.p(quad.p2)
+    def p3 = planeCoord.p(quad.p3)
+
+    def ps : [vec3] = [p0, p1, p2, p3]
+
+    def mul(mat4 : mat4) = Quad3(planeCoord * mat4, quad)
+}

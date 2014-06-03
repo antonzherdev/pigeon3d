@@ -1,0 +1,3 @@
+package com.pigeon3d.sound
+
+stub class SimpleSoundPlat(file : string) extends SimpleSound

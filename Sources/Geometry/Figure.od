@@ -1,0 +1,193 @@
+package com.pigeon3d.geometry
+
+abstract class Line {
+    static def apply(slope : float, point : vec2) : Line = SlopeLine(slope, calculateConstantWith(slope, point))
+    static def apply(p0 : vec2, p1 : vec2) : Line =
+        if(p0.x == p1.x) VerticalLine(p0.x)
+        else {
+            val slope = calculateSlopeWith(p0, p1)
+            SlopeLine(slope, calculateConstantWith(slope, p0))
+        }
+
+    static def calculateSlopeWith(p0 : vec2, p1 : vec2) : float = (p1.y - p0.y)/(p1.x - p0.x)
+    static def calculateConstantWith(slope : float, point : vec2) : float = point.y - slope*point.x
+
+    def contains(point : vec2) : bool
+    def isVertical : bool
+    def isHorizontal : bool
+
+    def intersectionWith(line : Line) : vec2?
+    def xIntersectionWith(line : Line) : float
+
+    def isRight(point : vec2) : bool
+    def slope : float
+    def moveWith(distance : float) : self
+
+    def angle : float
+    def degreeAngle : float = angle*180/M_PI
+
+    def perpendicularWith(point : vec2) : Line
+}
+
+case class SlopeLine(override val slope : float, val constant : float) extends Line {
+    override def contains(point : vec2) : bool = point.y == slope*point.x + constant
+    override def isVertical : bool = false
+    override def isHorizontal : bool = slope == 0
+    override def xIntersectionWith(line : Line) : float =
+        if(line.isVertical) line.xIntersectionWith(self)
+        else {
+            val that = line.cast<SlopeLine>
+            return (that.constant - self.constant)/(self.slope - that.slope)
+        }
+    def yFor(x : float) : float = {
+        return slope*x + constant
+    }
+    override def intersectionWith(line : Line) : vec2? =
+        if (!line.isVertical && line.cast<SlopeLine>.slope == slope) nil
+        else {
+            val xInt = xIntersectionWith(line)
+            vec2(xInt, yFor(xInt))
+        }
+
+    override def isRight(point : vec2) : bool =
+        if(contains(point)) false
+        else point.y < yFor(point.x)
+
+    override def moveWith(distance : float) : self = SlopeLine(slope, constant + distance)
+
+    override def angle : float = {
+        val a = atan(slope)
+        if(a < 0) M_PI + a else a
+    }
+
+    override def perpendicularWith(point : vec2) : Line =
+        if(slope == 0) VerticalLine(point.x)
+        else Line(slope = -slope, point = point)
+}
+
+case class VerticalLine(val x : float) extends Line {
+    override def contains(point : vec2) : bool = point.x == x
+    override def isVertical : bool = true
+    override def isHorizontal : bool = false
+    override def xIntersectionWith(line : Line) : float = x
+    override def intersectionWith(line : Line) : vec2? =
+        if(line.isVertical) nil
+        else line.intersectionWith(self)
+
+    override def isRight(point : vec2) : bool = point.x > x
+    override def slope : float = Float.max
+    override def moveWith(distance : float) : self = VerticalLine(x + distance)
+    override def angle : float = M_PI_2
+
+    override def perpendicularWith(point : vec2) : Line = SlopeLine(0, point.y)
+}
+
+trait Figure {
+    def boundingRect : Rect
+    def segments : [LineSegment]
+}
+
+
+case class LineSegment(val p0 : vec2, val p1 : vec2) extends Figure {
+    static def newWith(p0 : vec2, p1 : vec2) : LineSegment =
+        if(p0.compare(p1) < 0) LineSegment(p0, p1) else LineSegment(p1, p0)
+    static def newWith(x1 : float, y1 : float, x2 : float, y2 : float) : LineSegment =
+        LineSegment.newWith(vec2(x1, y1), vec2(x2, y2))
+
+    private val dir : bool = p0.y < p1.y || (p0.y == p1.y && p0.x < p1.x)
+    def isVertical : bool = p0.x == p1.x
+    def isHorizontal : bool = p0.y == p1.y
+
+    private var _line : Line?
+    def line : Line = {
+        if(_line == nil) {
+            _line = Line(p0 = p0, p1 = p1)
+            _line.get
+        } else _line
+    }
+    override val boundingRect : Rect = vec2(p0.x.min(p1.x), p0.y.min(p1.y)).rectTo(vec2(p0.x.max(p1.x), p0.y.max(p1.y)))
+
+    def contains(point : vec2) : bool = {
+        p0 == point || p1 == point ||
+        (line.contains(point) && boundingRect.contains(point))
+    }
+
+    def containsInBoundingRect(point : vec2) : bool = boundingRect.contains(point)
+
+    def intersectionWith(segment : LineSegment) : vec2? =
+        if (p0 == segment.p1) p0
+        else if (p1 == segment.p0) p0
+        else if(p0 == segment.p0) if(line == segment.line) nil else p0
+        else if(p1 == segment.p1) if(line == segment.line) nil else p1
+        else line.intersectionWith(segment.line).flatMap{p ->
+            if(containsInBoundingRect(p) && segment.containsInBoundingRect(p)) p else nil
+        }
+
+    def endingsContain(point :vec2) : bool = p0 == point || p1 == point
+    override def segments : [LineSegment] = [self]
+    def moveWith(point : vec2) : LineSegment = moveWith(point.x, point.y)
+    def moveWith(x : float, y : float) : LineSegment = {
+        val ret = LineSegment(vec2(p0.x + x, p0.y + y), vec2(p1.x + x, p1.y + y))
+        ret.set(line = line.moveWith(distance = x + y))
+        ret
+    }
+    private def set(line : Line) {
+        self._line = line
+    }
+
+    def mid : vec2 = p0.mid(p1)
+    def angle = if(dir) line.angle else M_PI + line.angle
+    def degreeAngle = if(dir) line.degreeAngle else 180 + line.degreeAngle
+    def length = p1.sub(p0).length
+    def vec : vec2 = p1.sub(p0)
+    def vec1 : vec2 = p0.sub(p1)
+}
+
+case class Polygon(val points : [vec2]) extends Figure {
+    override def boundingRect : Rect = {
+        var minX = Float.max
+        var maxX = Float.min
+        var minY = Float.max
+        var maxY = Float.min
+        points.for(p -> {
+            if(p.x < minX) minX = p.x
+            if(p.x > maxX) maxX = p.x
+            if(p.y < minY) minY = p.y
+            if(p.y > maxY) maxY = p.y
+        })
+        vec2(minX, minY).rectTo(vec2(maxX, maxY))
+    }
+
+    override val segments : [LineSegment] = points.chain.neighboursRing.map(ps -> LineSegment.newWith(ps.a, ps.b)).toArray
+}
+
+case class ThickLineSegment(val segment : LineSegment, val thickness : float) extends Figure {
+    val thickness_2 = thickness/2
+    override def boundingRect : Rect = segment.boundingRect.thicken(vec2(
+        x = if(segment.isHorizontal) 0 else thickness_2,
+        y = if(segment.isVertical) 0 else thickness_2))
+    private var _segments : [LineSegment]?
+
+    override def segments : [LineSegment] = {
+        if(_segments == nil) {
+            var dx : float = 0
+            var dy : float = 0
+            if(segment.isVertical) {
+                dx = thickness_2
+                dy = 0
+            } else if(segment.isHorizontal) {
+                dx = 0
+                dy = thickness_2
+            } else {
+                val k = segment.line.slope
+                dy = thickness_2/sqrt(1 + k)
+                dx = k * dy
+            }
+            val line1 = segment.moveWith(-dx, dy)
+            val line2 = segment.moveWith(dx, -dy)
+            val line3 = LineSegment.newWith(line1.p0, line2.p0)
+            _segments = [line1, line2, line3, line3.moveWith(segment.p1.sub(segment.p0))]
+            _segments.get
+        } else _segments
+    }
+}

@@ -1,0 +1,205 @@
+package com.pigeon3d.geometry
+
+class BentleyOttmann {
+    static def intersectionsFor<T>(segments : [(T, LineSegment)]) : Set<Intersection<T>> =
+        if(segments.count < 2) ImHashSet<Intersection<T>>()
+        else {
+            val sweepLine = SweepLine<T>()
+            val queue = BentleyOttmannEventQueue.newWith(segments, sweepLine)
+
+            while(!queue.isEmpty) {
+                val events = queue.poll
+                sweepLine.handle(events)
+            }
+            sweepLine.intersections.chain.flatMap(p ->
+                p.b.chain.combinations
+                    .filter(comb -> !comb.a.isVertical || !comb.b.isVertical)
+                    .map(comb -> Intersection<T>(Pair<T>(comb.a.data, comb.b.data), p.a))
+            ).toSet
+        }
+}
+
+case class Intersection<T>(val items : Pair<T>, val point : vec2)
+
+abstract class BentleyOttmannEvent<T> {
+    def point : vec2
+    def isIntersection : bool = false
+    def isStart : bool = false
+    def isEnd : bool = false
+}
+
+final class BentleyOttmannPointEvent<T>(override val isStart : bool, val data : T, val segment : LineSegment, override val point : vec2)
+    extends BentleyOttmannEvent<T>
+{
+    def yFor(x : float) : float =
+        if(segment.line.isVertical) if(isStart) segment.p0.y else segment.p1.y
+        else segment.line.cast<SlopeLine>.yFor(x)
+    def slope : float = segment.line.slope
+    def isVertical : bool = segment.line.isVertical
+    override def isEnd : bool = !isStart
+}
+final class BentleyOttmannIntersectionEvent<T>(override val point : vec2) extends BentleyOttmannEvent<T> {
+    override def isIntersection = true
+}
+
+
+class BentleyOttmannEventQueue<T> {
+    val events = MTreeMap<vec2, MArray<BentleyOttmannEvent<T>>>((a, b) -> a.compare(b))
+
+    def isEmpty : bool = events.isEmpty
+
+    static def newWith<T>(segments : [(T, LineSegment)], sweepLine : SweepLine) : BentleyOttmannEventQueue<T> {
+        val ret = BentleyOttmannEventQueue<T>()
+        if(!(segments.isEmpty)) {
+            segments.for(s -> {
+                val segment : LineSegment = s.b
+                ret.offer(segment.p0, BentleyOttmannPointEvent(true, s.a, segment, segment.p0))
+                ret.offer(segment.p1, BentleyOttmannPointEvent(false, s.a, segment, segment.p1))
+            })
+            sweepLine.queue = ret
+        }
+        ret
+    }
+
+    def offer(point : vec2, event : BentleyOttmannEvent) {
+        events.apply(key = point, orUpdateWith = MArray<BentleyOttmannEvent<T>>() ).append(event)
+    }
+
+    def poll : Seq<BentleyOttmannEvent> = events.pollFirst.get.b
+}
+
+class SweepLine<T>
+    /**
+    * Whether to ignore intersections of line segments when both
+    * their end points form the intersection point.
+    */
+//    ignoreSegmentEndings : bool
+{
+    var events = MTreeSet<BentleyOttmannPointEvent<T>>((a, b) -> compareEvents(a, b))
+
+    /**
+    * A map holding all intersection points mapped to the Events
+    * that form these intersections.
+    */
+    val intersections = MHashMap<vec2, MSet<BentleyOttmannPointEvent<T>>>()
+
+
+    /**
+    * The point of the current Event.
+    */
+    private var currentEventPoint : vec2 = vec2(0, 0)
+
+    /**
+    * The queue associated with this sweep line.
+    */
+    var queue : BentleyOttmannEventQueue? = nil
+
+    def handle(events : Seq<BentleyOttmannEvent<T>>) {
+        events.for(handleOne(event = _))
+    }
+
+    private def sweepTo(event : BentleyOttmannEvent<T>) {
+        currentEventPoint = event.point
+    }
+
+    private def handleOne(event : BentleyOttmannEvent<T>) {
+        if(event.isStart) {
+            sweepTo(event)
+            val pe = event.cast<BentleyOttmannPointEvent<T>>
+            if(pe.isVertical) {
+                val minY = pe.segment.p0.y
+                val maxY = pe.segment.p1.y
+                val i = events.iteratorHigherThan(pe)
+                while(i.hasNext) {
+                    val e = i.next
+                    if(!e.isVertical) {
+                        val y = e.yFor(currentEventPoint.x)
+                        if(y > maxY) break
+                        if(y >= minY) {
+                            registerIntersection(pe, e, vec2(currentEventPoint.x, y))
+                        }
+                    }
+                }
+            } else {
+                events.append(pe)
+                checkIntersection(event, above(pe))
+                checkIntersection(event, below(pe))
+            }
+        } else if(event.isEnd) {
+            val pe = event.cast<BentleyOttmannPointEvent<T>>
+            if(!pe.isVertical) {
+                val a = above(pe)
+                val b = below(pe)
+                events.remove(pe)
+                sweepTo(event)
+                checkIntersection(a, b)
+            }
+        } else {
+            val set = intersections[event.point].get
+            val toInsert = set.chain.filter(events.remove(_)).toArray
+            sweepTo(event)
+            toInsert.for{e ->
+                events.append(e)
+                checkIntersection(e, above(e))
+                checkIntersection(e, below(e))
+            }
+        }
+    }
+
+    private def above(event : BentleyOttmannPointEvent<T>) : BentleyOttmannPointEvent<T>? =
+         events.higherThan(event)
+
+
+    private def below(event : BentleyOttmannPointEvent<T>) : BentleyOttmannPointEvent<T>? =
+        events.lowerThan(event)
+
+
+    private def checkIntersection(a : BentleyOttmannEvent<T>?, b : BentleyOttmannEvent<T>?) {
+        if(a != nil && b != nil && a.is<BentleyOttmannPointEvent<T>> && b.is<BentleyOttmannPointEvent<T>>) {
+            val aa = a.cast<BentleyOttmannPointEvent<T>>
+            val bb = b.cast<BentleyOttmannPointEvent<T>>
+            // Get the intersection point between 'a' and 'b'.
+            aa.segment.intersectionWith(bb.segment).for(registerIntersection(aa, bb, _))
+        }
+    }
+
+    private def registerIntersection(a : BentleyOttmannPointEvent<T>, b : BentleyOttmannPointEvent<T>, point : vec2) {
+        if(!a.segment.endingsContain(point) || !b.segment.endingsContain(point)) {
+
+            // Add the intersection.
+            val existing = intersections.apply(key = point, orUpdateWith = MHashSet<BentleyOttmannPointEvent<T>>())
+            existing.append(a)
+            existing.append(b)
+
+            // If the intersection occurs to the right of the sweep line, OR
+            // if the intersection is on the sweep line and it's above the
+            // current event-point, add it as a new Event to the queue.
+            if(point.x > currentEventPoint.x || (point.x == currentEventPoint.x && point.y > currentEventPoint.y)) {
+                val intersection = BentleyOttmannIntersectionEvent<T>(point)
+                queue?.offer(point, intersection)
+            }
+        }
+    }
+
+    private def compareEvents(a : BentleyOttmannPointEvent<T>, b : BentleyOttmannPointEvent<T>) : int = {
+        // Equal Events.
+        if (a == b) return 0
+
+        val ay = a.yFor(currentEventPoint.x)
+        val by = b.yFor(currentEventPoint.x)
+
+        var c = ay.compare(by)
+        if(c == 0) {
+            if(a.isVertical) c = -1
+            else if(b.isVertical) c = 1
+            else {
+                c = a.slope.compare(b.slope)
+                if(ay > currentEventPoint.y) c = -c
+                if(c == 0) {
+                    c = a.point.x.compare(b.point.x)
+                }
+            }
+        }
+        c
+    }
+}

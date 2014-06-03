@@ -1,0 +1,7 @@
+package com.pigeon3d
+
+stub class Time {
+    val delta : float
+    def tick
+    def start
+}

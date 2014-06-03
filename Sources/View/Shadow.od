@@ -1,0 +1,257 @@
+package com.pigeon3d
+
+class ShadowMap(size : vec2i) extends Surface(size) {
+    override val frameBuffer = egGenFrameBuffer
+    static val biasMatrix = mat4.identity.translate(0.5, 0.5, 0.5).scale(0.5, 0.5, 0.5)
+    var biasDepthCp = mat4.identity
+
+    val texture : Texture = {
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer)
+
+        val t = EmptyTexture(size)
+        context.bindTexture(t)
+        TextureService.egInitShadowTexture(size)
+        egCheckError
+        egFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, t.id, 0)
+//        glDrawBuffer(GL_NONE)
+        val status = glCheckFramebufferStatus(GL_FRAMEBUFFER)
+        if(status != GL_FRAMEBUFFER_COMPLETE) throw "Error in shadow map frame buffer: $status"
+        t
+    }
+
+    override def dealloc {
+        val fb = frameBuffer
+        Director.current.onGLThread{
+            egDeleteFrameBuffer(fb)
+        }
+    }
+
+    override def bind {
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer)
+//        context.bindTexture(texture)
+        context.set(viewport = RectI(0, 0, size.x, size.y))
+    }
+
+    override def unbind {
+//        egDiscardFrameBuffer(GL_FRAMEBUFFER, [GL_DEPTH_ATTACHMENT])
+//        egFlush
+        egCheckError
+    }
+
+    private lazy val shader = ShadowSurfaceShader()
+    private lazy val vao = BaseViewportSurface.fullScreenMesh.vao(ShadowSurfaceShader())
+    def draw {
+        context.cullFace.disabled {
+            vao.draw(ColorSource(texture))
+        }
+    }
+}
+
+class ShadowSurfaceShaderBuilder extends ViewportShaderBuilder {
+    override def fragment =
+       "$fragmentHeader
+        $in mediump vec2 UV;
+
+        uniform mediump sampler2D txt;
+
+        void main(void) {
+            lowp vec4 col = $texture2D\(txt, UV);
+            $fragColor = vec4(col.x, col.x, col.x, 1);
+        }"
+}
+
+class ShadowSurfaceShader extends Shader<ColorSource>(ShadowSurfaceShaderBuilder().program) {
+    val positionSlot = program.attributeFor("position")
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        positionSlot.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, shift = vbDesc.model)
+    }
+    override def loadUniforms(param : ColorSource) {
+        param.texture.for(context.bindTexture(_))
+    }
+}
+
+
+class ShadowShaderSystem extends ShaderSystem<ColorSource> {
+    static val instance = ShadowShaderSystem()
+    override def shaderFor(param : ColorSource, renderTarget : RenderTarget) : ShadowShader =
+        if(isColorShaderFor(param)) ShadowShader.instanceForColor else ShadowShader.instanceForTexture
+    static def isColorShaderFor(param : ColorSource) = param.texture == nil || param.alphaTestLevel < 0
+}
+
+
+class ShadowShaderText(val texture : bool) extends ShaderTextBuilder {
+    def vertex =
+       "$vertexHeader
+       $if(texture)
+        $ain mediump vec2 vertexUV;
+        $out mediump vec2 UV;
+       $endif
+        $ain highp vec3 position;
+        uniform mat4 mwcp;
+
+        void main(void) {
+            gl_Position = mwcp * vec4(position, 1);
+            UV = vertexUV;$when(texture)
+        }"
+
+    def fragment =
+       "#version $version
+       $if(texture)
+        $in mediump vec2 UV;
+        uniform lowp sampler2D txt;
+        uniform lowp float alphaTestLevel;
+       $endif
+       $if(version > 100)
+        out float depth;
+       $endif
+
+        void main(void) {
+           $if(texture)
+            if($texture2D\(txt, UV).a < alphaTestLevel) {
+                discard;
+            }
+           $endif
+           $if(version > 100)
+            depth = gl_FragCoord.z;
+           $endif
+        }"
+
+    def program = ShaderProgram("Shadow", vertex, fragment)
+}
+
+class ShadowShader(val texture : bool, program : ShaderProgram) extends Shader<ColorSource>(program) {
+    static val instanceForColor = ShadowShader(false, ShadowShaderText(false).program)
+    static val instanceForTexture = ShadowShader(true, ShadowShaderText(true).program)
+
+    val uvSlot : ShaderAttribute? = if(texture) attributeFor("vertexUV") else nil
+    val positionSlot : ShaderAttribute = attributeFor("position")
+    val mvpUniform = uniformMat4("mwcp")
+    val alphaTestLevelUniform : ShaderUniformF4? = if(texture) uniformF4("alphaTestLevel") else nil
+
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        positionSlot.setFromBufferWith(vbDesc.stride, valuesCount = 3, GL_FLOAT, vbDesc.position)
+        if(texture) {
+            uvSlot?.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, vbDesc.uv)
+        }
+    }
+    override def loadUniforms(param : ColorSource) {
+        mvpUniform(matrix = matrix.value.mwcp)
+        if(texture) {
+            alphaTestLevelUniform?.apply(f4 = param.alphaTestLevel)
+            param.texture.for(context.bindTexture(_))
+        }
+    }
+}
+
+class ShadowDrawParam(val percents : Seq<float>, val viewportSurface : ViewportSurface?)
+
+class ShadowDrawShaderSystem extends ShaderSystem<ShadowDrawParam> {
+    static val instance = ShadowDrawShaderSystem()
+    override def shaderFor(param : ShadowDrawParam, renderTarget : RenderTarget) : ShadowDrawShader = {
+        val lights = context.environment.lights
+        val directLightsCount = lights.chain.filter(_.is<DirectLight> && _.hasShadows).count
+        val key = ShadowDrawShaderKey(directLightsCount, param.viewportSurface != nil)
+
+        shaders(key, orUpdateWith = key.shader)
+    }
+
+    static val settingsChangeObs = settings.shadowTypeChanged.observe(shaders.clear)
+
+    private static val shaders = MHashMap<ShadowDrawShaderKey, ShadowDrawShader>()
+}
+case class ShadowDrawShaderKey(val directLightCount : uint, val viewportSurface : bool) extends ShaderTextBuilder {
+    def shader : ShadowDrawShader = {
+        val vertexShader =
+            "$vertexHeader
+             $ain highp vec3 position;
+             uniform mat4 mwcp;
+             $lightsVertexUniform
+             $lightsOut
+            $if(viewportSurface)
+             $out mediump vec2 viewportUV;
+            $endif
+
+             void main(void) {
+                gl_Position = mwcp * vec4(position, 1);
+               $if(viewportSurface)
+                viewportUV = gl_Position.xy*0.5 + vec2(0.5, 0.5);
+               $endif
+                $lightsCalculateVaryings
+             }"
+        val fragmentShader =
+            "$fragmentHeader
+             $shadowExt
+            $if(viewportSurface)
+             uniform lowp sampler2D viewport;
+             $in mediump vec2 viewportUV;
+            $endif
+             $lightsIn
+             $lightsFragmentUniform
+
+             void main(void) {
+                lowp float visibility;
+                lowp float a = 0.0;
+                $lightsDiffuse
+                $fragColor = vec4(0, 0, 0, a) + (1.0 - a)*$texture2D\(viewport, viewportUV);
+            }"
+        ShadowDrawShader(self, ShaderProgram("ShadowDraw", vertexShader, fragmentShader))
+    }
+
+    def lightsVertexUniform : string =
+        if(settings.shadowType.isOff) ""
+        else directLightCount.range.chain.map{i -> "uniform mat4 dirLightDepthMwcp$i;"}.toString("\n")
+    def lightsIn : string =
+        if(settings.shadowType.isOff) ""
+        else directLightCount.range.chain.map{i ->
+            "$in mediump vec3 dirLightShadowCoord$i;"}.toString("\n")
+    def lightsOut : string =
+        if(settings.shadowType.isOff) ""
+        else directLightCount.range.chain.map{i ->
+            "$out mediump vec3 dirLightShadowCoord$i;"}.toString("\n")
+    def lightsCalculateVaryings : string = directLightCount.range.chain.map{i ->
+        if(settings.shadowType.isOff) ""
+        else
+            "dirLightShadowCoord$i = (dirLightDepthMwcp$i * vec4(position, 1)).xyz;
+             dirLightShadowCoord$i.z -= 0.005;"
+    }.toString("\n")
+
+
+    def lightsFragmentUniform : string =
+        if(settings.shadowType.isOff) ""
+        else directLightCount.range.chain.map{i ->
+            "uniform lowp float dirLightPercent$i;
+             uniform mediump $sampler2DShadow dirLightShadow$i;"}.toString("\n")
+    def lightsDiffuse : string =  directLightCount.range.chain.map{i ->
+        "a += dirLightPercent$i*(1.0 - $shadow2D("dirLightShadow$i", "dirLightShadowCoord$i"));"
+    }.toString("\n")
+
+}
+
+class ShadowDrawShader(val key : ShadowDrawShaderKey, program : ShaderProgram) extends Shader<ShadowDrawParam>(program) {
+    val positionSlot : ShaderAttribute = attributeFor("position")
+
+    val mwcpUniform = uniformMat4("mwcp")
+
+    val directLightPercents : [ShaderUniformF4] = key.directLightCount.range.chain.map{i -> uniformF4("dirLightPercent$i")}.toArray
+    val directLightDepthMwcp : [ShaderUniformMat4] = key.directLightCount.range.chain.map{i -> uniformMat4("dirLightDepthMwcp$i")}.toArray
+    val directLightShadows : [ShaderUniformI4] = key.directLightCount.range.chain.map{i -> uniformI4("dirLightShadow$i")}.toArray
+
+
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        positionSlot.setFromBufferWith(vbDesc.stride, valuesCount = 3, GL_FLOAT, vbDesc.position)
+    }
+    override def loadUniforms(param : ShadowDrawParam) {
+        mwcpUniform(matrix = matrix.value.mwcp)
+        val env = context.environment
+        param.viewportSurface.for(context.bindTexture(_.texture))
+        var i : uint4 = 0
+        env.lights.chain.filter(_.is<DirectLight> && _.hasShadows).for { light ->
+            val p : float4  = param.percents(i).get
+            directLightPercents[i].apply(f4 = p)
+            directLightDepthMwcp[i].apply(matrix = light.shadowMap.biasDepthCp * matrix.mw)
+            directLightShadows[i].apply(i4 = i + 1)
+            context.bindTexture(GL_TEXTURE0 + i + 1, GL_TEXTURE_2D, light.shadowMap.texture)
+            i++
+        }
+    }
+}

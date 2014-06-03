@@ -1,0 +1,94 @@
+package com.pigeon3d
+
+trait SoundPlayer extends Updatable {
+    def start{}
+    def stop{}
+    def pause{}
+    def resume{}
+    override def updateWith(delta : float) {}
+}
+
+class BackgroundSoundPlayer(val sound : SimpleSound) extends SoundPlayer {
+    override def start {
+        sound.playAlways
+    }
+    override def stop {
+        sound.stop
+    }
+    override def pause {
+        sound.pause
+    }
+    override def resume {
+        sound.resume
+    }
+}
+
+class SoundPlayersCollection(val players : [SoundPlayer]) extends SoundPlayer {
+    override def start {
+        players.for(_.start)
+    }
+    override def stop {
+        players.for(_.stop)
+    }
+    override def pause {
+        players.for(_.pause)
+    }
+    override def resume {
+        players.for(_.resume)
+    }
+    override def updateWith(delta : float) {
+        players.for(_.updateWith(delta))
+    }
+}
+
+class SporadicSoundPlayer(val sound : Sound, val secondsBetween : float/*average seconds amount between playings*/) extends SoundPlayer {
+    private var _timeToNextPlaying : float = 0
+
+    override def start {
+        _timeToNextPlaying = Float.rnd(0, secondsBetween*2)
+    }
+    override def stop {
+        sound.stop
+    }
+
+    private var wasPlaying = false
+    override def pause {
+        sound.pause
+    }
+    override def resume {
+        sound.resume
+    }
+    override def updateWith(delta : float) {
+        if(!sound.isPlaying) {
+            _timeToNextPlaying -= delta
+            if(_timeToNextPlaying <= 0) {
+                sound.play
+                _timeToNextPlaying = Float.rnd(0, secondsBetween*2)
+            }
+        }
+    }
+}
+
+class SignalSoundPlayer<T>(val sound : Sound, val signal : ObservableBase<T>, val condition : T -> bool = _ : T -> true)
+    extends SoundPlayer
+{
+    private var obs : Observer<T>?
+    override def start {
+        obs = signal.observe{data ->
+            if(condition(data)) sound.play
+        }
+    }
+    override def stop {
+        obs?.detach
+        obs = nil
+        sound.stop
+    }
+
+    override def pause {
+        sound.pause
+    }
+    override def resume {
+        sound.resume
+    }
+}
+

@@ -1,0 +1,241 @@
+package com.pigeon3d
+
+class ShaderProgram(val name : string, val handle : uint4) {
+    static def loadFromFiles(name : string, vertex : string, fragment : string) : ShaderProgram =
+        ShaderProgram(name, Bundle.readToString(vertex), Bundle.readToString(fragment))
+
+    static def apply(name : string, vertex : string, fragment : string) : ShaderProgram =  {
+        val vertexShader = compileShaderFor(GL_VERTEX_SHADER, vertex)
+        val fragmentShader = compileShaderFor(GL_FRAGMENT_SHADER, fragment)
+        val program = linkFromShaders(name, vertexShader, fragmentShader)
+        glDeleteShader(vertexShader)
+        glDeleteShader(fragmentShader)
+        program
+    }
+
+
+    static def linkFromShaders(name : string, vertex : uint4, fragment : uint4) : ShaderProgram = {
+        val handle = glCreateProgram
+        glAttachShader(handle, vertex)
+        glAttachShader(handle, fragment)
+        glLinkProgram(handle)
+        egGetProgramError(handle).for(throw "Error in shader program linking: " + _)
+        ShaderProgram(name, handle)
+    }
+
+    static def compileShaderFor(shaderType : uint4, source : string) : uint4 = {
+        val shader = glCreateShader(shaderType)
+        egShaderSource(shader, source)
+        glCompileShader(shader)
+        egGetShaderError(shader).for(throw  "Error in shader compiling : " + _ + source)
+        shader
+    }
+
+    def init {
+        egLabelShaderProgram(handle, name)
+    }
+
+    override def dealloc {
+        context.deleteShaderProgram(handle)
+    }
+
+    def attributeFor(name : string ) : ShaderAttribute = {
+        val h = egGetAttribLocation(handle, name)
+        if(h < 0) throw "Could not found attribute for name " + name
+        val ret = ShaderAttribute(h)
+        ret
+    }
+
+    static val version : int = egGLSLVersion
+}
+
+abstract class Shader<P>(val program : ShaderProgram) {
+    def draw(param : P, vertex : VertexBuffer<_>, index : IndexSource) {
+        context.bindShaderProgram(program)
+        vertex.bind
+        loadAttributes(vertex.desc)
+        loadUniforms(param)
+        index.bind
+        index.draw
+    }
+
+    def draw(param : P, mesh : Mesh) {
+        draw(param, mesh.vertex, mesh.index)
+    }
+
+    def draw(param : P, vao : SimpleVertexArray<P>) {
+        vao.bind
+        context.bindShaderProgram(program)
+        loadUniforms(param)
+        vao.index.draw
+        vao.unbind
+    }
+
+    def draw(param : P, vao : SimpleVertexArray<P>, start : uint, end : uint) {
+        vao.bind
+        context.bindShaderProgram(program)
+        loadUniforms(param)
+        vao.index.drawWith(start, end)
+        vao.unbind
+    }
+
+    def loadAttributes(vbDesc : VertexBufferDesc<_>)
+    def loadUniforms(param : P)
+
+    private def uniform(name : string) = {
+        val h = egGetUniformLocation(program.handle, name)
+        if(h < 0) throw "Could not found attribute for name " + name
+        h
+    }
+    private def uniformOpt(name : string) : int4? = {
+        val h = egGetUniformLocation(program.handle, name)
+        if(h < 0) nil
+        h
+    }
+
+    def uniformMat4(name : string) : ShaderUniformMat4 = ShaderUniformMat4(uniform(name))
+    def uniformVec4(name : string) : ShaderUniformVec4 = ShaderUniformVec4(uniform(name))
+    def uniformVec3(name : string) : ShaderUniformVec3 = ShaderUniformVec3(uniform(name))
+    def uniformVec2(name : string) : ShaderUniformVec2 = ShaderUniformVec2(uniform(name))
+    def uniformF4(name : string) : ShaderUniformF4 = ShaderUniformF4(uniform(name))
+    def uniformI4(name : string) : ShaderUniformI4 = ShaderUniformI4(uniform(name))
+    def uniformMat4Opt(name : string) : ShaderUniformMat4? = uniformOpt(name).map(ShaderUniformMat4(_))
+    def uniformVec4Opt(name : string) : ShaderUniformVec4? = uniformOpt(name).map(ShaderUniformVec4(_))
+    def uniformVec3Opt(name : string) : ShaderUniformVec3? = uniformOpt(name).map(ShaderUniformVec3(_))
+    def uniformVec2Opt(name : string) : ShaderUniformVec2? = uniformOpt(name).map(ShaderUniformVec2(_))
+    def uniformF4Opt(name : string) : ShaderUniformF4? = uniformOpt(name).map(ShaderUniformF4(_))
+    def uniformI4Opt(name : string) : ShaderUniformI4? = uniformOpt(name).map(ShaderUniformI4(_))
+    def attributeFor(name : string) : ShaderAttribute = program.attributeFor(name)
+
+    def vao(vbo : VertexBuffer<_>, ibo : IndexSource) : SimpleVertexArray<P> = {
+        val vao = SimpleVertexArray<P>(self, [vbo], ibo)
+        vao.bind
+        vbo.bind
+        ibo.bind
+        loadAttributes(vbo.desc)
+        vao.unbind
+        vao
+    }
+}
+
+class ShaderAttribute(val handle : uint4) {
+    def setFromBufferWith(stride : uint, valuesCount : uint, valuesType : uint4, shift : uint) {
+        glEnableVertexAttribArray(handle)
+        egVertexAttribPointer(handle, valuesCount, valuesType, GL_FALSE, stride, shift)
+    }
+}
+
+class ShaderUniformMat4(val handle : uint4) {
+    private var _last = mat4.null
+
+    def apply(matrix : mat4) {
+        if(matrix != _last) {
+            _last = matrix
+            glUniformMatrix4fv(handle, 1, GL_FALSE, matrix.array)
+        }
+    }
+}
+
+class ShaderUniformVec4(val handle : uint4) {
+    private var _last = vec4(0, 0, 0, 0)
+    def apply(vec4 : vec4) {
+        if(vec4 != _last) {
+            egUniformVec4(handle, vec4)
+            _last = vec4
+        }
+    }
+}
+
+class ShaderUniformVec3(val handle : uint4) {
+    private var _last = vec3(0, 0, 0)
+    def apply(vec3 : vec3) {
+        if(vec3 != _last) {
+            egUniformVec3(handle, vec3)
+            _last = vec3
+        }
+    }
+}
+
+class ShaderUniformVec2(val handle : uint4) {
+    private var _last = vec2(0, 0)
+    def apply(vec2 : vec2) {
+        if(vec2 != _last) {
+            egUniformVec2(handle, vec2)
+            _last = vec2
+        }
+    }
+}
+
+class ShaderUniformF4(val handle : uint4) {
+    private var _last : float4 = 0
+    def apply(f4 : float4) {
+        if(f4 != _last) {
+            glUniform1f(handle, f4)
+            _last = f4
+        }
+    }
+}
+
+class ShaderUniformI4(val handle : uint4) {
+    private var _last : int4 = 0
+    def apply(i4 : int4) {
+        if(i4 != _last) {
+            glUniform1i(handle, i4)
+            _last = i4
+        }
+    }
+}
+
+abstract class ShaderSystem<P> {
+    def draw(param : P, vertex : VertexBuffer<_>, index : IndexSource) {
+        val shader = shaderFor(param)
+        shader.draw(param, vertex, index)
+    }
+
+    def draw(param : P, vao : SimpleVertexArray<P>) {
+        val shader = shaderFor(param)
+        shader.draw(param, vao = vao)
+    }
+
+    def draw(param : P, mesh : Mesh) {
+        val shader = shaderFor(param)
+        shader.draw(param, mesh)
+    }
+
+    def shaderFor(param : P) : Shader<_> = shaderFor(param, context.renderTarget)
+    def shaderFor(param : P, renderTarget : RenderTarget) : Shader<_>
+
+    def vao(param : P, vbo : VertexBuffer<_>, ibo : IndexSource) : VertexArray = shaderFor(param).vao(vbo, ibo)
+}
+
+
+
+trait ShaderTextBuilder {
+    def versionString = "#version $version"
+    def vertexHeader = "#version $version"
+    def fragmentHeader =
+        "#version $version
+         $fragColorDeclaration"
+    def fragColorDeclaration = if(isFragColorDeclared) "" else "out lowp vec4 fragColor;"
+    def isFragColorDeclared = ShaderProgram.version < 110
+
+    def version : int = ShaderProgram.version
+
+    def ain = if(version < 150) "attribute" else "in"
+    def in = if(version < 150) "varying" else "in"
+    def out = if(version < 150) "varying" else "out"
+    def fragColor = if(version > 100) "fragColor" else "gl_FragColor"
+    def texture2D = if(version > 100) "texture" else "texture2D"
+
+    def shadowExt =
+        if(version == 100 && settings.shadowType == ShadowType.shadow2d) "#extension GL_EXT_shadow_samplers : require"
+        else ""
+    def sampler2DShadow = if(settings.shadowType == ShadowType.shadow2d) "sampler2DShadow" else "sampler2D"
+    def shadow2D(texture : string, vec3 : string) =
+        if(settings.shadowType == ShadowType.shadow2d)
+            "$shadow2DEXT\($texture, $vec3)"
+        else "($texture2D\($texture, $vec3.xy).x < $vec3.z ? 0.0 : 1.0)"
+    def blend(mode : BlendMode, a : string, b : string) = mode.blend(a, b)
+
+    def shadow2DEXT = if(version == 100) "shadow2DEXT" else "texture"
+}

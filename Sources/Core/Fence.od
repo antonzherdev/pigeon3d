@@ -1,0 +1,12 @@
+package com.pigeon3d
+
+stub class Fence(val name : string) {
+    def set
+    def clientWait
+    def wait
+    def sync(f : () -> void) {
+        clientWait
+        f
+        set
+    }
+}

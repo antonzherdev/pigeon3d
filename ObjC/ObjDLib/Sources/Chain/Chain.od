@@ -1,0 +1,326 @@
+package objd.chain
+
+stub package object {
+    val prefix = "CN"
+
+    import objd.concurrent._
+}
+
+class Chain<A>(val link : ChainLink<_, A>, val previous : Chain<_>?) extends ImTraversable<A> {
+    static def apply<T>(collection : Traversable<T>) : Chain<T> = Chain<T>(link = SourceLink(collection), previous = nil)
+
+    def filter(factor : float = 0.5, when: A -> bool) : Chain<A> = add(FilterLink(factor, when))
+    def top(numbers: int) : Chain<A> = add(TopLink<A>(numbers))
+    def filterCast<B>(factor : float = 0.5, to : ClassType<B>) : Chain<B> =
+        add(FilterLink<A>(factor) {item -> to.isInstance(item)}).cast<Chain<B>>
+
+    def map<B>(f: A -> B) : Chain<B> = add(MapLink(f))
+    def mapOpt<B>(f: A -> B?) : Chain<B> = add(MapOptLink(f))
+    def flatMap<B>(factor : float = 2.0, f: A -> Traversable<B>) : Chain<B> = add(FlatMapLink(factor, f))
+    def flat<B>(self : Chain<Traversable<B>>, factor : float = 2.0) : Chain<B> = add(FlatLink<B>(factor))
+
+    def combinations : Chain<(A, A)> = add(CombinationsLink<A>())
+    def uncombinations<B>(self : Chain<(B, B)>) : Chain<B> = add(UncombinationsLink<B>())
+    def neighbours : Chain<(A, A)> = add(NeighboursLink<A>(ring = false))
+    def neighboursRing : Chain<(A, A)> = add(NeighboursLink<A>(ring = true))
+    def mul<B>(by: Traversable<B>) : Chain<(A,B)> = add(MulLink<A, B>(by))
+
+    def group<K>(factor : float = 0.5, by : A -> K) : Chain<(K, [A])> =
+        add(MGroupByLink<A, K, ArrayBuilder<A>, [A]>(factor, by,
+            start = ArrayBuilder<A>(), append = (b, item) -> b.append(item), finish = b -> b.build))
+    def group<K, B>(factor : float = 0.5, by : A -> K, f : A -> B) : Chain<(K, [B])> =
+        add(MGroupByLink<A, K, ArrayBuilder<B>, [B]>(factor, by,
+            start = ArrayBuilder<B>(), append = (b, item) -> b.append(f(item)), finish = b -> b.build))
+    def group<K, C extends Traversable<A>>(factor : float = 0.5, by : A -> K, builder : () -> Builder<A, C>) : Chain<(K, C)> =
+        add(MGroupByLink(factor, by, start = builder, append = (b, item) -> b.append(item), finish = b -> b.build))
+    def group<B, K, C extends Traversable<B>>(factor : float = 0.5, by : A -> K, f : A -> B, builder : () -> Builder<B, C>) : Chain<(K, C)> =
+        add(MGroupByLink(factor, by, start = builder, append = (b, item) -> b.append(f(item)), finish = b -> b.build))
+    def group<K, V>(factor : float = 0.5, by : A -> K, start : () -> V, fold : (V, A) -> V) : Chain<(K, V)> =
+        add(ImGroupByLink(factor, by, start, fold))
+    def distinct(factor : float = 0.5) : Chain<A> = add(DistinctLink<A>(factor))
+
+    def zip<B>(b: Iterable<B>) : Chain<(A, B)> = add(ZipLink<A, B, (A, B)>(b) {aa, bb -> (aa, bb)})
+    def zip<B, X>(b : Iterable<B>, by : (A, B) -> X) : Chain<X> = add(ZipLink(b, by))
+    def zipFor<B>(b : Iterable<B>, by : (A, B) -> void) {
+        val bi = b.iterator
+        apply(Yield.make<A>(yield = a ->
+            if(bi.hasNext) {
+                by(a, bi.next)
+                Go.Continue
+            } else Go.Break
+        ))
+    }
+    def zip3<B, C>(b: Iterable<B>, c : Iterable<C>) : Chain<(A, B, C)> = add(Zip3Link<A, B, C, (A, B, C)>(b, c) {aa, bb, cc -> (aa, bb, cc)})
+    def zip3<B, C, X>(b : Iterable<B>, c : Iterable<C>, by : (A, B, C) -> X) : Chain<X> = add(Zip3Link(b, c, by))
+
+//    def join<K, V1, V2>(self : Chain<(K, V1)>, chain : Iterable<(K, V2)>) : Chain<K, (V1, V2)>
+
+    def prepend(collection: Traversable<A>) : Chain<A> = add(PrependLink(collection))
+    def append(collection: Traversable<A>) : Chain<A> = add(AppendLink(collection))
+    def exclude(collection: Traversable<A>) : Chain<A> = {
+        val c = Chain.resolveToSet(collection)
+        filter{item -> !c.contains(item)}
+    }
+    def intersect(collection: Iterable<A>) : Chain<A> = {
+        val c = Chain.resolveToSet(collection)
+        filter{item -> c.contains(item)}
+    }
+
+    def reverse : Chain<A> = add(ReverseLink<A>())
+    def reverse(when : bool) : Chain<A> = if(when) add(ReverseLink<A>()) else self
+    def sort<B extends Comparable<B>> (self : Chain<B>) : Chain<B> = add(SortLink<B>{a, b -> a.compare(b)})
+    def sortDesc<B extends Comparable<B>> (self : Chain<B>) : Chain<B> = add(SortLink<B>{a, b -> -a.compare(b)})
+    def sort(comparator:(A, A) -> int) : Chain<A> = add(SortLink<A>(comparator))
+    def sortBy : SortBuilder<A> = SortBuilder<A>(self)
+    def shuffle : Chain<A> = add(ShuffleLink<A>())
+
+    override def go(on : A -> Go) : Go = apply(Yield.make<A>(yield = on))
+    def fold<B>(start : B, by : (B, A) -> B) : B = {
+        var r = start
+        apply(Yield.make<A>(yield = item -> {
+            r = by(r, item)
+            Go.Continue
+        }))
+        r
+    }
+    def count : uint = {
+        var r = 0
+        _for(r++)
+        r
+    }
+    private def _for(each: A -> void) {
+        apply(Yield.make<A>(yield = {item ->
+            each(item)
+            Go.Continue
+        }))
+    }
+    def last : A? = {
+        var ret : A?
+        _for(item -> ret = item)
+        ret
+    }
+    def randomItem : A? = {
+        val s = toSeq
+        val n = s.count
+        if(n == 0) nil
+        else s[UInt.rnd(n - 1)]
+    }
+    def randomItem(seed : Seed) : A?  = {
+        val s = toSeq
+        val n = s.count
+        if(n == 0) nil
+        else s[seed.nextInt(min = 0, max = n - 1)]
+    }
+    def isEmpty : bool = {
+        var ret = true
+        apply(Yield.make<A>(yield = {item ->
+            ret = true
+            Go.Break
+        }))
+        ret
+    }
+    def gap<B extends Comparable<B>> (self : Chain<B>) : (B, B)? = {
+        var min : B?
+        var max : B?
+        _for{item : B ->
+            if(min == nil || min.compare(item) > 0) min = item
+            if(max == nil || max.compare(item) < 0) max = item
+        }
+        if(min == nil) nil
+        else (min, max.get)
+    }
+    def min<B extends Comparable<B>> (self : Chain<B>) : B? = {
+        var min : B?
+        _for{item : B ->
+            if(min == nil || min.compare(item) > 0) min = item
+        }
+        min
+    }
+    def max<B extends Comparable<B>> (self : Chain<B>) : B? = {
+        var max : B?
+        _for{item : B ->
+            if(max == nil || max.compare(item) < 0) max = item
+        }
+        max
+    }
+
+    def or(self : Chain<bool>) : bool = {
+        var ret = false
+        apply(Yield.make<bool>(yield = {item : Bool ->
+            if(item) {
+                ret = true
+                Go.Break
+            } else Go.Continue
+        }))
+        ret
+    }
+    def and(self : Chain<bool>) : bool = {
+        var ret = true
+        apply(Yield.make<bool>(yield = {item : Bool ->
+            if(!item) {
+                ret = false
+                Go.Break
+            } else Go.Continue
+        }))
+        ret
+    }
+
+
+    private inline def convert<R extends Traversable<A>>(to : Type<R>, builder : int -> Builder<A, R>) : R = {
+        var b : Builder<A, R>?
+        var r : R?
+        apply(Yield.make<A>(
+            begin = size -> {
+                b = builder(size)
+                Go.Continue
+            },
+            yield = item -> {
+                b.get.append(item)
+                Go.Continue
+            },
+            all = (yield, all) -> {
+                if(all.is<R>) {
+                    r = all.cast<R>
+                    Go.Continue
+                } else yield.stdYieldAll(all)
+            }
+        ))
+        if(r == nil) b.get.build else r
+    }
+    def toSeq : Seq<A> = convert<Seq<A>>(Seq.type, ArrayBuilder<A>(_))
+    def toArray : [A] = {
+        var b : ArrayBuilder<A>?
+        var r : [A]?
+        apply(Yield.make<A>(
+            begin = size -> {
+                b = ArrayBuilder<A>(size)
+                Go.Continue
+            },
+            yield = item -> {
+                b.get.append(item)
+                Go.Continue
+            },
+            all = (yield, all) -> {
+                if(all.is<ImArray<A>>) {
+                    r = all.cast<ImArray<A>>
+                    Go.Continue
+                } else if(all.is<MArray<A>>) {
+                    r = all.cast<MArray<A>>.im
+                    Go.Continue
+                } else yield.stdYieldAll(all)
+            }
+        ))
+        if(r == nil) b.get.build else r
+    }
+    def toList : ImList<A> = convert<ImList<A>>(ImList.type, ImListBuilder<A>())
+    def toSet : Set<A> = convert<Set<A>>(Set.type, HashSetBuilder<A>(_))
+    def toTreeSet<B extends Comparable<B>>(self : Chain<B>) : TreeSet<B> = {
+        var b : Builder<B, ImTreeSet<B>>?
+        var r : TreeSet<B>?
+        apply(Yield.make<B>(
+            begin = size -> {
+                b = TreeSetBuilder<B>()
+                Go.Continue
+            },
+            yield = item -> {
+                b.get.append(item)
+                Go.Continue
+            },
+            all = (yield, all) -> {
+                if(all.is<TreeSet<B>>) {
+                    r = all.cast<TreeSet<B>>
+                    Go.Continue
+                } else yield.stdYieldAll(all)
+            }
+        ))
+        if(r == nil) b.get.build else r
+    }
+    def toMap<K, V>(self : Chain<(K, V)>) : [K : V] = {
+        var b : Builder<(K, V), ImHashMap<K, V>>?
+        var r : ImHashMap<K, V>?
+        apply(Yield.make<(K, V)>(
+            begin = size -> {
+                b = HashMapBuilder<K, V>()
+                Go.Continue
+            },
+            yield = item -> {
+                b.get.append(item)
+                Go.Continue
+            },
+            all = (yield, all) -> {
+                if(all.is<ImHashMap<K, V>>) {
+                    r = all.cast<ImHashMap<K, V>>
+                    Go.Continue
+                } else if(all.is<MHashMap<K, V>>) {
+                    r = all.cast<MHashMap<K, V>>.im
+                    Go.Continue
+                } else yield.stdYieldAll(all)
+            }
+        ))
+        if(r == nil) b.get.build else r
+    }
+
+
+    def toString(start : string, delimiter : string, end : string) : string = {
+        val b = StringBuilder()
+        b.append(start)
+        var first = true
+        _for{item ->
+            if(first) first = false
+            else b.append(delimiter)
+            b.append(item)
+        }
+        b.append(end)
+        b.build
+    }
+    def toString(delimiter : string) : string = toString(start = "", delimiter, end = "")
+    def toString(self : Chain<char>) : string = {
+        val b = StringBuilder()
+        _for{item : Char ->
+            b.append(ch = item)
+        }
+        b.build
+    }
+
+    def future<V, R>(self : Chain<Future<V>>, f : Chain<V> -> R) : Future<R> = {
+        val lnk = FutureEnd<V>()
+        apply(lnk.yield)
+        lnk.future.map{o -> f(o.chain)}
+    }
+    def future<V>(self : Chain<Future<V>>) : Future<[V]> = {
+        val lnk = FutureEnd<V>()
+        apply(lnk.yield)
+        lnk.future
+    }
+    def voidFuture(self : Chain<Future<void>>) : Future<void> = {
+        val lnk = FutureVoidEnd()
+        apply(lnk.yield)
+        lnk.future
+    }
+
+
+    def apply(yield : Yield<A>) : Go = {
+        val y = build(yield)
+        val r = y.beginYieldWith(size = 0)
+        y.endYieldWith(result = r)
+    }
+    private def build(yield : Yield<A>) : Yield<_> = {
+        var ch : Chain<_>? = self
+        var y : Yield<_> = yield
+        while(ch != nil) {
+            y = ch.link.build(y)
+            ch = ch.previous
+        }
+        y
+    }
+
+    def add<B>(link : ChainLink<A, B>) : Chain<B> = Chain<B>(link, previous = self)
+
+    static inline def resolve<T>(collection : Traversable<T>) : Traversable<T> =
+        if(collection.is<Chain<T>>) collection.cast<Chain<T>>.toArray else collection
+
+    static inline def resolveToSet<T>(collection : Traversable<T>) : Traversable<T> =
+        if(collection.is<Chain<T>>) collection.cast<Chain<T>>.toSet else collection
+}
+
+

@@ -1,0 +1,387 @@
+package com.pigeon3d
+
+object Global {
+    val context : Context = Context()
+    val settings : Settings = Settings()
+    val matrix : MatrixStack = context.matrixStack
+    def compressedTextureFor(file : string) : Texture = context.textureFor(file, TextureFileFormat.compressed, TextureFormat.RGBA8, 1.0, TextureFilter.linear)
+    def compressedTextureFor(file : string, filter : TextureFilter) : Texture = context.textureFor(file, TextureFileFormat.compressed, TextureFormat.RGBA8, 1.0, filter)
+    def textureFor(file : string, fileFormat : TextureFileFormat = TextureFileFormat.PNG, format : TextureFormat = TextureFormat.RGBA8, filter : TextureFilter = TextureFilter.linear) : Texture =
+        context.textureFor(file, fileFormat, format, 1.0, filter)
+    def scaledTextureFor(name : string, fileFormat : TextureFileFormat = TextureFileFormat.PNG, format : TextureFormat = TextureFormat.RGBA8) : Texture =
+        context.textureFor(name, fileFormat, format, Director.current.scale, TextureFilter.nearest)
+    def fontWith(name : string) : Font = context.fontWith(name)
+    def fontWith(name : string, size : uint) : Font = context.fontWith(name, size)
+    def mainFontWith(size : uint) : Font = context.mainFontWith(size)
+}
+
+class Context {
+    val viewSize = Var<vec2i>(vec2i(0, 0))
+    val scaledViewSize = viewSize.map(_/Director.current.scale)
+    var ttf : bool = true
+    private val textureCache = MHashMap<string, FileTexture>()
+    private val fontCache = MHashMap<string, Font>()
+
+    def textureFor(name : string, fileFormat : TextureFileFormat, format : TextureFormat, scale : float, filter : TextureFilter) : Texture =
+        textureCache(key = name, orUpdateWith = FileTexture(name, fileFormat, format, scale, filter))
+
+    def fontWith(name : string) : Font = fontCache(key = name, orUpdateWith = BMFont(name))
+    def mainFontWith(size : uint) : Font = fontWith("Helvetica", size)
+    def fontWith(name : string, size : uint) : Font = {
+        val scale = Director.current.scale
+        val nm = "$name\ $((size*scale).cast<uint>)"
+        if(ttf) fontCache(key = nm, orUpdateWith = TTFFont(name, size*scale))
+        else fontWith(nm)
+    }
+
+    var environment = Environment.default
+    val matrixStack = MatrixStack()
+    var renderTarget : RenderTarget = SceneRenderTarget()
+    var considerShadows = true
+    var redrawShadows = true
+    var redrawFrame = true
+
+    def clear {
+        matrixStack.clear
+        considerShadows = true
+        redrawShadows = true
+        redrawFrame = true
+//        _viewport = RectI(0, 0, 0, 0)
+//        _lastTexture2D = 0
+//        _lastTextures.clear
+//        _lastShaderProgram = 0
+//        _lastIndexBuffer = 0
+//        _lastVertexBufferId = 0
+//        _lastVertexBufferCount = 0
+    }
+
+    def clearCache {
+        textureCache.clear
+        fontCache.clear
+    }
+
+    private var _viewport : RectI = RectI(0, 0, 0, 0)
+    def viewport = _viewport
+    def set(viewport : RectI) {
+        if(_viewport != viewport) {
+            _viewport = viewport
+            egViewport(viewport)
+        }
+    }
+
+    private var _lastTexture2D : uint4 = 0
+    def bindTexture(textureId : uint4) {
+        if(_lastTexture2D != textureId) {
+            _lastTexture2D = textureId
+            glBindTexture(GL_TEXTURE_2D, textureId)
+        }
+    }
+    def bindTexture(texture : Texture) {
+        val id = texture.id
+        if(_lastTexture2D != id) {
+            _lastTexture2D = id
+            glBindTexture(GL_TEXTURE_2D, id)
+        }
+    }
+
+    private val _lastTextures = MHashMap<uint4, uint4>()
+    def bindTexture(slot : uint4, target : uint4, texture : Texture) {
+        val id : uint4 = texture.id
+        if(slot == GL_TEXTURE0 && target == GL_TEXTURE_2D) {
+            if(_lastTexture2D != id) {
+                _lastTexture2D = id
+                glBindTexture(target, id)
+            }
+        } else {
+            val key = slot*13 + target
+            if(!_lastTextures.isValueEqual(key, id)) {
+                if(slot != GL_TEXTURE0) {
+                    glActiveTexture(slot)
+                    glBindTexture(target, id)
+                    glActiveTexture(GL_TEXTURE0)
+                } else glBindTexture(target, id)
+                _lastTextures.set(key, id)
+            }
+        }
+    }
+
+    def deleteTexture(id : uint4) {
+        Director.current.onGLThread{
+            egDeleteTexture(id)
+            if(_lastTexture2D == id) _lastTexture2D = 0
+            _lastTextures.clear
+        }
+    }
+
+    private var _lastShaderProgram : uint4 = 0
+    def bindShaderProgram(program : ShaderProgram) {
+        val id = program.handle
+        if(id != _lastShaderProgram) {
+            _lastShaderProgram = id
+            glUseProgram(id)
+        }
+    }
+    def deleteShaderProgram(id : uint4) {
+        glDeleteProgram(id)
+        if(id == _lastShaderProgram) _lastShaderProgram = 0
+    }
+
+    private var _lastRenderBuffer : uint4 = 0
+    def bindRenderBuffer(id : uint4) {
+        if(id != _lastRenderBuffer) {
+            _lastRenderBuffer = id
+            glBindRenderbuffer(GL_RENDERBUFFER, id)
+        }
+    }
+    def deleteRenderBuffer(id : uint4) {
+        Director.current.onGLThread{
+            egDeleteRenderBuffer(id)
+            if(id == _lastRenderBuffer) _lastRenderBuffer = 0
+        }
+    }
+
+    private var _lastVertexBufferId : uint4 = 0
+    private var _lastVertexBufferCount : uint4 = 0
+    def bindVertexBuffer(buffer : VertexBuffer<_>) {
+        val handle = buffer.handle
+        if(handle != _lastVertexBufferId) {
+            checkBindDefaultVertexArray
+            _lastVertexBufferId = handle
+            _lastVertexBufferCount = buffer.count
+            glBindBuffer(GL_ARRAY_BUFFER, handle)
+        }
+    }
+    def vertexBufferCount : uint4 = _lastVertexBufferCount
+
+    private var _lastIndexBuffer : uint4 = 0
+    def bindIndexBuffer(handle : uint4) {
+        if(handle != _lastIndexBuffer) {
+            checkBindDefaultVertexArray
+            _lastIndexBuffer = handle
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle)
+        }
+    }
+    def deleteBuffer(id : uint4) {
+        Director.current.onGLThread{
+            egDeleteBuffer(id)
+            if(id == _lastVertexBufferId){
+                _lastVertexBufferId = 0
+                _lastVertexBufferCount = 0
+            }
+            if(id == _lastIndexBuffer) _lastIndexBuffer = 0
+        }
+    }
+
+    private var _lastVertexArray : uint4 = 0
+    def bindVertexArray(handle : uint4, vertexCount : uint4, mutable : bool) {
+        if(handle != _lastVertexArray || mutable) {
+            _lastVertexArray = handle
+//            _lastVertexBufferId = 0
+            _lastIndexBuffer = 0
+            egBindVertexArray(handle)
+        }
+        _needBindDefaultVertexArray = false
+        _lastVertexBufferCount = vertexCount
+    }
+    def deleteVertexArray(id : uint4) {
+        Director.current.onGLThread{
+            egDeleteVertexArray(id)
+            if(id == _lastVertexArray) _lastVertexArray = 0
+        }
+    }
+
+    var defaultVertexArray : uint4 = 0
+    private var _needBindDefaultVertexArray = false
+    def bindDefaultVertexArray {
+        _needBindDefaultVertexArray = true
+    }
+    def checkBindDefaultVertexArray {
+        if(_needBindDefaultVertexArray) {
+            _lastIndexBuffer = 0
+            _lastVertexBufferCount = 0
+            _lastVertexBufferId = 0
+            egBindVertexArray(defaultVertexArray)
+            _needBindDefaultVertexArray = false
+        }
+    }
+
+    val cullFace : CullFace = CullFace()
+    val blend : EnablingState = EnablingState(GL_BLEND)
+    val depthTest : EnablingState = EnablingState(GL_DEPTH_TEST)
+    def draw {
+        cullFace.draw
+        depthTest.draw
+        if(_blendFunctionChanged) {
+            _blendFunctionComing.get.bind
+            _blendFunctionChanged = false
+            _blendFunction = _blendFunctionComing
+        }
+        blend.draw
+    }
+
+    private var _lastClearColor = vec4(0, 0, 0, 0)
+    def clearColor(color : vec4) {
+        if(_lastClearColor != color) {
+            _lastClearColor = color
+            glClearColor(color.x, color.y, color.z, color.w)
+        }
+    }
+
+    private var _blendFunction : BlendFunction?
+    private var _blendFunctionComing : BlendFunction?
+    private var _blendFunctionChanged = false
+    def blendFunction : BlendFunction? = _blendFunction
+    def set(blendFunction : BlendFunction) {
+        _blendFunctionComing = blendFunction
+        _blendFunctionChanged = (_blendFunction != blendFunction)
+    }
+}
+
+class EnablingState(val tp: uint4) {
+    private var _last : bool = false
+    private var _coming : bool = false
+
+    def enable : bool =
+        if(!_coming) {
+            _coming = true
+            true
+        } else false
+
+    def disable : bool =
+        if(_coming) {
+            _coming = false
+            true
+        } else false
+
+    def draw {
+        if(_last != _coming) {
+            if(_coming) glEnable(tp)
+            else glDisable(tp)
+            _last = _coming
+        }
+    }
+
+    def clear {
+        _last = false
+        _coming = false
+    }
+
+    inline def disabled(f : () -> void) {
+        val changed = disable
+        f()
+        if(changed) enable
+    }
+
+    inline def enabled(f : () -> void) {
+        val changed = enable
+        f()
+        if(changed) disable
+    }
+}
+
+class CullFace {
+    private var _lastActiveValue : uint4 = GL_NONE
+    private var _value : uint4 = GL_NONE
+    private var _comingValue : uint4 = GL_NONE
+
+    def set(value : uint4) {
+        _comingValue = value
+    }
+
+    def draw {
+        if(_value != _comingValue) {
+            if(_comingValue == GL_NONE) {
+                glDisable(GL_CULL_FACE)
+                _value = GL_NONE
+            } else {
+                if(_value == GL_NONE) {
+                    glEnable(GL_CULL_FACE)
+                }
+                if(_lastActiveValue != _comingValue) {
+                    glCullFace(_comingValue)
+                    _lastActiveValue = _comingValue
+                }
+                _value = _comingValue
+            }
+        }
+    }
+
+    def disable : uint4 {
+        val old = _comingValue
+        _comingValue = GL_NONE
+        old
+    }
+
+    inline def disabled(f : () -> void) {
+        val oldValue = disable
+        f()
+        if(oldValue != GL_NONE) set(value = oldValue)
+    }
+
+    def invert : uint4 {
+        val old = _comingValue
+        _comingValue = if(old == GL_FRONT) GL_BACK else GL_FRONT
+        old
+    }
+
+    inline def inverted(f : () -> void) {
+        val oldValue = invert
+        f()
+        if(oldValue != GL_NONE) set(value = oldValue)
+    }
+}
+
+class RenderTarget {
+    def isShadow : bool = false
+}
+class SceneRenderTarget extends RenderTarget
+class ShadowRenderTarget(val shadowLight : Light) extends RenderTarget {
+    static val default = ShadowRenderTarget(Light.default)
+    override def isShadow = true
+}
+
+class Environment(val ambientColor : vec4, val lights : [Light]) {
+    val directLights : [DirectLight] = lights.chain.filterCast(DirectLight.type).toArray
+    val directLightsWithShadows : [DirectLight] = lights.chain.filterCast(DirectLight.type).filter(_.hasShadows).toArray
+    val directLightsWithoutShadows : [DirectLight] = lights.chain.filterCast(DirectLight.type).filter(!_.hasShadows).toArray
+
+    static val default = Environment(vec4(1, 1, 1, 1), [])
+    static def apply(lights : [Light]) = Environment(vec4(1, 1, 1, 1), lights)
+    static def apply(light : Light) = Environment(vec4(1, 1, 1, 1), [light])
+}
+
+class Light(val color : vec4, val hasShadows : bool) {
+    lazy val shadowMap : ShadowMap = ShadowMap(vec2(2048, 2048))
+    static val default = Light(vec4(1, 1, 1, 1), true)
+
+    def shadowMatrix(model : MatrixModel) : MatrixModel = throw "Shadows are not supported for $(self.type)"
+}
+class DirectLight(color : vec4, val direction : vec3, hasShadows : bool, val shadowsProjectionMatrix : mat4)
+    extends Light(color, hasShadows)
+{
+    static def apply(color : vec4, direction : vec3) = DirectLight(color, direction, false, mat4.identity)
+    static def apply(color : vec4, direction : vec3, shadowsProjectionMatrix : mat4) = DirectLight(color, direction, true, shadowsProjectionMatrix)
+    override def shadowMatrix(model : MatrixModel) : MatrixModel =
+        model.mutable.modify(c = mat4.lookAt((model.w * vec4(direction, 0)).xyz.normalize.negate, vec3(0, 0, 0), vec3(0, 1, 0)))
+             .modify(p = shadowsProjectionMatrix)
+}
+
+enum ShadowType(val isOn : bool) {
+    no(false)
+    shadow2d(true)
+    sample2d(true)
+
+    def isOff = !isOn
+}
+
+class Settings {
+    val shadowTypeChanged = Signal<ShadowType>()
+    private var _shadowType : ShadowType = ShadowType.sample2d
+    def shadowType = _shadowType
+    def set(shadowType : ShadowType) {
+        if(_shadowType != shadowType) {
+            _shadowType = shadowType
+            shadowTypeChanged.post(shadowType)
+        }
+    }
+}

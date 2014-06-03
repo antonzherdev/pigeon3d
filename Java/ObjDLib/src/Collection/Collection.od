@@ -1,0 +1,256 @@
+package objd.collection
+
+import objd.concurrent.DispatchQueue
+import objd.chain.Chain
+
+stub package object {
+    val prefix = "CN"
+}
+
+trait Iterator<T> {
+   def hasNext : bool
+   def next : T
+}
+
+trait MIterator<T> extends Iterator<T> {
+    def remove
+    def set(value : T)
+}
+
+trait Builder<T, C extends Traversable<T>> {
+    def append(item : T)
+    def build : C
+    def appendAll(items : Traversable<T>) {
+        if(items.is<Iterable<T>>) {
+            items.cast<Iterable<T>>.for(append(_))
+        } else {
+            items.for(append(_))
+        }
+    }
+}
+
+enum Go {
+    Continue()
+    Break()
+}
+
+trait Traversable<T> {
+    def for(each : T -> void) {
+        go{item ->
+            each(item)
+            Go.Continue
+        }
+    }
+
+    def parFor(each : T -> void) {
+        go{item ->
+            DispatchQueue.default.async{
+                each(item)
+            }
+            Go.Continue
+        }
+    }
+
+    def go(on : T -> Go) : Go
+
+    def chain : Chain<T> = Chain<T>(collection = self)
+
+    def contains(item : T) : bool = {
+        var ret : bool = false
+        go{x ->
+            if(x == item) {
+                ret = true
+                Go.Break
+            } else Go.Continue
+        }
+        ret
+    }
+
+    def find(where : T -> bool) : T? = {
+        var ret : T? = nil
+        go{x ->
+            if(where(x)) {
+                ret = x
+                Go.Break
+            } else Go.Continue
+        }
+        ret
+    }
+
+    def exists(where : T -> bool) : bool = {
+        var ret = false
+        go{x ->
+            if(where(x)) {
+                ret = true
+                Go.Break
+            } else Go.Continue
+        }
+        ret
+    }
+
+    def all(confirm : T -> bool) : bool = {
+        var ret = true
+        go{x ->
+            if(!confirm(x)) {
+                ret = false
+                Go.Break
+            } else Go.Continue
+        }
+        ret
+    }
+
+    def head : T? = {
+        var ret : T?
+        go{on ->
+            ret = on
+            Go.Break
+        }
+        ret
+    }
+
+    def convertWith<C extends Traversable<T>>(builder : Builder<T, C>) : C = {
+        for(x -> builder.append(x))
+        builder.build
+    }
+}
+
+trait ImTraversable<T> extends Traversable<T> {
+    def mCopy : MTraversable<T> = {
+        val arr = MArray<T>()
+        for{item -> arr.append(item)}
+        arr
+    }
+}
+
+trait MTraversable<T> extends Traversable<T> {
+    def append(item : T)
+    def remove(item : T) : bool
+    def clear
+
+    def im : ImTraversable<T> = imCopy
+    def imCopy : ImTraversable<T> = {
+        val arr = MArray<T>()
+        for{item -> arr.append(item)}
+        arr.im
+    }
+}
+
+trait Iterable<T> extends Traversable<T> {
+    def count : uint = {
+        val i = iterator
+        var n : uint = 0
+        while(i.hasNext) {
+            i.next
+            n++
+        }
+        n
+    }
+    def iterator : Iterator<T>
+
+    override def head : T? = if(isEmpty) nil else iterator.next
+    def isEmpty : bool = !iterator.hasNext
+
+    override inline def for(each : T -> void) {
+        val i = iterator
+        while(i.hasNext) each(i.next)
+    }
+
+    override inline def parFor(each : T -> void) {
+        val i = iterator
+        while(i.hasNext) {
+            val v = i.next
+            DispatchQueue.default.async{
+                each(v)
+            }
+        }
+    }
+
+    override inline def go(on : T -> Go) : Go = {
+        var ret = Go.Continue
+        val i = iterator
+        while(i.hasNext) {
+            if(on(i.next) == Go.Break) {
+                ret = Go.Break
+                break
+            }
+        }
+        ret
+    }
+
+    override def contains(item : T) : bool = {
+        val i = iterator
+        while(i.hasNext) if(i.next == i) return true
+        false
+    }
+
+    override def description : string = {
+        chain.toString(start = "[", delimiter = ", ", end = "]")
+    }
+
+    override def hash : uint = {
+        var ret : uint = 13
+        val i = iterator
+        while(i.hasNext) {
+            ret = ret*31 + i.next.hash
+        }
+        ret
+    }
+
+    def isEqual(iterable : Iterable<T>) : bool =
+        if(count == iterable.count) true
+        else {
+            val ai = iterator
+            val bi = iterable.iterator
+            while(ai.hasNext && bi.hasNext) {
+                if(ai.next != bi.next) return false
+            }
+            true
+        }
+}
+
+trait ImIterable<T> extends Iterable<T> with ImTraversable<T> {
+    override def mCopy : MIterable<T> = {
+        val arr = MArray<T>()
+        for{item -> arr.append(item)}
+        arr
+    }
+}
+trait MIterable<T> extends Iterable<T> with MTraversable<T> {
+    def mutableIterator : MIterator<T>
+
+    override def remove(item : T) : bool = {
+        val i = mutableIterator
+        var ret = false
+        while(i.hasNext) {
+            if(i.next == item) {
+                i.remove
+                ret = true
+            }
+        }
+        ret
+    }
+
+    def mutableFilter(by : T -> bool) {
+        val i = mutableIterator
+        while(i.hasNext) {
+            if(by(i.next)) i.remove
+        }
+    }
+
+    override def im : ImIterable<T> = imCopy
+    override def imCopy : ImIterable<T> = {
+        val arr = MArray<T>()
+        for{item -> arr.append(item)}
+        arr.im
+    }
+}
+
+class IterableF<T>(val iteratorF : () -> Iterator<T>) extends ImIterable<T> {
+    override def iterator = iteratorF()
+}
+
+class EmptyIterator<T> extends Iterator<T> {
+    static val instance = EmptyIterator<any>()
+    override def hasNext : bool = false
+    override def next : T = throw "Iterator is empty"
+}

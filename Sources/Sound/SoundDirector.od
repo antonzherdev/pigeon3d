@@ -1,0 +1,25 @@
+package com.pigeon3d.sound
+
+class SoundDirector {
+    static val instance : SoundDirector = SoundDirector()
+    private var _enabled = true
+    def enabled = _enabled
+    val enabledChanged = Signal<bool>()
+    def set(enabled : bool) {
+        if(_enabled != enabled) {
+            _enabled = enabled
+            enabledChanged.post(enabled)
+        }
+    }
+
+
+    private var _timeSpeed = 1.0
+    def timeSpeed = _timeSpeed
+    val timeSpeedChanged = Signal<float>()
+    def set(timeSpeed : float) {
+        if(_timeSpeed != timeSpeed) {
+            _timeSpeed = timeSpeed
+            timeSpeedChanged.post(timeSpeed)
+        }
+    }
+}

@@ -1,0 +1,21 @@
+package com.pigeon3d
+
+stub class MultisamplingSurface(renderTarget : SurfaceRenderTarget, val depth : bool) extends RenderTargetSurface(renderTarget) {
+    override def bind
+
+    override def unbind
+
+    override def frameBuffer : int4
+}
+
+
+stub class ViewportSurface(createRenderTarget : vec2i -> SurfaceRenderTarget, val depth : bool, val multisampling : bool)
+    extends BaseViewportSurface(createRenderTarget)
+{
+    static def toTexture(depth : bool, multisampling : bool) : ViewportSurface
+    static def toRenderBuffer(depth : bool, multisampling : bool) : ViewportSurface
+
+    override def createSurface : RenderTargetSurface
+    def drawWith(z : float4)
+    def draw
+}

@@ -1,0 +1,7 @@
+package com.pigeon3d
+
+stub object TextureService {
+    def egLoadTextureFromFile(target : uint4, file : string, fileFormat : TextureFileFormat, scale : float, format : TextureFormat, filter : TextureFilter) : vec2
+    def egSaveTextureToFile(source : uint4, file : string)
+    def egInitShadowTexture(size : vec2i)
+}

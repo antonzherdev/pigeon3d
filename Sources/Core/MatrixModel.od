@@ -1,0 +1,175 @@
+package com.pigeon3d
+
+class MatrixStack {
+    private var stack = ImList<ImMatrixModel>()
+    private val _value = MMatrixModel()
+    def value : MMatrixModel = _value
+    def set(value : MatrixModel) {
+        _value.set(value)
+    }
+
+    def clear {
+        _value.clear
+        stack = ImList<ImMatrixModel>()
+    }
+
+    def push {
+        stack = ImList(_value.immutable, stack)
+    }
+
+    def pop {
+        _value.set(stack.head.get)
+        stack = stack.tail
+    }
+
+    inline def apply(modify : MMatrixModel -> void, f : () -> void) {
+        push
+        modify(value)
+        f()
+        pop
+    }
+
+    inline def identity(f : () -> void) {
+        push
+        value.clear
+        f()
+        pop
+    }
+
+    def m = _value.m
+    def w = _value.w
+    def c = _value.c
+    def p = _value.p
+    def mw = _value.mw
+    def mwc = _value.mwc
+    def mwcp = _value.mwcp
+    def wc = _value.wc
+    def wcp = _value.wcp
+    def cp = _value.cp
+}
+
+abstract class MatrixModel {
+    def m : mat4
+    def w : mat4
+    def c : mat4
+    def p : mat4
+
+    def mw : mat4 = w * m
+    def mwc : mat4 = c * (w * m)
+    def mwcp : mat4 = p * (c * (w * m))
+    def cp : mat4 = p * c
+    def wcp : mat4 = p * (c * w)
+    def wc : mat4 = c * w
+
+    static val identity : MatrixModel = ImMatrixModel(mat4.identity, mat4.identity, mat4.identity, mat4.identity)
+
+    def mutable : MMatrixModel
+}
+
+final class ImMatrixModel(override val m : mat4, override val w : mat4, override val c : mat4, override val p : mat4) extends MatrixModel {
+    override def mutable : MMatrixModel = MMatrixModel(m, w, c, p)
+
+    override def mw : mat4 = w * m
+    override def mwc : mat4 = c * (w * m)
+    override def mwcp : mat4 = p * (c * (w * m))
+    override def cp : mat4 = p * c
+    override def wcp : mat4 = p * (c * w)
+    override def wc : mat4 = c * w
+}
+
+final class MMatrixModel extends MatrixModel {
+    var _m : mat4 = mat4.identity
+    var _w : mat4 = mat4.identity
+    var _c : mat4 = mat4.identity
+    var _p : mat4 = mat4.identity
+    override def m : mat4 = _m
+    override def w : mat4 = _w
+    override def c : mat4 = _c
+    override def p : mat4 = _p
+
+    private var _mw : mat4? = nil
+    private var _mwc : mat4? = nil
+    private var _mwcp : mat4? = nil
+    override def mw : mat4 = {
+        if(_mw == nil) _mw = _w * _m
+        _mw.get
+    }
+    override def mwc : mat4 = {
+        if(_mwc == nil) _mwc = _c * mw
+        _mwc.get
+    }
+    override def mwcp : mat4 = {
+        if(_mwcp == nil) _mwcp = _p * mwc
+        _mwcp.get
+    }
+    override def cp : mat4 = _p * _c
+    override def wcp : mat4 = _p * (_c * _w)
+    override def wc : mat4 = _c * _w
+
+    def copy : MMatrixModel = MMatrixModel(m, w, c, p)
+    static def apply(matrixModel : MatrixModel) : MMatrixModel = matrixModel.mutable
+    static def apply(imMatrixModel : ImMatrixModel) : MMatrixModel = imMatrixModel.mutable
+
+    static def apply(m : mat4, w : mat4, c : mat4, p : mat4) : MMatrixModel = {
+        val mm = MMatrixModel()
+        mm._m = m
+        mm._w = w
+        mm._c = c
+        mm._p = p
+        mm
+    }
+
+    override def mutable : MMatrixModel = self
+    def immutable : ImMatrixModel = ImMatrixModel(m, w, c, p)
+
+    def modify(m : mat4 -> mat4) : MMatrixModel = {
+        _m = m(_m)
+        _mw = nil
+        _mwc = nil
+        _mwcp = nil
+        self
+    }
+
+
+    def modify(w : mat4 -> mat4) : MMatrixModel = {
+        _w = w(_w)
+        _mw = nil
+        _mwc = nil
+        _mwcp = nil
+        self
+    }
+
+    def modify(c : mat4 -> mat4) : MMatrixModel = {
+        _c = c(_c)
+        _mwc = nil
+        _mwcp = nil
+        self
+    }
+
+    def modify(p : mat4 -> mat4) : MMatrixModel = {
+        _p = p(_p)
+        _mwcp = nil
+        self
+    }
+
+    def clear {
+        _m = mat4.identity
+        _w = mat4.identity
+        _c = mat4.identity
+        _p = mat4.identity
+        _mw = nil
+        _mwc = nil
+        _mwcp = nil
+    }
+
+    def set(matrixModel : MatrixModel) {
+        _m = matrixModel.m
+        _w = matrixModel.w
+        _c = matrixModel.c
+        _p = matrixModel.p
+        _mw = nil
+        _mwc = nil
+        _mwcp = nil
+    }
+}
+

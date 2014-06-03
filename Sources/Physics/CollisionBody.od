@@ -1,0 +1,30 @@
+package com.pigeon3d
+
+stub class CollisionBody<T>(override val data : T, override val shape : CollisionShape, override val isKinematic : bool) extends PhysicsBody<T> {
+    private var _matrix : mat4 = mat4.identity
+    override def matrix = _matrix
+    override def set(matrix : mat4) {
+        _matrix = matrix
+    }
+
+    def translate(x : float4, y : float4, z : float4) {
+        _matrix = _matrix.translate(x, y, z)
+    }
+
+    def rotate(angle : float4, x : float4, y : float4, z : float4) {
+        _matrix = _matrix.rotate(angle, x, y, z)
+    }
+}
+
+stub trait CollisionShape
+
+stub class CollisionBox(val size : vec3) extends CollisionShape {
+    static def apply(x : float4, y : float4, z : float4) = CollisionBox(vec3(x, y, z))
+}
+
+stub class CollisionBox2d(val size : vec2) extends CollisionShape {
+    static def apply(x : float4, y : float4) = CollisionBox2d(vec2(x, y))
+}
+
+stub class CollisionPlane(val normal : vec3, val distance : float4) extends CollisionShape
+

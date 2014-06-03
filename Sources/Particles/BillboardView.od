@@ -1,0 +1,142 @@
+package com.pigeon3d
+
+class BillboardShaderSystem(val space : BillboardShaderSpace) extends ShaderSystem<ColorSource> {
+    static val cameraSpace = BillboardShaderSystem(BillboardShaderSpace.camera)
+    static val projectionSpace = BillboardShaderSystem(BillboardShaderSpace.projection)
+
+    override def shaderFor(param : ColorSource, renderTarget : RenderTarget) : BillboardShader = {
+        val key = BillboardShaderKey(
+                texture =
+                    (renderTarget.is<ShadowRenderTarget> && !ShadowShaderSystem.isColorShaderFor(param))
+                    || param.texture != nil,
+                alpha = param.alphaTestLevel > -0.1,
+                shadow = renderTarget.is<ShadowRenderTarget>,
+                modelSpace = space
+            )
+        map(key, orUpdateWith = key.shader)
+    }
+
+
+    static def shaderFor(key : BillboardShaderKey) = map(key, orUpdateWith = key.shader)
+    private static val map = MHashMap<BillboardShaderKey, BillboardShader>()
+}
+
+
+enum BillboardShaderSpace {
+    camera()
+    projection()
+}
+
+
+case class BillboardShaderKey(val texture : bool, val alpha : bool, val shadow : bool, val modelSpace : BillboardShaderSpace){
+    def shader : BillboardShader = BillboardShader(key = self, BillboardShaderBuilder(key = self).program)
+}
+
+class BillboardShaderBuilder(val key : BillboardShaderKey) extends ShaderTextBuilder {
+    def vertex =
+        "$vertexHeader
+         $ain highp vec3 position;
+         $ain lowp vec2 model;
+        $if(key.texture)
+         $ain mediump vec2 vertexUV;
+         $out mediump vec2 UV;
+        $endif
+         $ain lowp vec4 vertexColor;
+        $if(key.modelSpace == BillboardShaderSpace.camera)
+         uniform mat4 wc;
+         uniform mat4 p;
+        $else
+         uniform mat4 wcp;
+        $endif
+         $out vec4 fColor;
+
+         void main(void) {
+            $if(key.modelSpace == BillboardShaderSpace.camera)
+             highp vec4 pos = wc*vec4(position, 1);
+             pos.x += model.x;
+             pos.y += model.y;
+             gl_Position = p*pos;
+            $else
+             gl_Position = wcp*vec4(position.xy, position.z, 1);
+             gl_Position.xy += model;
+            $endif
+             UV = vertexUV;$when(key.texture)
+             fColor = vertexColor;
+         }"
+    def fragment =
+        "$versionString
+
+        $if(key.texture)
+         $in mediump vec2 UV;
+         uniform lowp sampler2D txt;
+        $endif
+         uniform lowp vec4 color;
+         uniform lowp float alphaTestLevel;
+         $in lowp vec4 fColor;
+        $if(key.shadow && version > 100)
+         out float depth;
+        $else
+         $fragColorDeclaration
+        $endif
+
+         void main(void) {
+             lowp vec4 fragColor;$when(key.shadow && !isFragColorDeclared)
+            $if(key.texture)
+             $fragColor = fColor * color * $texture2D\(txt, UV);
+            $else
+             $fragColor = fColor * color;
+            $endif
+            $if(key.alpha)
+             if($fragColor.a < alphaTestLevel) {
+                 discard;
+             }
+            $endif
+             depth = gl_FragCoord.z;$when(key.shadow && version > 100)
+         }"
+
+    def program = ShaderProgram("Billboard", vertex, fragment)
+}
+
+class BillboardShader(val key : BillboardShaderKey, program : ShaderProgram) extends Shader<ColorSource>(program) {
+    val positionSlot = attributeFor("position")
+    val modelSlot = attributeFor("model")
+    val uvSlot : ShaderAttribute? = if(key.texture) attributeFor("vertexUV") else nil
+    val colorSlot = attributeFor("vertexColor")
+    val colorUniform = uniformVec4("color")
+    val alphaTestLevelUniform : ShaderUniformF4? = if(key.alpha) uniformF4("alphaTestLevel") else nil
+
+    val wcUniform : ShaderUniformMat4? = if(key.modelSpace == BillboardShaderSpace.camera) uniformMat4("wc") else nil
+    val pUniform : ShaderUniformMat4? = if(key.modelSpace == BillboardShaderSpace.camera) uniformMat4("p") else nil
+    val wcpUniform : ShaderUniformMat4? = if(key.modelSpace == BillboardShaderSpace.projection) uniformMat4("wcp") else nil
+
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        positionSlot.setFromBufferWith(vbDesc.stride, valuesCount = 3, GL_FLOAT, shift = vbDesc.position)
+        modelSlot.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, shift = vbDesc.model)
+        colorSlot.setFromBufferWith(vbDesc.stride, valuesCount = 4, GL_FLOAT, shift = vbDesc.color)
+        if(key.texture) {
+            uvSlot?.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, shift = vbDesc.uv)
+        }
+    }
+    override def loadUniforms(param : ColorSource) {
+        if(key.modelSpace == BillboardShaderSpace.camera) {
+            wcUniform?.apply(matrix = matrix.value.wc)
+            pUniform?.apply(matrix = matrix.value.p)
+        } else {
+            wcpUniform?.apply(matrix = matrix.value.wcp)
+        }
+        if(key.alpha) {
+            alphaTestLevelUniform?.apply(f4 = param.alphaTestLevel)
+        }
+        if(key.texture) {
+            param.texture.for(context.bindTexture(_))
+        }
+        colorUniform(vec4 = param.color)
+    }
+}
+
+class BillboardParticleSystemView<P>(system : ParticleSystem,
+    material : ColorSource, blendFunc : BlendFunction = BlendFunction.standard
+) extends ParticleSystemViewIndexArray<P, BillboardBufferData, ColorSource>(
+    system, Sprite.vbDesc,
+    BillboardShaderSystem.cameraSpace.shaderFor(material), material, blendFunc
+)

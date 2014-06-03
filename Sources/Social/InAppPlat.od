@@ -1,0 +1,7 @@
+package com.pigeon3d
+
+stub class InApp {
+   static def loadProducts(ids : [string], callback :  [InAppProduct] -> void, onError : string -> void)
+   static def getFromCacheOrLoadProduct(id : string, callback :  InAppProduct -> void, onError : string -> void)
+}
+

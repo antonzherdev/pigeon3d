@@ -1,0 +1,5 @@
+package objd.lang
+
+stub object Action {
+    def delay(seconds : float8, weak action : () -> void)
+}

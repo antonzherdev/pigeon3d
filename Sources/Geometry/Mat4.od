@@ -1,0 +1,31 @@
+package com.pigeon3d.geometry
+
+stub class mat4(val array : float4[16]) {
+    static def identity : mat4
+    static def null : mat4
+    def inverse : mat4
+    def mul(vec4 : vec4) : vec4
+    def mul(vec3 : vec3) : vec3
+    def mul(vec3 : vec3, w : float4) : vec4
+    def mul(rect : Rect) : Rect
+    def mul(matrix : mat4) : mat4
+    def mul(rect : Rect, z : float4) : Rect
+    def divBySelf(vec4 : vec4) : vec4
+    def rotate(angle : float4, x : float4, y : float4, z : float4) : mat4
+    def rotate(angle : float4, vec3 : vec3) : mat4
+    def scale(x : float4, y : float4, z : float4) : mat4
+    def scale(vec3 : vec3) : mat4
+    def translate(x : float4, y : float4, z : float4) : mat4
+    def translate(vec3 : vec3) : mat4
+    static def ortho(left : float4, right : float4, bottom : float4, top : float4, zNear : float4, zFar : float4) : mat4
+    static def lookAt(eye : vec3, center : vec3, up : vec3) : mat4
+}
+
+stub class Mat3(val array : float4[9]) {
+    def array : float4[9]
+
+    static def identity : Mat3
+    static def null : Mat3
+    def mul(vec3 : vec3) : vec3
+    def mul(vec2 : vec2) : vec2
+}

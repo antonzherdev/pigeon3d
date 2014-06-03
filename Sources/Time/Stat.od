@@ -1,0 +1,31 @@
+package com.pigeon3d
+
+class Stat {
+    private var accumDelta : float = 0.0
+    private var framesCount : uint = 0
+    private var _frameRate : float = 0.0
+    private val textVar = Var<string>("")
+    private val text = Text(
+        font = mainFontWith(size = 18),
+        text = textVar,
+        position = vec3(-0.98, -0.99, 0),
+        alignment = TextAlignment.left,
+        color = vec4(1, 1, 1, 1))
+    def frameRate = _frameRate
+
+    def draw {
+        BlendFunction.standard {
+            text.draw
+        }
+    }
+    def tickWith(delta : float) {
+        accumDelta += delta
+        framesCount++
+        if(accumDelta > 1.0) {
+            _frameRate = framesCount / accumDelta
+            textVar.value = _frameRate.round
+            accumDelta = 0
+            framesCount = 0
+        }
+    }
+}

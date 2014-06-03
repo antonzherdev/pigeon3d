@@ -1,0 +1,99 @@
+package com.pigeon3d
+
+case class ViewportSurfaceShaderParam(val texture : Texture, val z : float4)
+
+class ViewportShaderBuilder extends ShaderTextBuilder {
+    def vertex =
+       "$vertexHeader
+
+        $ain highp vec2 position;
+        uniform lowp float z;
+        $out mediump vec2 UV;
+
+        void main(void) {
+            gl_Position = vec4(2.0*position.x - 1.0, 2.0*position.y - 1.0, z, 1);
+            UV = position;
+        }"
+    def fragment =
+       "$fragmentHeader
+        $in mediump vec2 UV;
+
+        uniform lowp sampler2D txt;
+
+        void main(void) {
+            $fragColor = $texture2D\(txt, UV);
+        }"
+    def program = ShaderProgram("Viewport", vertex, fragment)
+}
+
+class ViewportSurfaceShader extends Shader<ViewportSurfaceShaderParam>(ViewportShaderBuilder().program) {
+    static val instance = ViewportSurfaceShader()
+    val positionSlot = attributeFor("position")
+    val zUniform = uniformF4("z")
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        positionSlot.setFromBufferWith(vbDesc.stride, valuesCount = 2, GL_FLOAT, shift = vbDesc.model)
+    }
+
+    override def loadUniforms(param : ViewportSurfaceShaderParam) {
+        context.bindTexture(param.texture)
+        zUniform(f4 = param.z)
+    }
+}
+
+abstract class BaseViewportSurface(val createRenderTarget : vec2i -> SurfaceRenderTarget) {
+    private var _surface : RenderTargetSurface? = nil
+    def surface : RenderTargetSurface? = _surface
+    private var _renderTarget : SurfaceRenderTarget? = nil
+    def renderTarget : SurfaceRenderTarget = {
+        if(_renderTarget == nil || _renderTarget?.size != context.viewSize.value) {
+            _renderTarget = createRenderTarget(context.viewSize.value)
+        }
+        _renderTarget.get
+    }
+
+    private def maybeRecreateSurface {
+        if(needRedraw) {
+            _surface = createSurface
+        }
+    }
+
+    def createSurface : RenderTargetSurface
+
+    def texture : Texture = renderTarget.cast<SurfaceRenderTargetTexture>.texture
+    def renderBuffer : uint4 = renderTarget.cast<SurfaceRenderTargetRenderBuffer>.renderBuffer
+
+    def needRedraw : bool = _surface == nil || _surface?.size != context.viewSize.value
+
+    def bind {
+        maybeRecreateSurface
+        _surface?.bind
+    }
+
+    inline def apply(draw : () -> void) {
+        bind
+        draw()
+        unbind
+    }
+
+    inline def maybe(draw : () -> void) {
+        if(needRedraw) {
+            apply(draw)
+        }
+    }
+
+    inline def maybe(force : bool, draw : () -> void) {
+        if(force || needRedraw) {
+            apply(draw)
+        }
+    }
+
+    def unbind {
+        _surface?.unbind
+    }
+
+    static lazy val fullScreenMesh = Mesh(
+        VBO.vec2([vec2(0, 0), vec2(1, 0), vec2(0, 1), vec2(1, 1)]),
+        EmptyIndexSource.triangleStrip)
+    static lazy val fullScreenVao = fullScreenMesh.vao(ViewportSurfaceShader.instance)
+}
+

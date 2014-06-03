@@ -1,0 +1,134 @@
+package com.pigeon3d
+
+trait IndexSource {
+    def bind {}
+    def draw
+    def drawWith(start : uint, count : uint)
+    def isMutable = false
+    def isEmpty = false
+}
+
+object IBO {
+    static def apply(pointer : Pointer<uint4>, count : uint4) : ImmutableIndexBuffer = {
+        val ib = ImmutableIndexBuffer(egGenBuffer, GL_TRIANGLES, count*4, count)
+        ib.bind
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, count*4, pointer, GL_STATIC_DRAW)
+        ib
+    }
+
+    static def apply(data : PArray<uint4>) : ImmutableIndexBuffer = {
+        val ib = ImmutableIndexBuffer(egGenBuffer, GL_TRIANGLES, data.length, data.count)
+        ib.bind
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.length, data.bytes, GL_STATIC_DRAW)
+        ib
+    }
+
+    static def mut(mode : uint4 = GL_TRIANGLES, usage : uint4) : MutableIndexBuffer = MutableIndexBuffer(egGenBuffer, mode, usage)
+}
+
+trait IndexBuffer extends IndexSource {
+    def handle : uint4
+    def mode : uint4
+    def count : uint
+
+    override def draw {
+        context.draw
+        val n = count
+        if(n > 0) glDrawElements(mode, n, GL_UNSIGNED_INT, Pointer.null<uint4>)
+        egCheckError
+    }
+
+    override def drawWith(start : uint, count : uint) {
+        context.draw
+        if(count > 0) glDrawElements(mode, count, GL_UNSIGNED_INT, (4*start).cast<Pointer<uint4>>)
+        egCheckError
+    }
+}
+
+class ImmutableIndexBuffer(handle : uint4, override val mode : uint4, override val length : uint, override val count : uint)
+    extends Buffer<uint4>(UInt4.type, GL_ELEMENT_ARRAY_BUFFER, handle)
+    with IndexBuffer
+{
+    override def bind {
+        context.bindIndexBuffer(handle)
+    }
+}
+
+
+class MutableIndexBuffer(handle : uint4, override val mode : uint4, usage : uint4)
+    extends MutableBuffer<uint4>(UInt4.type, GL_ELEMENT_ARRAY_BUFFER, handle, usage)
+    with IndexBuffer
+{
+    override def isMutable = true
+    override def bind {
+        context.bindIndexBuffer(handle)
+    }
+    override def isEmpty = false
+}
+
+class IndexBufferRing(ringSize : uint4, val mode : uint4, val usage : uint4)
+    extends BufferRing<uint4, MutableIndexBuffer>(ringSize, creator = MutableIndexBuffer(egGenBuffer, mode, usage))
+
+class EmptyIndexSource(val mode : uint4) extends IndexSource {
+    static val triangleStrip = EmptyIndexSource(GL_TRIANGLE_STRIP)
+    static val triangleFan = EmptyIndexSource(GL_TRIANGLE_FAN)
+    static val triangles = EmptyIndexSource(GL_TRIANGLES)
+    static val lines = EmptyIndexSource(GL_LINES)
+
+    override def draw {
+        context.draw
+        glDrawArrays(mode, 0, context.vertexBufferCount)
+        egCheckError
+    }
+
+    override def drawWith(start : uint, count : uint) {
+        context.draw
+        if(count > 0) glDrawArrays(mode, start, count)
+        egCheckError
+    }
+}
+
+class ArrayIndexSource(val array : PArray<uint4>, val mode : uint4) extends IndexSource {
+    override def draw {
+        context.bindIndexBuffer(0)
+        val n = array.count
+        if(n > 0) glDrawElements(mode, n, GL_UNSIGNED_INT, array.bytes)
+        egCheckError
+    }
+
+    override def drawWith(start : uint, count : uint) {
+        context.bindIndexBuffer(0)
+        if(count > 0) glDrawElements(mode, count, GL_UNSIGNED_INT, array.bytes + 4*start)
+        egCheckError
+    }
+}
+
+class IndexSourceGap(val source : IndexSource, val start : uint4, val count : uint4) extends IndexSource {
+    override def bind {
+        source.bind
+    }
+
+    override def draw {
+        if(count > 0) source.drawWith(start, count)
+    }
+
+    override def drawWith(start : uint, count : uint) {
+        if(count > 0) source.drawWith(self.start + start, count)
+    }
+}
+
+class MutableIndexSourceGap(val source : IndexSource) extends IndexSource {
+    var start : uint4 = 0
+    var count : uint4 = 0
+    override def bind {
+        source.bind
+    }
+
+    override def draw {
+        if(count > 0) source.drawWith(start, count)
+    }
+
+    override def drawWith(start : uint, count : uint) {
+        if(count > 0) source.drawWith(self.start + start, count)
+    }
+}

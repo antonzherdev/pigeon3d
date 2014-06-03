@@ -1,0 +1,56 @@
+package com.pigeon3d
+
+import core.math._
+
+object Progress {
+    def progress(f4 : float4, f42 : float4) : float4 -> float4 = {
+        val k = (f42 - f4)
+        if(k == 0) t : float4 -> {f4}
+        else t : float4 -> {k*t + f4}
+    }
+
+    def progress(vec2 : vec2, vec22 : vec2) : float4 -> vec2 = {
+        val x = progress(vec2.x, vec22.x)
+        val y = progress(vec2.y, vec22.y)
+        t : float4 -> {vec2(x(t), y(t))}
+    }
+
+    def progress(vec3 : vec3, vec32 : vec3) : float4 -> vec3 = {
+        val x = progress(vec3.x, vec32.x)
+        val y = progress(vec3.y, vec32.y)
+        val z = progress(vec3.z, vec32.z)
+        t : float4 -> {vec3(x(t), y(t), z(t))}
+    }
+
+    def progress(vec4 : vec4, vec42 : vec4) : float4 -> vec4 = {
+        val x = progress(vec4.x, vec42.x)
+        val y = progress(vec4.y, vec42.y)
+        val z = progress(vec4.z, vec42.z)
+        val w = progress(vec4.w, vec42.w)
+        t : float4 -> {vec4(x(t), y(t), z(t), w(t))}
+    }
+
+    def gapOpt(t1 : float4, t2 : float4) : float4 -> float4? = {
+        val l = t2 - t1
+        t : float4 ->
+            if(t.between(t1, t2)) (t - t1)/l
+            else nil
+    }
+
+    def gap(t1 : float4, t2 : float4) : float4 -> float4 = {
+        val l = t2 - t1
+        t : float4 ->
+            if(t <= t1) 0.0.cast<float4>
+            else if(t >= t2) 1.0.cast<float4>
+            else (t - t1)/l
+    }
+
+    def trapezium(t1 : float4, t2 : float4 = 1.0 - t1) : float4 -> float4 = {
+        t : float4 ->
+            if(t <= t1) t/t1
+            else if(t >= t2) 1 - (t - t2)/(1 - t2)
+            else 1
+    }
+
+    def div(on : float4) : float4 -> float4 = t : float4 -> (t/on)
+}

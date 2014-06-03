@@ -1,0 +1,63 @@
+package com.pigeon3d
+
+enum OSType(val shadows : bool, val touch : bool) {
+    MacOS(true, false)
+    iOS(true, true)
+}
+
+enum InterfaceIdiom(val isPhone : bool, val isPad : bool, val isComputer : bool) {
+    phone(true, false, false)
+    pad(false, true, false)
+    computer(false, false, true)
+}
+
+enum DeviceType {
+    iPhone()
+    iPad()
+    iPodTouch()
+    Simulator()
+    Mac()
+}
+
+case class OS(val tp : OSType, val version : Version, val jailbreak : bool) {
+    def isIOS : bool = tp == OSType.iOS
+    def isIOSLess(version : string) : bool = tp == OSType.iOS && self.version.less(version)
+}
+
+case class Device(val tp : DeviceType, val interfaceIdiom : InterfaceIdiom, val version : Version, val screenSize : vec2) {
+    def isIPhoneLess(version : string) : bool = tp == DeviceType.iPhone && self.version.less(version)
+    def isIPodTouchLess(version : string) : bool = tp == DeviceType.iPodTouch && self.version.less(version)
+}
+
+case class Platform(val os : OS, val device : Device, val text : string) {
+    val shadows : bool = os.tp.shadows
+    val touch : bool = os.tp.touch
+    val interfaceIdiom  : InterfaceIdiom = device.interfaceIdiom
+    val isPhone : bool = interfaceIdiom.isPhone
+    val isPad : bool = interfaceIdiom.isPad
+    val isComputer : bool = interfaceIdiom.isComputer
+
+    def screenSize : vec2 = device.screenSize
+    def screenSizeRatio : float = screenSize.x/screenSize.y
+}
+
+
+case class Version(val parts : [int]) extends Comparable<Version> {
+    static def apply(str : string) : Version = Version(str.split(".").chain.map(_.toInt).toArray)
+
+    override def compare(to : Version) : int = {
+        val i = parts.iterator
+        val j = to.parts.iterator
+        while(i.hasNext && j.hasNext) {
+            val vi = i.next
+            val vj = j.next
+            if(vi != vj) {
+                return vi.compare(vj)
+            }
+        }
+        0
+    }
+
+    def less(than : string) : bool = compare(Version(str = than)) < 0
+    def more(than : string) : bool = compare(Version(str = than)) > 0
+}

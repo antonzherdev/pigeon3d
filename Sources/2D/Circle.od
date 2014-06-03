@@ -1,0 +1,106 @@
+package com.pigeon3d
+
+import objd.math._
+
+class CircleShaderBuilder(val segment : bool) extends ShaderTextBuilder {
+    def vertex =
+       "$vertexHeader
+        $ain lowp vec2 model;
+
+        uniform highp vec4 position;
+        uniform mat4 p;
+        uniform lowp vec2 radius;
+        $out highp vec2 coord;
+
+        void main(void) {
+            highp vec4 pos = p*position;
+            pos.xy += model*radius;
+            gl_Position = pos;
+            coord = model;
+        }"
+    def fragment =
+       "$fragmentHeader
+
+        $in highp vec2 coord;
+        uniform lowp vec4 color;
+        uniform lowp vec4 strokeColor;
+       $if(segment)
+        uniform lowp vec4 sectorColor;
+        uniform lowp float startTg;
+        uniform lowp float endTg;
+       $endif
+
+        void main(void) {
+            lowp float tg = atan(coord.y, coord.x);
+            highp float dt = dot(coord, coord);
+            lowp float alpha = 0.0;
+           $if(segment)
+            if(endTg < startTg) {
+                alpha = sectorColor.w * clamp(
+                    1.0 - smoothstep(0.95, 1.0, dt)
+                    - (clamp(smoothstep(endTg - 0.1, endTg, tg) + 1.0 - smoothstep(startTg, startTg + 0.1, tg), 1.0, 2.0) - 1.0)
+                    , 0.0, 1.0);
+            } else {
+                alpha = sectorColor.w * clamp(
+                    1.0 - smoothstep(0.95, 1.0, dt)
+                    - (1.0 - smoothstep(startTg, startTg + 0.1, tg))
+                    - (smoothstep(endTg - 0.1, endTg, tg))
+                    , 0.0, 1.0);
+            }
+            $fragColor = vec4(mix(
+                mix(color.xyz, sectorColor.xyz, alpha),
+                strokeColor.xyz, strokeColor.w*(smoothstep(0.75, 0.8, dt) - smoothstep(0.95, 1.0, dt))),
+                color.w * (1.0 - smoothstep(0.95, 1.0, dt)));
+           $else
+            $fragColor = vec4(mix(color.xyz, strokeColor.xyz, strokeColor.w*(smoothstep(0.75, 0.8, dt) - smoothstep(0.95, 1.0, dt))),
+                color.w * (1.0 - smoothstep(0.95, 1.0, dt)));
+           $endif
+        }"
+
+    def program = ShaderProgram("Circle", vertex, fragment)
+}
+
+class CircleParam(val color : vec4, val strokeColor : vec4, val position : vec3, val radius : vec2, val relative : vec2, val segment : CircleSegment?)
+class CircleSegment(val color : vec4, val start : float4, val end : float4)
+
+class CircleShader(val segment : bool) extends Shader<CircleParam>(CircleShaderBuilder(segment).program) {
+    static val withSegment = CircleShader(true)
+    static val withoutSegment = CircleShader(false)
+
+    val model = attributeFor("model")
+    override def loadAttributes(vbDesc : VertexBufferDesc<_>) {
+        model.setFromBufferWith(vbDesc.stride, 2, GL_FLOAT, vbDesc.model)
+    }
+
+    val pos = uniformVec4("position")
+    val p = uniformMat4("p")
+    val radius = uniformVec2("radius")
+    val color = uniformVec4("color")
+    val strokeColor = uniformVec4("strokeColor")
+    val sectorColor : ShaderUniformVec4? = if(segment) uniformVec4("sectorColor") else nil
+    val startTg : ShaderUniformF4? = if(segment) uniformF4("startTg") else nil
+    val endTg : ShaderUniformF4? = if(segment) uniformF4("endTg") else nil
+    override def loadUniforms(param : CircleParam) {
+        pos(matrix.value.wc * vec4(param.position, 1) + param.relative)
+        p(matrix.value.p)
+        radius(param.radius)
+        color(param.color)
+        strokeColor(param.strokeColor)
+        if(segment) {
+            param.segment.for{ sec ->
+                sectorColor?.apply(sec.color)
+                if(sec.start < sec.end) {
+                    startTg?.apply(clamp(sec.start))
+                    endTg?.apply(clamp(sec.end))
+                } else {
+                    startTg?.apply(clamp(sec.end))
+                    endTg?.apply(clamp(sec.start))
+                }
+            }
+        }
+    }
+    private def clamp(p : float4) : float4 =
+        if(p < -M_PI) 2*M_PI + p
+        else if(p > M_PI) -2*M_PI + p
+        else p
+}

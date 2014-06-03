@@ -1,0 +1,150 @@
+package com.pigeon3d
+
+import objd.math._
+
+class CameraIso(val tilesOnScreen : vec2, val reserve : CameraReserve, override val viewportRatio : float, val center : vec2)
+    extends Camera
+{
+    static def apply(tilesOnScreen : vec2, reserve : CameraReserve, viewportRatio : float) =
+        CameraIso(tilesOnScreen, reserve, viewportRatio, (tilesOnScreen - vec2(1, 1))/2.0)
+    private static val ISO = MapSso.ISO
+
+    private val ww : float = tilesOnScreen.x + tilesOnScreen.y
+//    val viewportRatio : float = 2*ww/(yReserve*2 + ww)
+
+    static val m = mat4.identity.rotate(90, 1, 0, 0)
+    static val w = mat4.identity.rotate(-90, 1, 0, 0)
+
+    override val matrixModel : MatrixModel = {
+        val isoWW = ww*ISO
+        val isoWW2 = isoWW/2
+        val as = (isoWW - viewportRatio*reserve.height + reserve.width)/(isoWW*viewportRatio)
+        val angleSin = if(as > 1.0) 1.0 else as
+        ImMatrixModel(
+            m = m,
+            w = w,
+            c = {
+                val ang = asin(angleSin)*180/M_PI
+                val t = mat4.identity.translate(-center.x, 0, center.y)
+                val r = mat4.identity
+                    .rotate(ang, 1, 0, 0)
+                    .rotate(-45.0, 0, 1, 0)
+                r * t
+            },
+            p = mat4.ortho(
+                -isoWW2 - reserve.left, isoWW2 + reserve.right,
+                -isoWW2*angleSin - reserve.bottom, isoWW2*angleSin + reserve.top,
+                -1000.0, 1000.0)
+        )
+    }
+
+    override def cullFace : uint = GL_FRONT
+    def naturalCenter : vec2 = (tilesOnScreen - vec2(1, 1))/2.0
+}
+
+
+class CameraIsoMove(val base : CameraIso, val minScale : float, val maxScale : float, val panFingers : uint, val tapFingers : uint)
+    extends InputProcessor
+{
+    private var _currentBase : CameraIso = base
+    private var _camera : CameraIso = base
+    def camera : CameraIso = _camera
+
+    val changed = Signal<CameraIsoMove>()
+    val scale : Var<float> = Var.limited<float>(1.0) {s -> s.clamp(minScale, maxScale)}
+    private val scaleObs = scale.observe { s ->
+        _camera = CameraIso(_currentBase.tilesOnScreen/s, _currentBase.reserve/s, _currentBase.viewportRatio, _camera.center)
+        changed.post
+    }
+
+    val center : Var<vec2> = Var.limited<vec2>(_camera.center) { cen ->
+        if(scale.value <= 1) _currentBase.naturalCenter
+        else {
+            val centerP = _currentBase.matrixModel.wcp.mul(vec4(cen, 0, 1)).xy
+            val cp = centerBounds.closestPointFor(vec2 = centerP)
+            if(cp == centerP) cen
+            else {
+                val mat4 = _currentBase.matrixModel.wcp.inverse
+                val p0 = mat4.mul(vec4 = vec4(cp.x, cp.y, -1, 1))
+                val p1 = mat4.mul(vec4 = vec4(cp.x, cp.y, 1, 1))
+                val line = Line3(p0.xyz, p1.xyz - p0.xyz)
+                line.r(plane = Plane(vec3(0, 0, 0), vec3(0, 0, 1))).xy
+            }
+        }
+    }
+    private val centerObs = center.observe{ cen ->
+        _camera = CameraIso(camera.tilesOnScreen, camera.reserve, camera.viewportRatio, cen)
+        changed.post
+    }
+
+    private var _startPan : vec2 = vec2(-1, -1)
+    private var _startScale : float = 1.0
+    private var _pinchLocation : vec2 = vec2(-1, -1)
+    private var _startCenter : vec2 = vec2(-1, -1)
+
+    def viewportRatio : float = _currentBase.viewportRatio
+    def set(viewportRatio : float) {
+        _currentBase = CameraIso(_currentBase.tilesOnScreen, _currentBase.reserve, viewportRatio, _currentBase.center)
+        _camera = CameraIso(_camera.tilesOnScreen, _camera.reserve, viewportRatio, _camera.center)
+    }
+    def reserve : CameraReserve = _currentBase.reserve
+    def set(reserve : CameraReserve) {
+        _currentBase = CameraIso(_currentBase.tilesOnScreen, reserve, _currentBase.viewportRatio, _currentBase.center)
+        _camera = CameraIso(_camera.tilesOnScreen, reserve, _camera.viewportRatio, _camera.center)
+    }
+
+    var panEnabled = true
+    var tapEnabled = true
+    var pinchEnabled = true
+    override def recognizers : Recognizers = [Recognizer<PinchParameter>(Pinch(),
+        began = event -> {
+            if(pinchEnabled) {
+                _startScale = scale.value
+                _pinchLocation = event.location
+                _startCenter = _camera.center
+                true
+            } else false
+        },
+        changed = event -> {
+            val s = event.param.scale
+            scale.value = _startScale * s
+            center.value =
+                if(s <= 1.0) _startCenter
+                else if(s < 2.0) _startCenter + (_pinchLocation - _startCenter)*(s - 1.0)
+                else _pinchLocation
+        },
+        ended = event -> {
+        }
+    ),
+    Recognizer<Void>(Pan(panFingers),
+        began = event -> {
+            _startPan = event.location
+            panEnabled && scale.value > 1.0
+        },
+        changed = event -> {
+            center.value = _camera.center + _startPan - event.location
+        },
+        ended = event -> {
+        }
+    ),
+    Recognizer<Void>(Tap(tapFingers, 2),
+        on = event -> {
+            if(tapEnabled) {
+                if(scale.value != maxScale) {
+                    val loc = event.location
+                    scale.value = maxScale
+                    center.value = loc
+                } else {
+                    scale.value = 1.0
+                    center.value = _currentBase.naturalCenter
+                }
+                true
+            } else false
+        })
+    ]
+
+    private def centerBounds : Rect = {
+        val sizeP = vec2(2.0 - 2.0/scale.value)
+        Rect(sizeP/-2.0, sizeP)
+    }
+}

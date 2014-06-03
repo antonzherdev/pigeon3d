@@ -1,0 +1,189 @@
+package com.pigeon3d.gl
+
+import com.pigeon3d.geometry._
+import com.pigeon3d._
+
+stub object gl {
+    def glClear(: uint4)
+    def glClearColor(r : float4, g : float4, b : float4, a : float4)
+    def glClearDepth( : float4)
+    def glDepthMask( : ubyte)
+    def egCheckError
+
+    def egFlush
+    def glFlush
+    def glFinish
+    def glEnable(: uint4)
+    def glDisable(: uint4)
+    val GL_DEPTH_TEST : uint4
+    val GL_MULTISAMPLE : uint4
+    val GL_CULL_FACE : uint4
+    val GL_BLEND : uint4
+    val GL_ALPHA_TEST : uint4
+    def glHint(: uint4, : uint4)
+    val GL_LINE_SMOOTH_HINT : uint4
+    val GL_POLYGON_SMOOTH_HINT : uint4
+    val GL_NICEST : uint4
+    def glAlphaFunc(: uint4, : float4)
+    val GL_GREATER : uint4
+
+    def glCullFace(: uint4)
+    val GL_FRONT : uint4
+    val GL_BACK : uint4
+    val GL_FRONT_AND_BACK : uint4
+    def glFrontFace(: uint4)
+    val GL_CW : uint4
+    val GL_CWW : uint4
+
+    def glGetError : uint4
+
+    def glLineWidth(width : float4)
+    def egViewport(rect : RectI)
+    def glViewport (x : int4, y : int4, width : int4, height : int4)
+    def glUniformMatrix4fv(location : uint4, count : int4, transpose : ubyte, value : float4[16])
+    def glUniform1f(location : uint4, f : float4)
+    def glUniform1i(location : uint4, f : int4)
+    def egUniformVec4(location : uint4, color : vec4)
+    def egUniformVec3(location : uint4, color : vec3)
+    def egUniformVec2(location : uint4, color : vec2)
+
+    def glCreateProgram : uint4
+    def glAttachShader(program : uint4, shader : uint4)
+    def glAttachShader(program : uint4, shader : uint4)
+    def glLinkProgram(program : uint4)
+    def glDeleteProgram(program : uint4)
+    def glUseProgram(program : uint4)
+    def egGetAttribLocation(program : uint4, name : string) : int4
+    def egGetUniformLocation(program : uint4, name : string) : int4
+    def egGetProgramError(program : uint4) : string?
+
+    def glDeleteShader(shader : uint4)
+    def glCreateShader(shaderType : uint4) : uint4
+    def egShaderSource(shader : uint4, source : string)
+    def glCompileShader(shader : uint4)
+    def egGetShaderError(shader : uint4) : string?
+
+    val GL_VERTEX_SHADER : uint4
+    val GL_FRAGMENT_SHADER : uint4
+
+    def egGenBuffer : uint4
+    def egDeleteBuffer(handle : uint4)
+    def egGenVertexArray : uint4
+    def egDeleteVertexArray(handle : uint4)
+    def egBindVertexArray(handle : uint4)
+    def glBindBuffer(target : uint4, handle : uint4) : uint4
+    def glBufferData(target : uint4, size : int8, data : Pointer<_>, usage : uint4)
+    def egMapBuffer<T>(target : uint4, access : uint4) : Pointer<T>?
+    def egUnmapBuffer(target : uint4) : bool
+    def glBufferSubData(target : uint4, offset : int8 ,size : int8, data : Pointer<_>)
+    def egVertexAttribPointer(slot : uint4, size : uint4, tp : uint4, normalized : ubyte, stride : uint4, shift : uint4)
+    def glDrawElements(mode : uint4, count : int4, tp : uint4, indices : Pointer<_>)
+    def glDrawElementsEXT(mode : uint4, count : int4, tp : uint4, indices : Pointer<_>)
+    def glDrawRangeElements(mode : uint4, start : uint4, end : uint4, count : int4, tp : uint4, indices : Pointer<_>)
+    def glDrawArrays(mode : uint4, first : int4, count : int4)
+    def glEnableVertexAttribArray(handle : int4)
+    def glDisableVertexAttribArray(handle : int4)
+    val GL_ARRAY_BUFFER : uint4
+    val GL_ELEMENT_ARRAY_BUFFER : uint4
+    val GL_STATIC_DRAW : uint4
+    val GL_DYNAMIC_DRAW : uint4
+    val GL_STREAM_DRAW : uint4
+    val GL_WRITE_ONLY : uint4
+    val GL_READ_ONLY : uint4
+    val GL_READ_WRITE : uint4
+    val GL_TRIANGLES : uint4
+    val GL_TRIANGLE_STRIP : uint4
+    val GL_TRIANGLE_FAN : uint4
+    val GL_LINES : uint4
+
+    val GL_FLOAT : uint4
+    val GL_DOUBLE : uint4
+    val GL_BYTE : uint4
+    val GL_UNSIGNED_BYTE : uint4
+    val GL_UNSIGNED_SHORT : uint4
+    val GL_INT : uint4
+    val GL_UNSIGNED_INT : uint4
+
+    val GL_TRUE : ubyte
+    val GL_FALSE : ubyte
+
+    def glBlendFunc(sfactor : uint4, dfactor : uint4)
+    def glBlendFuncSeparate(srcRGB : uint4, dstRGB : uint4, stcAlpha : uint4, dstAlpha : uint4)
+    val GL_ZERO : uint4
+    val GL_ONE : uint4
+    val GL_SRC_ALPHA : uint4
+    val GL_ONE_MINUS_SRC_ALPHA : uint4
+
+
+    def egGenFrameBuffer : uint4
+    def egGenFrameBufferEXT : uint4
+    def egDeleteFrameBuffer(handle : uint4)
+    def egDeleteFrameBufferEXT(handle : uint4)
+    def glBindFramebuffer( : uint4, handle : uint4)
+    def glBindFramebufferEXT( : uint4, handle : uint4)
+    val GL_FRAMEBUFFER : uint4
+    val GL_READ_FRAMEBUFFER : uint4
+    val GL_DRAW_FRAMEBUFFER : uint4
+    val GL_COLOR_BUFFER_BIT : uint4
+    val GL_DEPTH_BUFFER_BIT : uint4
+    def glBindTexture( : uint4,handle : uint4)
+    val GL_TEXTURE_2D : uint4
+    val GL_TEXTURE_2D_MULTISAMPLE : uint4
+    val GL_RGBA : uint4
+    val GL_RGBA8_OES : uint4
+    val GL_DEPTH_COMPONENT16 : uint4
+    val GL_DEPTH_COMPONENT24 : uint4
+    val GL_DEPTH_COMPONENT32 : uint4
+    val GL_RGBA8 : uint4
+    val GL_NONE : uint4
+    def egGenTexture : uint4
+    def egDeleteTexture(handle : uint4)
+    def egDiscardFrameBuffer(target : uint4, attachments : PArray<uint4>)
+
+    def egGenRenderBuffer : uint4
+    def egDeleteRenderBuffer(handle : uint4) : uint4
+    def glBindRenderbuffer( : uint4,handle : uint4)
+    def glRenderbufferStorage( : uint4, component : uint4, width : int4, height : int4)
+    val GL_RENDERBUFFER : uint4
+    val GL_DEPTH_COMPONENT : uint4
+    val GL_DEPTH_COMPONENT24 : uint4
+    def glFramebufferRenderbuffer(target : uint4, attachment : uint4, buftarget : uint4, buffer : uint4)
+    val GL_DEPTH_ATTACHMENT : uint4
+
+    def glTexImage2D(target : uint4, level : int4, internalformat  : int4, width : int4, height : int4, border : int4, format : uint4, tp : uint4, pixels : Pointer<_>)
+    def glTexImage2DMultisample(target : uint4, samples : int4, internalformat  : int4, width : int4, height : int4, fixedsamplelocations : ubyte)
+    def glTexParameteri(target : uint4, pname : uint4, param : int4)
+    val GL_TEXTURE_WRAP_S : uint4
+    val GL_TEXTURE_WRAP_T : uint4
+    val GL_TEXTURE_COMPARE_FUNC : uint4
+    val GL_TEXTURE_COMPARE_MODE : uint4
+    val GL_LINEAR : uint4
+    val GL_LINEAR_MIPMAP_LINEAR : uint4
+    val GL_LINEAR_MIPMAP_NEAREST : uint4
+    val GL_NEAREST_MIPMAP_LINEAR : uint4
+    val GL_NEAREST_MIPMAP_NEAREST : uint4
+    val GL_CLAMP_TO_EDGE : uint4
+    val GL_LEQUAL : uint4
+    val GL_COMPARE_R_TO_TEXTURE : uint4
+    val GL_NEAREST : uint4
+    val GL_TEXTURE_MIN_FILTER : uint4
+    val GL_TEXTURE_MAG_FILTER : uint4
+    def egFramebufferTexture(target : uint4, attachment : uint4, texture : uint4, level : int4)
+    def glDrawBuffer(:uint4)
+    def glCheckFramebufferStatus(target : uint4) : int4
+    val GL_COLOR_ATTACHMENT0 : uint4
+    val GL_FRAMEBUFFER_COMPLETE : uint4
+    def glGenerateMipmap(target : uint4)
+    def glActiveTexture(: uint4)
+    val GL_TEXTURE0 : uint4
+    val GL_TEXTURE1 : uint4
+    val GL_TEXTURE2 : uint4
+    val GL_TEXTURE3 : uint4
+    val GL_TEXTURE4 : uint4
+
+    def egGLSLVersion : uint4
+
+    def egLabelShaderProgram(handle : uint4, name : string)
+    def egPushGroupMarker(name : string)
+    def egPopGroupMarker
+}

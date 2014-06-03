@@ -1,0 +1,33 @@
+package com.pigeon3d
+
+enum ShareChannel {
+    facebook()
+    twitter()
+    email()
+    message()
+}
+
+
+case class ShareItem(val text : string, val subject : string?) {
+    static def apply(text : string) = ShareItem(text, nil)
+}
+
+case class ShareContent(val text : string, val image : string?, val items : [ShareChannel : ShareItem]) {
+    static def apply(text : string, image : string?) = ShareContent(text, image, [])
+
+    def add(channel : ShareChannel, text : string) : ShareContent = add(channel, text, nil)
+    def add(channel : ShareChannel, text : string, subject : string?) : ShareContent = ShareContent(self.text, image, items + (channel, ShareItem(text, subject)))
+
+    def twitter(text : string) : ShareContent = add(ShareChannel.twitter, text)
+    def facebook(text : string) : ShareContent = add(ShareChannel.facebook, text)
+    def email(text : string, subject : string) : ShareContent = add(ShareChannel.email, text, subject)
+    def message(text : string) : ShareContent = add(ShareChannel.message, text)
+
+    def text(channel : ShareChannel) : string = items(channel)?.text.getOr(text)
+    def subject(channel : ShareChannel) : string? = items(channel)?.subject
+    def image(channel : ShareChannel) : string? = image
+
+    def dialog : ShareDialog = ShareDialog(self, shareHandler = _ -> {}, cancelHandler = {})
+    def dialog(shareHandler : ShareChannel -> void, cancelHandler : () -> void) : ShareDialog =
+        ShareDialog(self, shareHandler, cancelHandler)
+}

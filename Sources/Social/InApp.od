@@ -1,0 +1,26 @@
+package com.pigeon3d
+
+abstract class InAppProduct(val id : string, val name : string, val price : string) {
+    def buy {
+        buy(1)
+    }
+
+    def buy(quantity : uint)
+}
+
+class InAppTransaction(val productId : string, val quantity : uint, val state : InAppTransactionState,  val error : string?) {
+    def finish {
+        finished.post(self)
+    }
+
+    static val changed = Signal<InAppTransaction>()
+    static val finished = Signal<InAppTransaction>()
+}
+
+
+enum InAppTransactionState {
+    purchasing()
+    purchased()
+    failed()
+    restored()
+}

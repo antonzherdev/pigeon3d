@@ -1,0 +1,63 @@
+package com.pigeon3d
+
+abstract class ParticleSystemView<P, D, M>(
+    val system : ParticleSystem<P>, val vbDesc : VertexBufferDesc<D>,
+    val shader : Shader<M>, val material : M, val blendFunc : BlendFunction)
+{
+    val maxCount = system.maxCount
+    val vertexCount = system.vertexCount
+
+    def indexCount : uint4
+    private val _indexCount = indexCount
+    val index : IndexSource = createIndexSource
+    protected def createIndexSource : IndexSource
+
+
+    val vaoRing = VertexArrayRing<M>(ringSize = 3, creator = weak shader.vao(VBO.mut<D>(vbDesc, GL_STREAM_DRAW), index))
+    private var _vao : VertexArray<M>?
+    private var _data : MappedBufferData<D>?
+    private var _lastWriteFuture : Future<uint4>?
+    def prepare {
+        _vao = vaoRing.next
+        _vao?.syncWait
+        _vao?.mutableVertexBuffer.for{ vbo ->
+            _data = vbo.beginWrite(count = vertexCount * maxCount)
+            if(_data != nil) _lastWriteFuture = system.writeTo(_data)
+            else _lastWriteFuture = nil
+        }
+    }
+
+    def draw {
+        if(_data != nil) {
+            _data.finish
+            if(_data.wasUpdated && _lastWriteFuture != nil) {
+                val r = _lastWriteFuture.waitResult(1)
+                if(r != nil && r.isSuccess) {
+                    val n = r.get
+                    if(n > 0) {
+                        context.depthTest.disabled{ context.cullFace.disabled{ blendFunc {
+                            _vao?.draw(material, 0, _indexCount * n)
+                        }}}
+                    }
+                    _vao?.syncSet
+                } else {
+                    Log.info("Incorrect result in particle system: $r")
+                }
+            }
+        }
+    }
+}
+
+abstract class ParticleSystemViewIndexArray<P, D, M>(
+    system : ParticleSystem<P>, vbDesc : VertexBufferDesc<D>,
+    shader : Shader<M>, material : M, blendFunc : BlendFunction)
+    extends ParticleSystemView(system, vbDesc, shader, material, blendFunc)
+{
+    override def indexCount : uint4 = system.cast<ParticleSystemIndexArray>.indexCount
+    protected override def createIndexSource : IndexSource = {
+        val ia = system.cast<ParticleSystemIndexArray>.createIndexArray
+        val ib = IBO(ia, indexCount * maxCount)
+        ia.free
+        ib
+    }
+}

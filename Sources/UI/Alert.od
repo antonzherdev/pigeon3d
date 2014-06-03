@@ -1,0 +1,6 @@
+package com.pigeon3d
+
+stub class Alert {
+    static def showError(title : string, message : string)
+    static def showError(title : string, message : string, callback : () -> void)
+}

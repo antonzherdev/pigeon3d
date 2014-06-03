@@ -1,0 +1,5 @@
+package com.pigeon3d
+
+stub object platform {
+    def egPlatform : Platform
+}

@@ -1,0 +1,35 @@
+package com.pigeon3d
+
+class Text(val visible : React<bool> = true, val font : React<Font>, val text : React<string>, val position : React<vec3>,
+    val alignment : React<TextAlignment>,
+    val color : React<vec4>, val shadow : React<TextShadow?> = nil)
+{
+    private val _changed = ReactFlag(initial = true, [font, text, position, alignment, shadow, context.viewSize])
+    private val fontObserver = font.map{newFont ->
+        weak newFont.symbolsChanged.observe{_ -> _changed.set}
+    }
+
+    private var _vao : SimpleVertexArray<FontShaderParam>?
+    private val isEmpty : React<bool> = text.map(_.isEmpty)
+
+    def draw {
+        if(!visible.value || isEmpty.value) return nil
+        if(_changed.value) {
+            _vao = font.value.vao(text.value, position.value, alignment.value)
+            _changed.clear
+        }
+        shadow.value.for {sh ->
+            _vao?.draw(FontShaderParam(font.value.texture, sh.color * color.value.w, sh.shift))
+        }
+        _vao?.draw(FontShaderParam(font.value.texture, color.value, shift = vec2(0, 0)))
+    }
+
+    lazy val sizeInPoints : React<vec2> = React.async(DispatchQueue.mainThread, font, text) {f, t -> f.measureInPoints(t)}
+    lazy val sizeInP : React<vec2> = React.async(DispatchQueue.mainThread, sizeInPoints, context.scaledViewSize) {s, vs -> s*2/vs}
+
+    def measureInPoints : vec2 = font.value.measureInPoints(text.value)
+    def measureP : vec2 = font.value.measureP(text.value)
+    def measureC : vec2 = font.value.measureC(text.value)
+}
+
+case class TextShadow(val color : vec4, val shift : vec2)

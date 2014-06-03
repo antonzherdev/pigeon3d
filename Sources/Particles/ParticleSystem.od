@@ -1,0 +1,120 @@
+package com.pigeon3d
+
+abstract class ParticleSystem<P, D>(val particleType : PType<P>, val maxCount : uint4) extends Actor {
+    def vertexCount : uint4
+
+    def particleSize : uint4 = particleType.size
+    val particles : Pointer<P> = Pointer<P>(particleSize, maxCount)
+    override def dealloc {
+        particles.free
+    }
+
+    def updateWith(delta : float) : Future<void> = future{
+        doUpdateWith(delta)
+    }
+
+    protected def doUpdateWith(delta : float)
+
+    def writeTo(array : MappedBufferData<D>) : Future<uint4> = future {
+        var ret : uint4 = 0
+        array.write{p ->
+            ret = doWriteTo(p)
+        }
+        ret
+    }
+    protected def doWriteTo(array : Pointer<D>) : uint4
+}
+
+trait ParticleSystemIndexArray {
+    def indexCount : uint4
+    def maxCount : uint4
+    protected def createIndexArray : Pointer<uint4>
+}
+
+abstract class FixedParticleSystem<P, D>(particleType : PType<P>, maxCount : uint4)
+    extends ParticleSystem<P, D>(particleType, maxCount)
+{
+    protected inline def forParticles(by : Pointer<P> -> void) {
+        var i = 0
+        var p = particles
+        while(i < maxCount) {
+            by(p)
+            i++
+            p++
+        }
+    }
+
+    protected inline def writeParticles(array : Pointer<D>, by : (Pointer<D>, Pointer<P>) -> Pointer<D>) : uint4 = {
+        var i = 0
+        var p = particles
+        var a = array
+        while(i < maxCount) {
+            a = by(a, p)
+            i++
+            p++
+        }
+        maxCount
+    }
+}
+
+abstract class EmissiveParticleSystem<P, D>(particleType : PType<P>, maxCount : uint4)
+    extends ParticleSystem<P, D>(particleType, maxCount)
+{
+    protected inline def updateParticles(by : Pointer<P> -> bool) {
+        var i = 0
+        var p = particles
+        while(i < maxCount) {
+            if(p.cast<Pointer<byte>>.get != 0) {
+                val ch = by(p)
+                if(!ch) {
+                    p.cast<Pointer<byte>>.set(0)
+                    _lifeCount--
+                    _nextInvalidRef = p
+                    _nextInvalidNumber = i
+                }
+            }
+            i++
+            p++
+        }
+    }
+    protected var _lifeCount = 0
+    protected val _particleSize = particleSize
+    protected var _nextInvalidNumber = 0
+    protected var _nextInvalidRef : Pointer<P> = particles
+    protected inline def emit(by : Pointer<P> -> void) {
+        if(_lifeCount < maxCount) {
+            var p = _nextInvalidRef
+            var round = false
+            while(p.cast<Pointer<byte>>.get != 0) {
+                _nextInvalidNumber++
+                if(_nextInvalidNumber >= maxCount) {
+                    if(round) return nil
+                    round = true
+                    _nextInvalidNumber = 0
+                    p = particles
+                } else {
+                    p++
+                }
+            }
+            p.cast<Pointer<byte>>.set<byte>(1)
+            by(p)
+            _nextInvalidRef = p
+            _lifeCount++
+        }
+    }
+
+    protected inline def writeParticles(array : Pointer<D>, by : (Pointer<D>, Pointer<P>) -> Pointer<D>) : uint4 = {
+        var i = 0
+        var p = particles
+        var a = array
+        while(i < maxCount) {
+            if(p.cast<Pointer<byte>>.get != 0) {
+                a = by(a, p)
+            }
+            i++
+            p++
+        }
+        _lifeCount
+    }
+}
+
