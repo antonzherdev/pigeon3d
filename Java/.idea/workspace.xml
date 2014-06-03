@@ -1,7 +1,543 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="8518442a-5e74-464f-9fb2-5a52281fb34b" name="Default" comment="" />
+    <list default="true" id="8518442a-5e74-464f-9fb2-5a52281fb34b" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/res/drawable-hdpi/ic_launcher.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/res/drawable-ldpi/ic_launcher.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/res/drawable-mdpi/ic_launcher.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/res/drawable-xhdpi/ic_launcher.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/AndroidManifest.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ArrayIndexSource.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BMFont.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BackgroundSoundPlayer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BaseViewportSurface.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/BentleyOttmann.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/BentleyOttmannEvent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/BentleyOttmannEventQueue.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/BentleyOttmannIntersectionEvent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/BentleyOttmannPointEvent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/test/com/pigeon3d/geometry/BentleyOttmannTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardBufferData.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardParticle.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardParticleSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardParticleSystemView.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardParticleSystem_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardShaderBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardShaderKey.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardShaderSpace.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BillboardShaderSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BlendFunction.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BlendMode.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Buffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BufferRing.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BuildConfig.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Button.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Camera.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Camera2D.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CameraEvent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CameraIso.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CameraIsoMove.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CameraReserve.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Camera_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CircleParam.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CircleSegment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CircleShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CircleShaderBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Collision.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/test/com/pigeon3d/CollisionsTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ColorSource.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Contact.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Context.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Controller.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Controller_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Counter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CounterData.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CrossPoint.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CullFace.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/D2D.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Device.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/DeviceType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/DirectLight.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Director.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/DynamicCollision.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/test/com/pigeon3d/DynamicTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/EmissiveParticleSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/EmptyCounter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/EmptyIndexSource.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/EmptyTexture.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/EnablingState.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Environment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Event.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/EventCounter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/EventPhase.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Event_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Figure.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/test/com/pigeon3d/geometry/FigureTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Figure_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/FileTexture.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Finisher.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/FixedParticleSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Font.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/FontPrintData.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/FontShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/FontShaderBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/FontShaderParam.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/FontSymbolDesc.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Global.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IBO.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ImMatrixModel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ImSchedule.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ImmutableIndexBuffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ImmutableVertexBuffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/InAppProduct.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/InAppTransaction.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/InAppTransactionState.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IndexBuffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IndexBufferRing.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IndexBuffer_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IndexFunFilteredIterable.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IndexFunFilteredIterator.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IndexSource.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IndexSourceGap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/IndexSource_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/InputProcessor.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/InputProcessor_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/InterfaceIdiom.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Intersection.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Layer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/LayerView.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/LayerView_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Layers.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/LengthCounter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Light.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Line.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Line2.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Line3.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/LineSegment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/LocalPlayerScore.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/LongRecognizer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MMatrixModel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MSchedule.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Manifest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MapSso.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/test/com/pigeon3d/MapSsoTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MapSsoView.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MapTileCutState.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MappedBufferData.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Material.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MaterialVertexArray.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MatrixModel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MatrixStack.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Mesh.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MeshData.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MeshDataModel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MeshModel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MeshUnite.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MeshWriter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MutableBuffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MutableCounterArray.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MutableIndexBuffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MutableIndexSourceGap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MutableVertexBuffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/NormalMap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/OS.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/OSType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Pan.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/sound/ParSound.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ParticleSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ParticleSystemIndexArray.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ParticleSystemIndexArray_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ParticleSystemView.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ParticleSystemViewIndexArray.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/test/com/pigeon3d/geometry/PerlinTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/PhysicsBody.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/PhysicsBody_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/PhysicsWorld.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Pinch.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/PinchParameter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Plane.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/PlaneCoord.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Platform.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Polygon.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Progress.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Quad.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Quad3.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Quadrant.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/R.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Recognizer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/RecognizerType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Recognizers.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/RecognizersState.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Rect.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/RectI.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/RenderTarget.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/RenderTargetSurface.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/RouteVertexArray.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Scene.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SceneRenderTarget.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SceneView.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SceneView_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ScheduleEvent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Settings.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Shader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderAttribute.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderProgram.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderTextBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderTextBuilder_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderUniformF4.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderUniformI4.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderUniformMat4.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderUniformVec2.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderUniformVec3.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShaderUniformVec4.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowDrawParam.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowDrawShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowDrawShaderKey.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowDrawShaderSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowMap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowRenderTarget.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowShaderSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowShaderText.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowSurfaceShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowSurfaceShaderBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShareChannel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShareContent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShareItem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShortRecognizer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SignalSoundPlayer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SimpleShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SimpleShaderKey.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SimpleShaderSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/sound/SimpleSound.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SimpleSurface.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SimpleVertexArray.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SingleLayer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/SlopeLine.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/sound/Sound.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/sound/SoundDirector.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SoundPlayer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SoundPlayer_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SoundPlayersCollection.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SporadicSoundPlayer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Sprite.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/StandardMaterial.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/StandardShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/StandardShaderKey.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/StandardShaderSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/StandardShadowShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Stat.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Surface.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SurfaceRenderTarget.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SurfaceRenderTargetRenderBuffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/SurfaceRenderTargetTexture.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/SweepLine.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Tap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Text.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/TextAlignment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/TextShadow.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Texture.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/TextureFileFormat.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/TextureFilter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/TextureFormat.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/TextureRegion.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/ThickLineSegment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/Triangle.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Updatable.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Updatable_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VBO.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Version.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VertexArray.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VertexArrayRing.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VertexBuffer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VertexBufferDesc.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VertexBufferRing.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VertexBuffer_impl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/VerticalLine.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ViewEvent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ViewportShaderBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ViewportSurfaceShader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ViewportSurfaceShaderParam.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/ant.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/build.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/local.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/res/layout/main.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/proguard-project.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/project.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/res/values/strings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/vec2.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/vec2i.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/vec3.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/geometry/vec4.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen-test/com/pigeon3d/CollisionsTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen-test/com/pigeon3d/DynamicTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen-test/com/pigeon3d/MapSsoTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen-test/com/pigeon3d/geometry/BentleyOttmannTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen-test/com/pigeon3d/geometry/FigureTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen-test/com/pigeon3d/geometry/PerlinTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ArrayIndexSource.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BMFont.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BackgroundSoundPlayer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BaseViewportSurface.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardBufferData.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardParticle.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardParticleSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardParticleSystemView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardParticleSystem_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardShaderBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardShaderKey.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardShaderSpace.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BillboardShaderSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BlendFunction.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BlendMode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Buffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/BufferRing.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Button.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Camera.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Camera2D.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CameraEvent.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CameraIso.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CameraIsoMove.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CameraReserve.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Camera_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CircleParam.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CircleSegment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CircleShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CircleShaderBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Collision.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ColorSource.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Contact.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Context.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Controller.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Controller_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Counter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CounterData.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CrossPoint.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/CullFace.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/D2D.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Device.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/DeviceType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/DirectLight.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Director.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/DynamicCollision.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/EmissiveParticleSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/EmptyCounter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/EmptyIndexSource.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/EmptyTexture.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/EnablingState.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Environment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Event.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/EventCounter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/EventPhase.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Event_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/FileTexture.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Finisher.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/FixedParticleSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Font.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/FontPrintData.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/FontShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/FontShaderBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/FontShaderParam.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/FontSymbolDesc.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Global.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IBO.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ImMatrixModel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ImSchedule.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ImmutableIndexBuffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ImmutableVertexBuffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/InAppProduct.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/InAppTransaction.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/InAppTransactionState.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IndexBuffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IndexBufferRing.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IndexBuffer_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IndexFunFilteredIterable.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IndexFunFilteredIterator.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IndexSource.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IndexSourceGap.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/IndexSource_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/InputProcessor.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/InputProcessor_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/InterfaceIdiom.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Layer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/LayerView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/LayerView_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Layers.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/LengthCounter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Light.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/LocalPlayerScore.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/LongRecognizer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MMatrixModel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MSchedule.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MapSso.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MapSsoView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MapTileCutState.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MappedBufferData.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Material.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MaterialVertexArray.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MatrixModel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MatrixStack.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Mesh.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MeshData.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MeshDataModel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MeshModel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MeshUnite.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MeshWriter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MutableBuffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MutableCounterArray.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MutableIndexBuffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MutableIndexSourceGap.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/MutableVertexBuffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/NormalMap.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/OS.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/OSType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Pan.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ParticleSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ParticleSystemIndexArray.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ParticleSystemIndexArray_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ParticleSystemView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ParticleSystemViewIndexArray.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/PhysicsBody.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/PhysicsBody_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/PhysicsWorld.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Pinch.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/PinchParameter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Platform.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Progress.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Recognizer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/RecognizerType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Recognizers.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/RecognizersState.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/RenderTarget.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/RenderTargetSurface.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/RouteVertexArray.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Scene.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SceneRenderTarget.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SceneView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SceneView_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ScheduleEvent.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Settings.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Shader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderAttribute.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderProgram.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderTextBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderTextBuilder_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderUniformF4.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderUniformI4.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderUniformMat4.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderUniformVec2.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderUniformVec3.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShaderUniformVec4.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowDrawParam.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowDrawShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowDrawShaderKey.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowDrawShaderSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowMap.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowRenderTarget.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowShaderSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowShaderText.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowSurfaceShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowSurfaceShaderBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShadowType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShareChannel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShareContent.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShareItem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ShortRecognizer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SignalSoundPlayer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SimpleShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SimpleShaderKey.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SimpleShaderSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SimpleSurface.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SimpleVertexArray.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SingleLayer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SoundPlayer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SoundPlayer_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SoundPlayersCollection.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SporadicSoundPlayer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Sprite.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/StandardMaterial.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/StandardShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/StandardShaderKey.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/StandardShaderSystem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/StandardShadowShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Stat.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Surface.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SurfaceRenderTarget.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SurfaceRenderTargetRenderBuffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/SurfaceRenderTargetTexture.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Tap.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Text.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/TextAlignment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/TextShadow.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Texture.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/TextureFileFormat.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/TextureFilter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/TextureFormat.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/TextureRegion.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Updatable.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Updatable_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/VBO.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/Version.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/VertexArray.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/VertexArrayRing.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/VertexBuffer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/VertexBufferDesc.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/VertexBufferRing.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/VertexBuffer_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ViewEvent.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ViewportShaderBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ViewportSurfaceShader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/ViewportSurfaceShaderParam.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/BentleyOttmann.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/BentleyOttmannEvent.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/BentleyOttmannEventQueue.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/BentleyOttmannIntersectionEvent.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/BentleyOttmannPointEvent.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Figure.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Figure_impl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Intersection.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Line.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Line2.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Line3.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/LineSegment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Plane.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/PlaneCoord.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Polygon.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Quad.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Quad3.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Quadrant.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Rect.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/RectI.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/SlopeLine.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/SweepLine.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/ThickLineSegment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/Triangle.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/VerticalLine.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/vec2.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/vec2i.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/vec3.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/geometry/vec4.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/sound/ParSound.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/sound/SimpleSound.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/sound/Sound.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pigeon/gen/com/pigeon3d/sound/SoundDirector.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon.xcodeproj/project.xcworkspace/xcuserdata/antonzherdev.xcuserdatad/UserInterfaceState.xcuserstate" afterPath="$PROJECT_DIR$/../ObjC/Pigeon.xcodeproj/project.xcworkspace/xcuserdata/antonzherdev.xcuserdatad/UserInterfaceState.xcuserstate" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/Pigeon.iml" afterPath="$PROJECT_DIR$/Pigeon/Pigeon.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../build.sh" afterPath="$PROJECT_DIR$/../build.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="ObjDLib.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,7 +558,18 @@
     <favorites_list name="ObjDLib" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Pigeon/AndroidManifest.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="512">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -30,7 +577,7 @@
     </FindUsagesManager>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
@@ -95,24 +642,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Pigeon" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gen" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pigeon3d" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ObjDLib" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="ObjDLib" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -135,7 +664,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="FullScreen" value="true" />
-    <property name="options.lastSelected" value="editor.preferences.import" />
+    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -182,6 +711,19 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -207,19 +749,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -323,10 +852,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287841" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3283582" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -334,7 +863,9 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39925373" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -400,6 +931,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Pigeon/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="512">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
   </component>
   <component name="masterDetails">
     <states>
@@ -417,7 +956,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>No facets are configured</last-edited>
+          <last-edited>Android</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -452,11 +991,12 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>Sample</last-edited>
+          <last-edited>Pigeon</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
