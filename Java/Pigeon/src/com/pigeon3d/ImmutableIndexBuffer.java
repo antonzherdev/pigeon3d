@@ -1,7 +1,8 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
+import com.pigeon3d.gl.eg;
 
 public class ImmutableIndexBuffer extends Buffer<Integer> implements IndexBuffer {
     public final int mode;
@@ -24,7 +25,7 @@ public class ImmutableIndexBuffer extends Buffer<Integer> implements IndexBuffer
         Global.context.bindIndexBufferHandle(this.handle);
     }
     public ImmutableIndexBuffer(final int handle, final int mode, final int length, final int count) {
-        super(((PType<Integer>)(((PType)(UInt4.type)))), gl.GL_ELEMENT_ARRAY_BUFFER, handle);
+        super(((PType<Integer>)(((PType)(UInt4.type)))), GLES20.GL_ELEMENT_ARRAY_BUFFER, handle);
         this.mode = mode;
         this.length = length;
         this.count = count;
@@ -37,17 +38,17 @@ public class ImmutableIndexBuffer extends Buffer<Integer> implements IndexBuffer
         Global.context.draw();
         final int n = this.count();
         if(n > 0) {
-            gl.glDrawElementsModeCountTpIndices(this.mode(), ((int)(n)), gl.GL_UNSIGNED_INT, ERROR: Unknown null<uint4>);
+            GLES20.glDrawElements(this.mode(), ((int)(n)), GLES20.GL_UNSIGNED_INT, ERROR: Unknown null<uint4>);
         }
-        gl.egCheckError();
+        eg.egCheckError();
     }
     @Override
     public void drawWithStartCount(final int start, final int count) {
         Global.context.draw();
         if(count > 0) {
-            gl.glDrawElementsModeCountTpIndices(this.mode(), ((int)(count)), gl.GL_UNSIGNED_INT, ((Pointer)(4 * start)));
+            GLES20.glDrawElements(this.mode(), ((int)(count)), GLES20.GL_UNSIGNED_INT, ((Pointer)(4 * start)));
         }
-        gl.egCheckError();
+        eg.egCheckError();
     }
     public boolean isMutable() {
         return false;

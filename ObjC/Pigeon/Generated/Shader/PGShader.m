@@ -35,10 +35,6 @@ static CNClassType* _PGShaderProgram_type;
     }
 }
 
-+ (PGShaderProgram*)loadFromFilesName:(NSString*)name vertex:(NSString*)vertex fragment:(NSString*)fragment {
-    return [PGShaderProgram applyName:name vertex:[CNBundle readToStringResource:vertex] fragment:[CNBundle readToStringResource:fragment]];
-}
-
 + (PGShaderProgram*)applyName:(NSString*)name vertex:(NSString*)vertex fragment:(NSString*)fragment {
     unsigned int vertexShader = [PGShaderProgram compileShaderForShaderType:GL_VERTEX_SHADER source:vertex];
     unsigned int fragmentShader = [PGShaderProgram compileShaderForShaderType:GL_FRAGMENT_SHADER source:fragment];

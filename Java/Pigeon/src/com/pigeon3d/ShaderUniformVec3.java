@@ -2,14 +2,14 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import com.pigeon3d.geometry.vec3;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class ShaderUniformVec3 {
     public final int handle;
     private vec3 _last;
     public void applyVec3(final vec3 vec3) {
         if(!(vec3.equals(this._last))) {
-            gl.egUniformVec3LocationColor(this.handle, vec3);
+            GLES20.egUniformVec3(this.handle, vec3);
             this._last = vec3;
         }
     }

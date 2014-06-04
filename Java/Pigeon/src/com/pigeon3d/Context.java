@@ -8,7 +8,8 @@ import com.pigeon3d.geometry.vec2;
 import objd.collection.MHashMap;
 import com.pigeon3d.geometry.RectI;
 import com.pigeon3d.geometry.vec4;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
+import com.pigeon3d.gl.eg;
 
 public class Context {
     public final Var<vec2i> viewSize;
@@ -89,38 +90,38 @@ public class Context {
     public void setViewport(final RectI viewport) {
         if(!(this._viewport.equals(viewport))) {
             this._viewport = viewport;
-            gl.egViewportRect(viewport);
+            GLES20.egViewportRect(viewport);
         }
     }
     public void bindTextureTextureId(final int textureId) {
         if(this._lastTexture2D != textureId) {
             this._lastTexture2D = textureId;
-            gl.glBindTextureHandle(gl.GL_TEXTURE_2D, textureId);
+            GLES20.glBindTextureHandle(GLES20.GL_TEXTURE_2D, textureId);
         }
     }
     public void bindTextureTexture(final Texture texture) {
         final int id = texture.id();
         if(this._lastTexture2D != id) {
             this._lastTexture2D = id;
-            gl.glBindTextureHandle(gl.GL_TEXTURE_2D, id);
+            GLES20.glBindTextureHandle(GLES20.GL_TEXTURE_2D, id);
         }
     }
     public void bindTextureSlotTargetTexture(final int slot, final int target, final Texture texture) {
         final int id = texture.id();
-        if(slot == gl.GL_TEXTURE0 && target == gl.GL_TEXTURE_2D) {
+        if(slot == GLES20.GL_TEXTURE0 && target == GLES20.GL_TEXTURE_2D) {
             if(this._lastTexture2D != id) {
                 this._lastTexture2D = id;
-                gl.glBindTextureHandle(target, id);
+                GLES20.glBindTextureHandle(target, id);
             }
         } else {
             final int key = slot * 13 + target;
             if(!(this._lastTextures.isValueEqualKeyValue(key, id))) {
-                if(slot != gl.GL_TEXTURE0) {
-                    gl.glActiveTexture(slot);
-                    gl.glBindTextureHandle(target, id);
-                    gl.glActiveTexture(gl.GL_TEXTURE0);
+                if(slot != GLES20.GL_TEXTURE0) {
+                    GLES20.glActiveTexture(slot);
+                    GLES20.glBindTextureHandle(target, id);
+                    GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
                 } else {
-                    gl.glBindTextureHandle(target, id);
+                    GLES20.glBindTextureHandle(target, id);
                 }
                 this._lastTextures.setKeyValue(key, id);
             }
@@ -130,7 +131,7 @@ public class Context {
         Director.current().onGLThreadF(new P0() {
             @Override
             public void apply() {
-                gl.egDeleteTextureHandle(id);
+                eg.egDeleteTexture(id);
                 if(Context.this._lastTexture2D == id) {
                     Context.this._lastTexture2D = ((int)(0));
                 }
@@ -142,11 +143,11 @@ public class Context {
         final int id = program.handle;
         if(id != this._lastShaderProgram) {
             this._lastShaderProgram = id;
-            gl.glUseProgramProgram(id);
+            GLES20.glUseProgram(id);
         }
     }
     public void deleteShaderProgramId(final int id) {
-        gl.glDeleteProgramProgram(id);
+        GLES20.glDeleteProgram(id);
         if(id == this._lastShaderProgram) {
             this._lastShaderProgram = ((int)(0));
         }
@@ -154,14 +155,14 @@ public class Context {
     public void bindRenderBufferId(final int id) {
         if(id != this._lastRenderBuffer) {
             this._lastRenderBuffer = id;
-            gl.glBindRenderbufferHandle(gl.GL_RENDERBUFFER, id);
+            GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
         }
     }
     public void deleteRenderBufferId(final int id) {
         Director.current().onGLThreadF(new P0() {
             @Override
             public void apply() {
-                gl.egDeleteRenderBufferHandle(id);
+                eg.egDeleteRenderBuffer(id);
                 if(id == Context.this._lastRenderBuffer) {
                     Context.this._lastRenderBuffer = ((int)(0));
                 }
@@ -174,7 +175,7 @@ public class Context {
             this.checkBindDefaultVertexArray();
             this._lastVertexBufferId = handle;
             this._lastVertexBufferCount = ((int)(buffer.count()));
-            gl.glBindBufferTargetHandle(gl.GL_ARRAY_BUFFER, handle);
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, handle);
         }
     }
     public int vertexBufferCount() {
@@ -184,14 +185,14 @@ public class Context {
         if(handle != this._lastIndexBuffer) {
             this.checkBindDefaultVertexArray();
             this._lastIndexBuffer = handle;
-            gl.glBindBufferTargetHandle(gl.GL_ELEMENT_ARRAY_BUFFER, handle);
+            GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, handle);
         }
     }
     public void deleteBufferId(final int id) {
         Director.current().onGLThreadF(new P0() {
             @Override
             public void apply() {
-                gl.egDeleteBufferHandle(id);
+                eg.egDeleteBuffer(id);
                 if(id == Context.this._lastVertexBufferId) {
                     Context.this._lastVertexBufferId = ((int)(0));
                     Context.this._lastVertexBufferCount = ((int)(0));
@@ -206,7 +207,7 @@ public class Context {
         if(handle != this._lastVertexArray || mutable) {
             this._lastVertexArray = handle;
             this._lastIndexBuffer = ((int)(0));
-            gl.egBindVertexArrayHandle(handle);
+            eg.egBindVertexArray(handle);
         }
         this._needBindDefaultVertexArray = false;
         this._lastVertexBufferCount = vertexCount;
@@ -215,7 +216,7 @@ public class Context {
         Director.current().onGLThreadF(new P0() {
             @Override
             public void apply() {
-                gl.egDeleteVertexArrayHandle(id);
+                eg.egDeleteVertexArray(id);
                 if(id == Context.this._lastVertexArray) {
                     Context.this._lastVertexArray = ((int)(0));
                 }
@@ -230,7 +231,7 @@ public class Context {
             this._lastIndexBuffer = ((int)(0));
             this._lastVertexBufferCount = ((int)(0));
             this._lastVertexBufferId = ((int)(0));
-            gl.egBindVertexArrayHandle(this.defaultVertexArray);
+            eg.egBindVertexArray(this.defaultVertexArray);
             this._needBindDefaultVertexArray = false;
         }
     }
@@ -250,7 +251,7 @@ public class Context {
     public void clearColorColor(final vec4 color) {
         if(!(this._lastClearColor.equals(color))) {
             this._lastClearColor = color;
-            gl.glClearColorRGBA(color.x, color.y, color.z, color.w);
+            GLES20.glClearColor(color.x, color.y, color.z, color.w);
         }
     }
     public BlendFunction blendFunction() {
@@ -289,8 +290,8 @@ public class Context {
         this.defaultVertexArray = ((int)(0));
         this._needBindDefaultVertexArray = false;
         this.cullFace = new CullFace();
-        this.blend = new EnablingState(gl.GL_BLEND);
-        this.depthTest = new EnablingState(gl.GL_DEPTH_TEST);
+        this.blend = new EnablingState(GLES20.GL_BLEND);
+        this.depthTest = new EnablingState(GLES20.GL_DEPTH_TEST);
         this._lastClearColor = new vec4(((float)(0)), ((float)(0)), ((float)(0)), ((float)(0)));
         this._blendFunctionChanged = false;
     }

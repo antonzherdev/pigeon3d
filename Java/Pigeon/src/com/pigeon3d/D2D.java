@@ -4,7 +4,7 @@ import objd.lang.*;
 import com.pigeon3d.geometry.vec3;
 import com.pigeon3d.geometry.Rect;
 import com.pigeon3d.geometry.Quad;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.vec4;
 import com.pigeon3d.geometry.vec2i;
@@ -69,7 +69,7 @@ public class D2D {
                 } else {
                     D2D.vaoForTexture.drawParam(material);
                 }
-                if(__il__2oldValue != gl.GL_NONE) {
+                if(__il__2oldValue != GLES20.GL_NONE) {
                     __tmp__il__2self.setValue(__il__2oldValue);
                 }
             }
@@ -118,7 +118,7 @@ public class D2D {
             {
                 final int __il__5oldValue = __tmp__il__5self.disable();
                 D2D.lineVao.drawParam(material);
-                if(__il__5oldValue != gl.GL_NONE) {
+                if(__il__5oldValue != GLES20.GL_NONE) {
                     __tmp__il__5self.setValue(__il__5oldValue);
                 }
             }
@@ -130,7 +130,7 @@ public class D2D {
             {
                 final int __il__0oldValue = __tmp__il__0self.disable();
                 D2D.circleVaoWithSegment().drawParam(new CircleParam(backColor, strokeColor, at, D2D.radiusPR(radius), relative, new CircleSegment(segmentColor, ((float)(start)), ((float)(end)))));
-                if(__il__0oldValue != gl.GL_NONE) {
+                if(__il__0oldValue != GLES20.GL_NONE) {
                     __tmp__il__0self.setValue(__il__0oldValue);
                 }
             }
@@ -142,7 +142,7 @@ public class D2D {
             {
                 final int __il__0oldValue = __tmp__il__0self.disable();
                 D2D.circleVaoWithoutSegment().drawParam(new CircleParam(backColor, strokeColor, at, D2D.radiusPR(radius), relative, null));
-                if(__il__0oldValue != gl.GL_NONE) {
+                if(__il__0oldValue != GLES20.GL_NONE) {
                     __tmp__il__0self.setValue(__il__0oldValue);
                 }
             }
@@ -159,10 +159,10 @@ public class D2D {
     }
     static {
         vertexes = new Pointer<BillboardBufferData>(BillboardBufferData.type, ((int)(4)));
-        vb = VBO.<BillboardBufferData>mutDescUsage(Sprite.vbDesc, gl.GL_STREAM_DRAW);
+        vb = VBO.<BillboardBufferData>mutDescUsage(Sprite.vbDesc, GLES20.GL_STREAM_DRAW);
         vaoForColor = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.vb)))), EmptyIndexSource.triangleStrip).<ColorSource>vaoShader(((Shader<ColorSource>)(((Shader)(BillboardShaderSystem.shaderForKey(new BillboardShaderKey(false, false, false, BillboardShaderSpace.camera)))))));
         vaoForTexture = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.vb)))), EmptyIndexSource.triangleStrip).<ColorSource>vaoShader(((Shader<ColorSource>)(((Shader)(BillboardShaderSystem.shaderForKey(new BillboardShaderKey(true, false, false, BillboardShaderSpace.camera)))))));
-        lineVb = VBO.mutMeshUsage(gl.GL_STREAM_DRAW);
+        lineVb = VBO.mutMeshUsage(GLES20.GL_STREAM_DRAW);
         lineVertexes = pp;
         lineVao = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.lineVb)))), EmptyIndexSource.lines).<ColorSource>vaoShader(SimpleShaderSystem.colorShader());
         _lazy_circleVaoWithSegment = new Lazy(new F0<VertexArray<CircleParam>>() {

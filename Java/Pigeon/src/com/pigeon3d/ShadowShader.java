@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class ShadowShader extends Shader<ColorSource> {
     public static final ShadowShader instanceForColor;
@@ -13,10 +13,10 @@ public class ShadowShader extends Shader<ColorSource> {
     public final ShaderUniformF4 alphaTestLevelUniform;
     @Override
     public void loadAttributesVbDesc(final VertexBufferDesc<Object> vbDesc) {
-        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), gl.GL_FLOAT, ((int)(vbDesc.position)));
+        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), GLES20.GL_FLOAT, ((int)(vbDesc.position)));
         if(this.texture) {
             if(this.uvSlot != null) {
-                this.uvSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), gl.GL_FLOAT, ((int)(vbDesc.uv)));
+                this.uvSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), GLES20.GL_FLOAT, ((int)(vbDesc.uv)));
             }
         }
     }

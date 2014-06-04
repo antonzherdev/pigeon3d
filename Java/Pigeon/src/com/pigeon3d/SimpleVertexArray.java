@@ -2,7 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import objd.collection.ImArray;
-import com.pigeon3d.gl.gl;
+import com.pigeon3d.gl.eg;
 
 public class SimpleVertexArray<P> extends VertexArray<P> {
     public final int handle;
@@ -20,7 +20,7 @@ public class SimpleVertexArray<P> extends VertexArray<P> {
     public final boolean isMutable;
     private final Fence fence;
     public static <P> SimpleVertexArray<P> applyShaderBuffersIndex(final Shader<P> shader, final ImArray<VertexBuffer<Object>> buffers, final IndexSource index) {
-        return new SimpleVertexArray<P>(gl.egGenVertexArray(), shader, ((ImArray<VertexBuffer<Object>>)(((ImArray)(buffers)))), index);
+        return new SimpleVertexArray<P>(eg.egGenVertexArray(), shader, ((ImArray<VertexBuffer<Object>>)(((ImArray)(buffers)))), index);
     }
     public void bind() {
         final VertexBuffer<Object> __tmp_0rp1 = this.vertexBuffers.head();
@@ -30,7 +30,8 @@ public class SimpleVertexArray<P> extends VertexArray<P> {
         Global.context.bindDefaultVertexArray();
     }
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
         Global.context.deleteVertexArrayId(this.handle);
     }
     public int count() {

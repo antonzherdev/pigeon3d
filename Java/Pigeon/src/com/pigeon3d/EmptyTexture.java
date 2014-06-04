@@ -2,7 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import com.pigeon3d.geometry.vec2;
-import com.pigeon3d.gl.gl;
+import com.pigeon3d.gl.eg;
 
 public final class EmptyTexture extends Texture {
     public final vec2 size;
@@ -17,7 +17,7 @@ public final class EmptyTexture extends Texture {
     }
     public EmptyTexture(final vec2 size) {
         this.size = size;
-        this.id = gl.egGenTexture();
+        this.id = eg.egGenTexture();
     }
     public String toString() {
         return String.format("EmptyTexture(%s)", this.size);

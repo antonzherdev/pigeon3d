@@ -1,9 +1,6 @@
 package com.pigeon3d
 
 class ShaderProgram(val name : string, val handle : uint4) {
-    static def loadFromFiles(name : string, vertex : string, fragment : string) : ShaderProgram =
-        ShaderProgram(name, Bundle.readToString(vertex), Bundle.readToString(fragment))
-
     static def apply(name : string, vertex : string, fragment : string) : ShaderProgram =  {
         val vertexShader = compileShaderFor(GL_VERTEX_SHADER, vertex)
         val fragmentShader = compileShaderFor(GL_FRAGMENT_SHADER, fragment)

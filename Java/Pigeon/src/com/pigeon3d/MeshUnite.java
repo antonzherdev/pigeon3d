@@ -5,7 +5,7 @@ import objd.collection.PArray;
 import objd.collection.Iterator;
 import com.pigeon3d.geometry.mat4;
 import objd.collection.Iterable;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class MeshUnite {
     public final PArray<MeshData> vertexSample;
@@ -56,8 +56,8 @@ public class MeshUnite {
         this.vertexSample = vertexSample;
         this.indexSample = indexSample;
         this.createVao = createVao;
-        this.vbo = VBO.mutMeshUsage(gl.GL_DYNAMIC_DRAW);
-        this.ibo = IBO.mutUsage(gl.GL_DYNAMIC_DRAW);
+        this.vbo = VBO.mutMeshUsage(GLES20.GL_DYNAMIC_DRAW);
+        this.ibo = IBO.mutUsage(GLES20.GL_DYNAMIC_DRAW);
         this.mesh = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(this.vbo)))), this.ibo);
         this.vao = ((VertexArray<Object>)(((VertexArray)(createVao.apply(this.mesh)))));
         this._count = ((int)(0));

@@ -1,30 +1,28 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
+import com.pigeon3d.gl.eg;
 
 public class ShaderProgram {
     public static final int version;
     public final String name;
     public final int handle;
-    public static ShaderProgram loadFromFilesNameVertexFragment(final String name, final String vertex, final String fragment) {
-        return ShaderProgram.applyNameVertexFragment(name, Bundle.readToStringResource(vertex), Bundle.readToStringResource(fragment));
-    }
     public static ShaderProgram applyNameVertexFragment(final String name, final String vertex, final String fragment) {
-        final int vertexShader = ShaderProgram.compileShaderForShaderTypeSource(gl.GL_VERTEX_SHADER, vertex);
-        final int fragmentShader = ShaderProgram.compileShaderForShaderTypeSource(gl.GL_FRAGMENT_SHADER, fragment);
+        final int vertexShader = ShaderProgram.compileShaderForShaderTypeSource(GLES20.GL_VERTEX_SHADER, vertex);
+        final int fragmentShader = ShaderProgram.compileShaderForShaderTypeSource(GLES20.GL_FRAGMENT_SHADER, fragment);
         final ShaderProgram program = ShaderProgram.linkFromShadersNameVertexFragment(name, vertexShader, fragmentShader);
-        gl.glDeleteShaderShader(vertexShader);
-        gl.glDeleteShaderShader(fragmentShader);
+        GLES20.glDeleteShader(vertexShader);
+        GLES20.glDeleteShader(fragmentShader);
         return program;
     }
     public static ShaderProgram linkFromShadersNameVertexFragment(final String name, final int vertex, final int fragment) {
-        final int handle = gl.glCreateProgram();
-        gl.glAttachShaderProgramShader(handle, vertex);
-        gl.glAttachShaderProgramShader(handle, fragment);
-        gl.glLinkProgramProgram(handle);
+        final int handle = GLES20.glCreateProgram();
+        GLES20.glAttachShader(handle, vertex);
+        GLES20.glAttachShader(handle, fragment);
+        GLES20.glLinkProgram(handle);
         {
-            final String _ = gl.egGetProgramErrorProgram(handle);
+            final String _ = eg.egGetProgramError(handle);
             if(_ != null) {
                 throw new RuntimeException("Error in shader program linking: " + _);
             }
@@ -32,11 +30,11 @@ public class ShaderProgram {
         return new ShaderProgram(name, handle);
     }
     public static int compileShaderForShaderTypeSource(final int shaderType, final String source) {
-        final int shader = gl.glCreateShaderShaderType(shaderType);
-        gl.egShaderSourceShaderSource(shader, source);
-        gl.glCompileShaderShader(shader);
+        final int shader = GLES20.glCreateShader(shaderType);
+        eg.egShaderSource(shader, source);
+        GLES20.glCompileShader(shader);
         {
-            final String _ = gl.egGetShaderErrorShader(shader);
+            final String _ = eg.egGetShaderError(shader);
             if(_ != null) {
                 throw new RuntimeException("Error in shader compiling : " + _ + source);
             }
@@ -44,14 +42,14 @@ public class ShaderProgram {
         return shader;
     }
     public void init() {
-        gl.egLabelShaderProgramHandleName(this.handle, this.name);
     }
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
         Global.context.deleteShaderProgramId(this.handle);
     }
     public ShaderAttribute attributeForName(final String name) {
-        final int h = gl.egGetAttribLocationProgramName(this.handle, name);
+        final int h = GLES20.glGetAttribLocation(this.handle, name);
         if(h < 0) {
             throw new RuntimeException("Could not found attribute for name " + name);
         }
@@ -66,6 +64,6 @@ public class ShaderProgram {
         return String.format("ShaderProgram(%s, %d)", this.name, this.handle);
     }
     static {
-        version = ((int)(gl.egGLSLVersion()));
+        version = ((int)(eg.egGLSLVersion()));
     }
 }

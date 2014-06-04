@@ -4,6 +4,7 @@ stub package object {
     import com.pigeon3d.geometry._
     import com.pigeon3d.gl._
     import com.pigeon3d.gl.gl._
+    import com.pigeon3d.gl.eg._
     import com.pigeon3d.Global._
     import com.pigeon3d.sound._
     import com.pigeon3d.platform._

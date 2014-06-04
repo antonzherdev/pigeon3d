@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class BlendFunction {
     public static final BlendFunction standard;
@@ -24,7 +24,7 @@ public class BlendFunction {
         }
     }
     public void bind() {
-        gl.glBlendFuncSfactorDfactor(this.source, this.destination);
+        GLES20.glBlendFunc(this.source, this.destination);
     }
     public BlendFunction(final int source, final int destination) {
         this.source = source;
@@ -34,7 +34,7 @@ public class BlendFunction {
         return String.format("BlendFunction(%d, %d)", this.source, this.destination);
     }
     static {
-        standard = new BlendFunction(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
-        premultiplied = new BlendFunction(gl.GL_ONE, gl.GL_ONE_MINUS_SRC_ALPHA);
+        standard = new BlendFunction(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        premultiplied = new BlendFunction(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
     }
 }

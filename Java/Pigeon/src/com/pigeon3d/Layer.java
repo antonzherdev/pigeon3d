@@ -1,9 +1,10 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
 import com.pigeon3d.geometry.RectI;
 import objd.collection.Iterator;
+import android.opengl.GLES20;
+import com.pigeon3d.gl.eg;
 import com.pigeon3d.geometry.Rect;
 import com.pigeon3d.geometry.vec2;
 import objd.collection.ImArray;
@@ -17,7 +18,6 @@ public class Layer extends Updatable_impl {
         return new Layer(view, Util.<InputProcessor>as(InputProcessor.class, view));
     }
     public void prepareWithViewport(final Rect viewport) {
-        gl.egPushGroupMarkerName(String.format("Prepare %s", this.view.name()));
         final Environment env = this.view.environment();
         Global.context.environment = env;
         final Camera camera = this.view.camera();
@@ -27,40 +27,36 @@ public class Layer extends Updatable_impl {
         Global.context.setViewport(RectI.applyRect(viewport));
         Global.matrix.setValue(camera.matrixModel());
         this.view.prepare();
-        gl.egPopGroupMarker();
         if(platform.egPlatform().shadows) {
             {
                 final Iterator<Light> __il__11t_0i = env.lights.iterator();
                 while(__il__11t_0i.hasNext()) {
                     final Light light = __il__11t_0i.next();
                     if(light.hasShadows) {
-                        gl.egPushGroupMarkerName(String.format("Shadow %s", this.view.name()));
                         {
                             final CullFace __tmp__il__11t_0rt_1self = Global.context.cullFace;
                             {
                                 final int __il__11t_0rt_1oldValue = __tmp__il__11t_0rt_1self.invert();
                                 drawShadowForCameraLight(camera, light);
-                                if(__il__11t_0rt_1oldValue != gl.GL_NONE) {
+                                if(__il__11t_0rt_1oldValue != GLES20.GL_NONE) {
                                     __tmp__il__11t_0rt_1self.setValue(__il__11t_0rt_1oldValue);
                                 }
                             }
                         }
-                        gl.egPopGroupMarker();
                     }
                 }
             }
             if(this.iOS6) {
-                gl.glFinish();
+                GLES20.glFinish();
             }
         }
-        gl.egCheckError();
+        eg.egCheckError();
     }
     public void reshapeWithViewport(final Rect viewport) {
         Global.context.setViewport(RectI.applyRect(viewport));
         this.view.reshapeWithViewport(viewport);
     }
     public void drawWithViewport(final Rect viewport) {
-        gl.egPushGroupMarkerName(this.view.name());
         final Environment env = this.view.environment();
         Global.context.environment = env;
         final Camera camera = this.view.camera();
@@ -69,8 +65,7 @@ public class Layer extends Updatable_impl {
         Global.context.setViewport(RectI.applyRect(viewport));
         Global.matrix.setValue(camera.matrixModel());
         this.view.draw();
-        gl.egCheckError();
-        gl.egPopGroupMarker();
+        eg.egCheckError();
     }
     public void completeWithViewport(final Rect viewport) {
         this.view.complete();
@@ -85,14 +80,14 @@ public class Layer extends Updatable_impl {
                 {
                     __tmp__il__3t_0self.bind();
                     {
-                        gl.glClear(gl.GL_DEPTH_BUFFER_BIT);
+                        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
                         this.view.draw();
                     }
                     __tmp__il__3t_0self.unbind();
                 }
             }
         }
-        gl.egCheckError();
+        eg.egCheckError();
     }
     public <P> boolean processEventViewport(final Event<P> event, final Rect viewport) {
         if(this.inputProcessor == null) {

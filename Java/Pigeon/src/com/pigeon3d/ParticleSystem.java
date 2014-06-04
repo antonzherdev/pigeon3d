@@ -15,7 +15,8 @@ public abstract class ParticleSystem<P, D> extends Actor {
         return ((int)(this.particleType.size));
     }
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
         Pointer.free(this.particles);
     }
     public Future<Void> updateWithDelta(final double delta) {

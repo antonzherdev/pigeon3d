@@ -1,7 +1,8 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
+import com.pigeon3d.gl.eg;
 
 public abstract class IndexBuffer_impl extends IndexSource_impl implements IndexBuffer {
     public IndexBuffer_impl() {
@@ -11,16 +12,16 @@ public abstract class IndexBuffer_impl extends IndexSource_impl implements Index
         Global.context.draw();
         final int n = this.count();
         if(n > 0) {
-            gl.glDrawElementsModeCountTpIndices(this.mode(), ((int)(n)), gl.GL_UNSIGNED_INT, ERROR: Unknown null<uint4>);
+            GLES20.glDrawElements(this.mode(), ((int)(n)), GLES20.GL_UNSIGNED_INT, ERROR: Unknown null<uint4>);
         }
-        gl.egCheckError();
+        eg.egCheckError();
     }
     @Override
     public void drawWithStartCount(final int start, final int count) {
         Global.context.draw();
         if(count > 0) {
-            gl.glDrawElementsModeCountTpIndices(this.mode(), ((int)(count)), gl.GL_UNSIGNED_INT, ((Pointer)(4 * start)));
+            GLES20.glDrawElements(this.mode(), ((int)(count)), GLES20.GL_UNSIGNED_INT, ((Pointer)(4 * start)));
         }
-        gl.egCheckError();
+        eg.egCheckError();
     }
 }

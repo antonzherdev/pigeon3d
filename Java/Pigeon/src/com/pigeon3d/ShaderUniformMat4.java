@@ -2,7 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import com.pigeon3d.geometry.mat4;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class ShaderUniformMat4 {
     public final int handle;
@@ -10,7 +10,7 @@ public class ShaderUniformMat4 {
     public void applyMatrix(final mat4 matrix) {
         if(!(matrix.equals(this._last))) {
             this._last = matrix;
-            gl.glUniformMatrix4fvLocationCountTransposeValue(this.handle, ((int)(1)), gl.GL_FALSE, matrix.array);
+            GLES20.glUniformMatrix4fv(this.handle, ((int)(1)), GLES20.GL_FALSE, matrix.array);
         }
     }
     public ShaderUniformMat4(final int handle) {

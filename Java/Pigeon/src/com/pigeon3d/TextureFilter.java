@@ -1,12 +1,12 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public enum TextureFilter {
-    nearest(gl.GL_NEAREST, gl.GL_NEAREST),
-    linear(gl.GL_LINEAR, gl.GL_LINEAR),
-    mipmapNearest(gl.GL_LINEAR, gl.GL_LINEAR_MIPMAP_NEAREST);
+    nearest(GLES20.GL_NEAREST, GLES20.GL_NEAREST),
+    linear(GLES20.GL_LINEAR, GLES20.GL_LINEAR),
+    mipmapNearest(GLES20.GL_LINEAR, GLES20.GL_LINEAR_MIPMAP_NEAREST);
     private TextureFilter(final int magFilter, final int minFilter) {
         this.magFilter = magFilter;
         this.minFilter = minFilter;

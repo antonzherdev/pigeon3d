@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public abstract class Buffer<T> {
     public abstract int length();
@@ -10,11 +10,12 @@ public abstract class Buffer<T> {
     public final int bufferType;
     public final int handle;
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
         Global.context.deleteBufferId(this.handle);
     }
     public void bind() {
-        gl.glBindBufferTargetHandle(this.bufferType, this.handle);
+        GLES20.glBindBuffer(this.bufferType, this.handle);
     }
     public int stride() {
         return ((int)(this.dataType.size));

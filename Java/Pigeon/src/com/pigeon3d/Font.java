@@ -9,7 +9,7 @@ import com.pigeon3d.geometry.vec4;
 import objd.collection.MArray;
 import com.pigeon3d.geometry.Rect;
 import com.pigeon3d.geometry.vec3;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public abstract class Font {
     public abstract Texture texture();
@@ -172,7 +172,7 @@ public abstract class Font {
             {
                 final int __il__1oldValue = __tmp__il__1self.disable();
                 vao.drawParam(new FontShaderParam(this.texture(), color, new vec2(((float)(0)), ((float)(0)))));
-                if(__il__1oldValue != gl.GL_NONE) {
+                if(__il__1oldValue != GLES20.GL_NONE) {
                     __tmp__il__1self.setValue(__il__1oldValue);
                 }
             }

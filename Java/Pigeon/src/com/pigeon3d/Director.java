@@ -8,9 +8,10 @@ import objd.concurrent.Future;
 import objd.concurrent.ConcurrentQueue;
 import objd.collection.Iterator;
 import com.pigeon3d.geometry.vec2i;
-import com.pigeon3d.gl.gl;
+import com.pigeon3d.gl.eg;
 import com.pigeon3d.geometry.RectI;
 import com.pigeon3d.geometry.Rect;
+import android.opengl.GLES20;
 import com.pigeon3d.sound.SoundDirector;
 
 public abstract class Director {
@@ -112,13 +113,11 @@ public abstract class Director {
         {
             final Scene sc = this._scene;
             if(sc != null) {
-                gl.egPushGroupMarkerName("Prepare");
                 Director._current = this;
                 Global.context.clear();
                 Global.context.depthTest.enable();
                 sc.prepareWithViewSize(this._lastViewSize);
-                gl.egCheckError();
-                gl.egPopGroupMarker();
+                eg.egCheckError();
             }
         }
     }
@@ -129,12 +128,11 @@ public abstract class Director {
         {
             final Scene sc = this._scene;
             if(sc != null) {
-                gl.egPushGroupMarkerName("Draw");
                 Global.context.clear();
                 Global.context.depthTest.enable();
                 Global.context.clearColorColor(sc.backgroundColor);
                 Global.context.setViewport(RectI.applyRect(new Rect(new vec2(((float)(0)), ((float)(0))), this._lastViewSize)));
-                gl.glClear(gl.GL_COLOR_BUFFER_BIT + gl.GL_DEPTH_BUFFER_BIT);
+                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT + GLES20.GL_DEPTH_BUFFER_BIT);
                 sc.drawWithViewSize(this._lastViewSize);
                 {
                     final Stat stat = this._stat;
@@ -143,18 +141,15 @@ public abstract class Director {
                         stat.draw();
                     }
                 }
-                gl.egCheckError();
-                gl.egPopGroupMarker();
+                eg.egCheckError();
             }
         }
     }
     public void complete() {
-        gl.egPushGroupMarkerName("Complete");
         if(this._scene != null) {
             this._scene.complete();
         }
-        gl.egCheckError();
-        gl.egPopGroupMarker();
+        eg.egCheckError();
     }
     public void processEvent(final Event<Object> event) {
         if(this._scene != null) {

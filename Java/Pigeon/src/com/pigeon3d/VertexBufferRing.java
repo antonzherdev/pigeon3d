@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import com.pigeon3d.gl.eg;
 
 public class VertexBufferRing<T> extends BufferRing<T, MutableVertexBuffer<T>> {
     public final VertexBufferDesc<T> desc;
@@ -10,7 +10,7 @@ public class VertexBufferRing<T> extends BufferRing<T, MutableVertexBuffer<T>> {
         super(ringSize, new F0<MutableVertexBuffer<T>>() {
             @Override
             public MutableVertexBuffer<T> apply() {
-                return new MutableVertexBuffer<T>(desc, gl.egGenBuffer(), usage);
+                return new MutableVertexBuffer<T>(desc, eg.egGenBuffer(), usage);
             }
         });
         this.desc = desc;

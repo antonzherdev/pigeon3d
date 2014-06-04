@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 import objd.collection.ImArray;
 
 public abstract class Shader<P> {
@@ -34,14 +34,14 @@ public abstract class Shader<P> {
         vao.unbind();
     }
     private int uniformName(final String name) {
-        final int h = gl.egGetUniformLocationProgramName(this.program.handle, name);
+        final int h = GLES20.glGetUniformLocation(this.program.handle, name);
         if(h < 0) {
             throw new RuntimeException("Could not found attribute for name " + name);
         }
         return h;
     }
     private Integer uniformOptName(final String name) {
-        final int h = gl.egGetUniformLocationProgramName(this.program.handle, name);
+        final int h = GLES20.glGetUniformLocation(this.program.handle, name);
         if(h < 0) {
             null;
         }

@@ -2,7 +2,8 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import objd.collection.PArray;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
+import com.pigeon3d.gl.eg;
 
 public class ArrayIndexSource extends IndexSource_impl {
     public final PArray<Integer> array;
@@ -12,17 +13,17 @@ public class ArrayIndexSource extends IndexSource_impl {
         Global.context.bindIndexBufferHandle(((int)(0)));
         final int n = this.array.count;
         if(n > 0) {
-            gl.glDrawElementsModeCountTpIndices(this.mode, ((int)(n)), gl.GL_UNSIGNED_INT, this.array.bytes);
+            GLES20.glDrawElements(this.mode, ((int)(n)), GLES20.GL_UNSIGNED_INT, this.array.bytes);
         }
-        gl.egCheckError();
+        eg.egCheckError();
     }
     @Override
     public void drawWithStartCount(final int start, final int count) {
         Global.context.bindIndexBufferHandle(((int)(0)));
         if(count > 0) {
-            gl.glDrawElementsModeCountTpIndices(this.mode, ((int)(count)), gl.GL_UNSIGNED_INT, this.array.bytes + 4 * start);
+            GLES20.glDrawElements(this.mode, ((int)(count)), GLES20.GL_UNSIGNED_INT, this.array.bytes + 4 * start);
         }
-        gl.egCheckError();
+        eg.egCheckError();
     }
     public ArrayIndexSource(final PArray<Integer> array, final int mode) {
         this.array = array;

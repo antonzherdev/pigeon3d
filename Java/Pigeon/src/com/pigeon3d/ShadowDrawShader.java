@@ -2,7 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import objd.collection.ImArray;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class ShadowDrawShader extends Shader<ShadowDrawParam> {
     public final ShadowDrawShaderKey key;
@@ -13,7 +13,7 @@ public class ShadowDrawShader extends Shader<ShadowDrawParam> {
     public final ImArray<ShaderUniformI4> directLightShadows;
     @Override
     public void loadAttributesVbDesc(final VertexBufferDesc<Object> vbDesc) {
-        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), gl.GL_FLOAT, ((int)(vbDesc.position)));
+        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), GLES20.GL_FLOAT, ((int)(vbDesc.position)));
     }
     @Override
     public void loadUniformsParam(final ShadowDrawParam param) {
@@ -42,7 +42,7 @@ public class ShadowDrawShader extends Shader<ShadowDrawParam> {
                 ShadowDrawShader.this.directLightPercents[i.value].applyF4(p);
                 ShadowDrawShader.this.directLightDepthMwcp[i.value].applyMatrix(light.shadowMap().biasDepthCp.mulMatrix(Global.matrix.mw()));
                 ShadowDrawShader.this.directLightShadows[i.value].applyI4(((int)(i.value + 1)));
-                Global.context.bindTextureSlotTargetTexture(gl.GL_TEXTURE0 + i.value + 1, gl.GL_TEXTURE_2D, light.shadowMap().texture);
+                Global.context.bindTextureSlotTargetTexture(GLES20.GL_TEXTURE0 + i.value + 1, GLES20.GL_TEXTURE_2D, light.shadowMap().texture);
                 i.value++;
             }
         });

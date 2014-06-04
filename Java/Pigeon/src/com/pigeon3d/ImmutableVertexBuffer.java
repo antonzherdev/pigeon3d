@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class ImmutableVertexBuffer<T> extends Buffer<T> implements VertexBuffer<T> {
     public final VertexBufferDesc<T> desc;
@@ -24,7 +24,7 @@ public class ImmutableVertexBuffer<T> extends Buffer<T> implements VertexBuffer<
         Global.context.bindVertexBufferBuffer(((VertexBuffer<Object>)(((VertexBuffer)(this)))));
     }
     public ImmutableVertexBuffer(final VertexBufferDesc<T> desc, final int handle, final int length, final int count) {
-        super(desc.dataType, gl.GL_ARRAY_BUFFER, handle);
+        super(desc.dataType, GLES20.GL_ARRAY_BUFFER, handle);
         this.desc = desc;
         this.length = length;
         this.count = count;

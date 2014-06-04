@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import com.pigeon3d.gl.eg;
 
 public class IndexBufferRing extends BufferRing<Integer, MutableIndexBuffer> {
     public final int mode;
@@ -10,7 +10,7 @@ public class IndexBufferRing extends BufferRing<Integer, MutableIndexBuffer> {
         super(ringSize, new F0<MutableIndexBuffer>() {
             @Override
             public MutableIndexBuffer apply() {
-                return new MutableIndexBuffer(gl.egGenBuffer(), mode, usage);
+                return new MutableIndexBuffer(eg.egGenBuffer(), mode, usage);
             }
         });
         this.mode = mode;

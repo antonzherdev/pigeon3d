@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 import com.pigeon3d.geometry.vec4;
 
 public class FontShader extends Shader<FontShaderParam> {
@@ -12,8 +12,8 @@ public class FontShader extends Shader<FontShaderParam> {
     public final ShaderUniformVec2 shiftSlot;
     @Override
     public void loadAttributesVbDesc(final VertexBufferDesc<Object> vbDesc) {
-        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), gl.GL_FLOAT, ((int)(vbDesc.position)));
-        this.uvSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), gl.GL_FLOAT, ((int)(vbDesc.uv)));
+        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), GLES20.GL_FLOAT, ((int)(vbDesc.position)));
+        this.uvSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), GLES20.GL_FLOAT, ((int)(vbDesc.uv)));
     }
     @Override
     public void loadUniformsParam(final FontShaderParam param) {

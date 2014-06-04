@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class ViewportSurfaceShader extends Shader<ViewportSurfaceShaderParam> {
     public static final ViewportSurfaceShader instance;
@@ -9,7 +9,7 @@ public class ViewportSurfaceShader extends Shader<ViewportSurfaceShaderParam> {
     public final ShaderUniformF4 zUniform;
     @Override
     public void loadAttributesVbDesc(final VertexBufferDesc<Object> vbDesc) {
-        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), gl.GL_FLOAT, ((int)(vbDesc.model)));
+        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), GLES20.GL_FLOAT, ((int)(vbDesc.model)));
     }
     @Override
     public void loadUniformsParam(final ViewportSurfaceShaderParam param) {

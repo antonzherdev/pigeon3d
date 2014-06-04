@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class EnablingState {
     public final int tp;
@@ -26,9 +26,9 @@ public class EnablingState {
     public void draw() {
         if(!(this._last.equals(this._coming))) {
             if(this._coming) {
-                gl.glEnable(this.tp);
+                GLES20.glEnable(this.tp);
             } else {
-                gl.glDisable(this.tp);
+                GLES20.glDisable(this.tp);
             }
             this._last = this._coming;
         }

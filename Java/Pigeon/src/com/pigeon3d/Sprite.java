@@ -8,7 +8,7 @@ import objd.react.ReactFlag;
 import objd.react.Signal;
 import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.Quad;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 import com.pigeon3d.geometry.vec4;
 import objd.react.Observable;
 import objd.collection.ImArray;
@@ -96,7 +96,7 @@ public class Sprite {
                 if(this.vao != null) {
                     this.vao.draw();
                 }
-                if(__il__3oldValue != gl.GL_NONE) {
+                if(__il__3oldValue != GLES20.GL_NONE) {
                     __tmp__il__3self.setValue(__il__3oldValue);
                 }
             }
@@ -130,7 +130,7 @@ public class Sprite {
         this.material = material;
         this.position = position;
         this.rect = rect;
-        this.vb = VBO.<BillboardBufferData>mutDescUsage(Sprite.vbDesc, gl.GL_DYNAMIC_DRAW);
+        this.vb = VBO.<BillboardBufferData>mutDescUsage(Sprite.vbDesc, GLES20.GL_DYNAMIC_DRAW);
         this._changed = new ReactFlag(true, ImArray.fromObjects(((Observable<Object>)(((Observable)(((React<Object>)(((React)(material.<Texture>mapF(new F<ColorSource, Texture>() {
             @Override
             public Texture apply(final ColorSource _) {

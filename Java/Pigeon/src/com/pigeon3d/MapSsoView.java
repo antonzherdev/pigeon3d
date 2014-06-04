@@ -3,7 +3,7 @@ package com.pigeon3d;
 import objd.lang.*;
 import com.pigeon3d.geometry.vec4;
 import objd.collection.ImArray;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 import com.pigeon3d.geometry.mat4;
 import com.pigeon3d.geometry.RectI;
 import com.pigeon3d.geometry.vec2;
@@ -19,9 +19,9 @@ public class MapSsoView {
     public final Mesh plane;
     private final VertexArray<Material> planeVao;
     public void drawLayout() {
-        ColorSource.applyColor(new vec4(((float)(1)), ((float)(0)), ((float)(0)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 1))), gl.GL_LINES));
-        ColorSource.applyColor(new vec4(((float)(0)), ((float)(1)), ((float)(0)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 2))), gl.GL_LINES));
-        ColorSource.applyColor(new vec4(((float)(0)), ((float)(0)), ((float)(1)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 3))), gl.GL_LINES));
+        ColorSource.applyColor(new vec4(((float)(1)), ((float)(0)), ((float)(0)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 1))), GLES20.GL_LINES));
+        ColorSource.applyColor(new vec4(((float)(0)), ((float)(1)), ((float)(0)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 2))), GLES20.GL_LINES));
+        ColorSource.applyColor(new vec4(((float)(0)), ((float)(0)), ((float)(1)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 3))), GLES20.GL_LINES));
     }
     public void draw() {
         {
@@ -29,7 +29,7 @@ public class MapSsoView {
             {
                 final int __il__0oldValue = __tmp__il__0self.disable();
                 this.planeVao.draw();
-                if(__il__0oldValue != gl.GL_NONE) {
+                if(__il__0oldValue != GLES20.GL_NONE) {
                     __tmp__il__0self.setValue(__il__0oldValue);
                 }
             }

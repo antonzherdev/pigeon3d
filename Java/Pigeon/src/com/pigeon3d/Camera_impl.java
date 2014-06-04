@@ -1,12 +1,12 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public abstract class Camera_impl implements Camera {
     public Camera_impl() {
     }
     public int cullFace() {
-        return ((int)(gl.GL_NONE));
+        return ((int)(GLES20.GL_NONE));
     }
 }

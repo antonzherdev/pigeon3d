@@ -14,7 +14,8 @@ public abstract class Texture {
         return vec2.divF(this.size(), this.scale());
     }
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
         this.deleteTexture();
     }
     public void deleteTexture() {

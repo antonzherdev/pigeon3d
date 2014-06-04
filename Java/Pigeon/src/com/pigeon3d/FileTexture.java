@@ -2,7 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import com.pigeon3d.geometry.vec2;
-import com.pigeon3d.gl.gl;
+import com.pigeon3d.gl.eg;
 
 public final class FileTexture extends Texture {
     public final String name;
@@ -33,7 +33,7 @@ public final class FileTexture extends Texture {
         this.format = format;
         this.scale = scale;
         this.filter = filter;
-        this.id = gl.egGenTexture();
+        this.id = eg.egGenTexture();
     }
     public String toString() {
         return String.format("FileTexture(%s, %s, %s, %f, %s)", this.name, this.fileFormat, this.format, this.scale, this.filter);

@@ -1,7 +1,8 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
+import com.pigeon3d.gl.eg;
 import objd.collection.PArray;
 
 public abstract class MutableBuffer<T> extends Buffer<T> {
@@ -22,8 +23,8 @@ public abstract class MutableBuffer<T> extends Buffer<T> {
     }
     public MutableBuffer<T> setData(final PArray<T> data) {
         this.bind();
-        gl.glBufferDataTargetSizeDataUsage(this.bufferType, ((long)(data.length)), data.bytes, this.usage);
-        gl.egCheckError();
+        GLES20.glBufferData(this.bufferType, ((long)(data.length)), data.bytes, this.usage);
+        eg.egCheckError();
         this._length = data.length;
         this._count = data.count;
         return this;
@@ -31,13 +32,13 @@ public abstract class MutableBuffer<T> extends Buffer<T> {
     public MutableBuffer<T> setArrayCount(final Pointer array, final int count) {
         this.bind();
         this._length = ((int)(count * this.dataType.size));
-        gl.glBufferDataTargetSizeDataUsage(this.bufferType, ((long)(this._length)), array, this.usage);
-        gl.egCheckError();
+        GLES20.glBufferData(this.bufferType, ((long)(this._length)), array, this.usage);
+        eg.egCheckError();
         this._count = ((int)(count));
         return this;
     }
     public void writeCountF(final int count, final P<Pointer> f) {
-        mapCountAccessF(count, gl.GL_WRITE_ONLY, f);
+        mapCountAccessF(count, GLES20.GL_WRITE_ONLY, f);
     }
     public void mapCountAccessF(final int count, final int access, final P<Pointer> f) {
         if(this.mappedData != null) {
@@ -46,18 +47,18 @@ public abstract class MutableBuffer<T> extends Buffer<T> {
         this.bind();
         this._count = ((int)(count));
         this._length = ((int)(count * this.dataType.size));
-        gl.glBufferDataTargetSizeDataUsage(this.bufferType, ((long)(this._length)), ERROR: Unknown null<T#G>, this.usage);
+        GLES20.glBufferData(this.bufferType, ((long)(this._length)), ERROR: Unknown null<T#G>, this.usage);
         {
-            final Pointer _ = gl.<T>egMapBufferTargetAccess(this.bufferType, access);
+            final Pointer _ = eg.<T>egMapBuffer(this.bufferType, access);
             if(_ != null) {
                 f;
             }
         }
-        gl.egUnmapBufferTarget(this.bufferType);
-        gl.egCheckError();
+        eg.egUnmapBuffer(this.bufferType);
+        eg.egCheckError();
     }
     public MappedBufferData<T> beginWriteCount(final int count) {
-        return mapCountAccess(count, gl.GL_WRITE_ONLY);
+        return mapCountAccess(count, GLES20.GL_WRITE_ONLY);
     }
     public MappedBufferData<T> mapCountAccess(final int count, final int access) {
         if(this.mappedData != null) {
@@ -66,22 +67,22 @@ public abstract class MutableBuffer<T> extends Buffer<T> {
         this.bind();
         this._count = ((int)(count));
         this._length = ((int)(count * this.dataType.size));
-        gl.glBufferDataTargetSizeDataUsage(this.bufferType, ((long)(this._length)), ERROR: Unknown null<T#G>, this.usage);
+        GLES20.glBufferData(this.bufferType, ((long)(this._length)), ERROR: Unknown null<T#G>, this.usage);
         {
-            final Pointer _ = gl.<T>egMapBufferTargetAccess(this.bufferType, access);
+            final Pointer _ = eg.<T>egMapBuffer(this.bufferType, access);
             if(_ != null) {
                 this.mappedData = new MappedBufferData<T>(this, _);
             } else {
                 this.mappedData = null;
             }
         }
-        gl.egCheckError();
+        eg.egCheckError();
         return this.mappedData;
     }
     public void _finishMapping() {
         this.bind();
-        gl.egUnmapBufferTarget(this.bufferType);
-        gl.egCheckError();
+        eg.egUnmapBuffer(this.bufferType);
+        eg.egCheckError();
         this.mappedData = null;
     }
     public MutableBuffer(final PType<T> dataType, final int bufferType, final int handle, final int usage) {

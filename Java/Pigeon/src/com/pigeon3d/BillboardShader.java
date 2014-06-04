@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class BillboardShader extends Shader<ColorSource> {
     public final BillboardShaderKey key;
@@ -16,12 +16,12 @@ public class BillboardShader extends Shader<ColorSource> {
     public final ShaderUniformMat4 wcpUniform;
     @Override
     public void loadAttributesVbDesc(final VertexBufferDesc<Object> vbDesc) {
-        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), gl.GL_FLOAT, ((int)(vbDesc.position)));
-        this.modelSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), gl.GL_FLOAT, ((int)(vbDesc.model)));
-        this.colorSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(4)), gl.GL_FLOAT, ((int)(vbDesc.color)));
+        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), GLES20.GL_FLOAT, ((int)(vbDesc.position)));
+        this.modelSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), GLES20.GL_FLOAT, ((int)(vbDesc.model)));
+        this.colorSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(4)), GLES20.GL_FLOAT, ((int)(vbDesc.color)));
         if(this.key.texture) {
             if(this.uvSlot != null) {
-                this.uvSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), gl.GL_FLOAT, ((int)(vbDesc.uv)));
+                this.uvSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), GLES20.GL_FLOAT, ((int)(vbDesc.uv)));
             }
         }
     }

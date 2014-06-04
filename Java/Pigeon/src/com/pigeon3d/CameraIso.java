@@ -3,7 +3,7 @@ package com.pigeon3d;
 import objd.lang.*;
 import com.pigeon3d.geometry.mat4;
 import com.pigeon3d.geometry.vec2;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 import objd.math;
 
 public class CameraIso extends Camera_impl {
@@ -29,7 +29,7 @@ public class CameraIso extends Camera_impl {
     }
     @Override
     public int cullFace() {
-        return ((int)(gl.GL_FRONT));
+        return ((int)(GLES20.GL_FRONT));
     }
     public vec2 naturalCenter() {
         return vec2.divF(vec2.subVec2(this.tilesOnScreen, new vec2(((float)(1)), ((float)(1)))), 2.0);

@@ -34,7 +34,6 @@
 + (instancetype)shaderProgramWithName:(NSString*)name handle:(unsigned int)handle;
 - (instancetype)initWithName:(NSString*)name handle:(unsigned int)handle;
 - (CNClassType*)type;
-+ (PGShaderProgram*)loadFromFilesName:(NSString*)name vertex:(NSString*)vertex fragment:(NSString*)fragment;
 + (PGShaderProgram*)applyName:(NSString*)name vertex:(NSString*)vertex fragment:(NSString*)fragment;
 + (PGShaderProgram*)linkFromShadersName:(NSString*)name vertex:(unsigned int)vertex fragment:(unsigned int)fragment;
 + (unsigned int)compileShaderForShaderType:(unsigned int)shaderType source:(NSString*)source;

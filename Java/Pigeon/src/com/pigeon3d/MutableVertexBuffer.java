@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public class MutableVertexBuffer<T> extends MutableBuffer<T> implements VertexBuffer<T> {
     public final VertexBufferDesc<T> desc;
@@ -22,7 +22,7 @@ public class MutableVertexBuffer<T> extends MutableBuffer<T> implements VertexBu
         return false;
     }
     public MutableVertexBuffer(final VertexBufferDesc<T> desc, final int handle, final int usage) {
-        super(desc.dataType, gl.GL_ARRAY_BUFFER, handle, usage);
+        super(desc.dataType, GLES20.GL_ARRAY_BUFFER, handle, usage);
         this.desc = desc;
     }
     public String toString() {

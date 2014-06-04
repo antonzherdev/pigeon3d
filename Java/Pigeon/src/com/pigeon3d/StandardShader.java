@@ -2,7 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import objd.collection.ImArray;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 import com.pigeon3d.geometry.Rect;
 import objd.collection.Iterator;
 import com.pigeon3d.geometry.vec3;
@@ -28,15 +28,15 @@ public class StandardShader extends Shader<StandardMaterial> {
     public final ImArray<ShaderUniformMat4> directLightDepthMwcp;
     @Override
     public void loadAttributesVbDesc(final VertexBufferDesc<Object> vbDesc) {
-        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), gl.GL_FLOAT, ((int)(vbDesc.position)));
+        this.positionSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), GLES20.GL_FLOAT, ((int)(vbDesc.position)));
         if(this.key.needUV) {
             if(this.uvSlot != null) {
-                this.uvSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), gl.GL_FLOAT, ((int)(vbDesc.uv)));
+                this.uvSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(2)), GLES20.GL_FLOAT, ((int)(vbDesc.uv)));
             }
         }
         if(this.key.directLightCount > 0) {
             if(this.normalSlot != null) {
-                this.normalSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), gl.GL_FLOAT, ((int)(vbDesc.normal)));
+                this.normalSlot.setFromBufferWithStrideValuesCountValuesTypeShift(((int)(vbDesc.stride())), ((int)(3)), GLES20.GL_FLOAT, ((int)(vbDesc.normal)));
             }
         }
     }
@@ -71,7 +71,7 @@ public class StandardShader extends Shader<StandardMaterial> {
                 final NormalMap __tmp_2t_1lu = param.normalMap;
                 final Texture _ = ((__tmp_2t_1lu != null) ? (__tmp_2t_1lu.texture) : (null));
                 if(_ != null) {
-                    Global.context.bindTextureSlotTargetTexture(gl.GL_TEXTURE1, gl.GL_TEXTURE_2D, ((Texture)(_)));
+                    Global.context.bindTextureSlotTargetTexture(GLES20.GL_TEXTURE1, GLES20.GL_TEXTURE_2D, ((Texture)(_)));
                 }
             }
         }
@@ -104,7 +104,7 @@ public class StandardShader extends Shader<StandardMaterial> {
                             this.directLightColors[i].applyVec4(light.color);
                             this.directLightDepthMwcp[i].applyMatrix(light.shadowMap().biasDepthCp.mulMatrix(Global.matrix.mw()));
                             this.directLightShadows[i].applyI4(((int)(i + 2)));
-                            Global.context.bindTextureSlotTargetTexture(gl.GL_TEXTURE0 + i + 2, gl.GL_TEXTURE_2D, light.shadowMap().texture);
+                            Global.context.bindTextureSlotTargetTexture(GLES20.GL_TEXTURE0 + i + 2, GLES20.GL_TEXTURE_2D, light.shadowMap().texture);
                             i++;
                         }
                     }

@@ -86,7 +86,8 @@ public class MeshWriter {
         this.ibo.setArrayCount(this.index, ((int)(this.indexSample.count * this.count)));
     }
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
         Pointer.free(this.vertex);
         Pointer.free(this.index);
     }

@@ -2,7 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import objd.concurrent.Future;
-import com.pigeon3d.gl.gl;
+import android.opengl.GLES20;
 
 public abstract class ParticleSystemView<P, D, M> {
     public abstract int indexCount();
@@ -70,7 +70,7 @@ public abstract class ParticleSystemView<P, D, M> {
                                                 }
                                             }
                                         }
-                                        if(__il__0t_1t_1t_1t_0rp0oldValue != gl.GL_NONE) {
+                                        if(__il__0t_1t_1t_1t_0rp0oldValue != GLES20.GL_NONE) {
                                             __tmp__il__0t_1t_1t_1t_0rp0self.setValue(__il__0t_1t_1t_1t_0rp0oldValue);
                                         }
                                     }
@@ -103,7 +103,7 @@ public abstract class ParticleSystemView<P, D, M> {
         this.vaoRing = new VertexArrayRing<M>(((int)(3)), ((F<Integer, VertexArray<M>>)(((F)(new F<Integer, SimpleVertexArray<M>>() {
             @Override
             public SimpleVertexArray<M> apply(final Integer _) {
-                return shader.vaoVboIbo(((VertexBuffer<Object>)(((VertexBuffer)(VBO.<D>mutDescUsage(vbDesc, gl.GL_STREAM_DRAW))))), ParticleSystemView.this.index);
+                return shader.vaoVboIbo(((VertexBuffer<Object>)(((VertexBuffer)(VBO.<D>mutDescUsage(vbDesc, GLES20.GL_STREAM_DRAW))))), ParticleSystemView.this.index);
             }
         })))));
     }
