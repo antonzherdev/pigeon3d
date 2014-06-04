@@ -15,7 +15,7 @@ public class ShaderUniformMat4 {
     }
     public ShaderUniformMat4(final int handle) {
         this.handle = handle;
-        this._last = mat4.null();
+        this._last = mat4.nil();
     }
     public String toString() {
         return String.format("ShaderUniformMat4(%d)", this.handle);

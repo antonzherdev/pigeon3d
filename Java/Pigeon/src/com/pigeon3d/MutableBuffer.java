@@ -47,11 +47,11 @@ public abstract class MutableBuffer<T> extends Buffer<T> {
         this.bind();
         this._count = ((int)(count));
         this._length = ((int)(count * this.dataType.size));
-        GLES20.glBufferData(this.bufferType, ((long)(this._length)), ERROR: Unknown null<T#G>, this.usage);
+        GLES20.glBufferData(this.bufferType, ((long)(this._length)), null, this.usage);
         {
             final Pointer _ = eg.<T>egMapBuffer(this.bufferType, access);
             if(_ != null) {
-                f;
+                f.apply(_);
             }
         }
         eg.egUnmapBuffer(this.bufferType);
@@ -67,7 +67,7 @@ public abstract class MutableBuffer<T> extends Buffer<T> {
         this.bind();
         this._count = ((int)(count));
         this._length = ((int)(count * this.dataType.size));
-        GLES20.glBufferData(this.bufferType, ((long)(this._length)), ERROR: Unknown null<T#G>, this.usage);
+        GLES20.glBufferData(this.bufferType, ((long)(this._length)), null, this.usage);
         {
             final Pointer _ = eg.<T>egMapBuffer(this.bufferType, access);
             if(_ != null) {

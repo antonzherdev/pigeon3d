@@ -73,7 +73,7 @@ stub object gl {
     def egDeleteVertexArray(handle : uint4)
     def egBindVertexArray(handle : uint4)
     def glBindBuffer(target : uint4, handle : uint4) : uint4
-    def glBufferData(target : uint4, size : int8, data : Pointer<_>, usage : uint4)
+    def glBufferData(target : uint4, size : int4, data : Pointer<_>, usage : uint4)
     def egMapBuffer<T>(target : uint4, access : uint4) : Pointer<T>?
     def egUnmapBuffer(target : uint4) : bool
     def glBufferSubData(target : uint4, offset : int8 ,size : int8, data : Pointer<_>)

@@ -84,14 +84,14 @@ static CNClassType* _PGVBO_type;
     unsigned int len = count * desc.dataType.size;
     PGImmutableVertexBuffer* vb = [PGImmutableVertexBuffer immutableVertexBufferWithDesc:desc handle:egGenBuffer() length:((NSUInteger)(len)) count:((NSUInteger)(count))];
     [vb bind];
-    glBufferData(GL_ARRAY_BUFFER, ((long)(len)), array, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, ((int)(len)), array, GL_STATIC_DRAW);
     return vb;
 }
 
 + (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc data:(CNPArray*)data {
     PGImmutableVertexBuffer* vb = [PGImmutableVertexBuffer immutableVertexBufferWithDesc:desc handle:egGenBuffer() length:data.length count:data.count];
     [vb bind];
-    glBufferData(GL_ARRAY_BUFFER, ((long)(data.length)), data.bytes, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, ((int)(data.length)), data.bytes, GL_STATIC_DRAW);
     return vb;
 }
 

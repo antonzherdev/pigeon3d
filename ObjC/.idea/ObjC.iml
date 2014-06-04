@@ -7,6 +7,9 @@
     <content url="file://$MODULE_DIR$/../Sources">
       <sourceFolder url="file://$MODULE_DIR$/../Sources" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../build-java.sh">
+      <sourceFolder url="file://$MODULE_DIR$/../build-java.sh" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../build.sh">
       <sourceFolder url="file://$MODULE_DIR$/../build.sh" isTestSource="false" />
     </content>

@@ -43,4 +43,11 @@ public class eg {
         }
         return ((int) pVersion.charAt(0) - '0')*100 + (pVersion.charAt(2) - '0') *10 + pVersion.charAt(3)  - '0';
     }
+
+    public static void egCheckError() {
+        int err = GLES20.glGetError();
+        if(err != GLES20.GL_NO_ERROR) {
+            throw new RuntimeException("OpenGL error: " + err);
+        }
+    }
 }

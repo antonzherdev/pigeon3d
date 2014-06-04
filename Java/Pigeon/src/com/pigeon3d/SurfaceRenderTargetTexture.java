@@ -15,7 +15,7 @@ public class SurfaceRenderTargetTexture extends SurfaceRenderTarget {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, ((int)(GLES20.GL_CLAMP_TO_EDGE)));
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, ((int)(GLES20.GL_NEAREST)));
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, ((int)(GLES20.GL_NEAREST)));
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, ((int)(0)), ((int)(GLES20.GL_RGBA)), ((int)(size.x)), ((int)(size.y)), ((int)(0)), GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ERROR: Unknown null<void>);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, ((int)(0)), ((int)(GLES20.GL_RGBA)), ((int)(size.x)), ((int)(size.y)), ((int)(0)), GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
         return new SurfaceRenderTargetTexture(t, size);
     }
     @Override

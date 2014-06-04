@@ -105,7 +105,7 @@ static CNClassType* _PGMutableBuffer_type;
 
 - (id)setData:(CNPArray*)data {
     [self bind];
-    glBufferData(self.bufferType, ((long)(data.length)), data.bytes, _usage);
+    glBufferData(self.bufferType, ((int)(data.length)), data.bytes, _usage);
     egCheckError();
     __length = data.length;
     __count = data.count;
@@ -115,7 +115,7 @@ static CNClassType* _PGMutableBuffer_type;
 - (id)setArray:(void*)array count:(unsigned int)count {
     [self bind];
     __length = ((NSUInteger)(count * self.dataType.size));
-    glBufferData(self.bufferType, ((long)(__length)), array, _usage);
+    glBufferData(self.bufferType, ((int)(__length)), array, _usage);
     egCheckError();
     __count = ((NSUInteger)(count));
     return self;
@@ -130,10 +130,10 @@ static CNClassType* _PGMutableBuffer_type;
     [self bind];
     __count = ((NSUInteger)(count));
     __length = ((NSUInteger)(count * self.dataType.size));
-    glBufferData(self.bufferType, ((long)(__length)), NULL, _usage);
+    glBufferData(self.bufferType, ((int)(__length)), NULL, _usage);
     {
         void* _ = egMapBuffer(self.bufferType, access);
-        if(_ != nil) f;
+        if(_ != nil) f(_);
     }
     egUnmapBuffer(self.bufferType);
     egCheckError();
@@ -148,7 +148,7 @@ static CNClassType* _PGMutableBuffer_type;
     [self bind];
     __count = ((NSUInteger)(count));
     __length = ((NSUInteger)(count * self.dataType.size));
-    glBufferData(self.bufferType, ((long)(__length)), NULL, _usage);
+    glBufferData(self.bufferType, ((int)(__length)), NULL, _usage);
     {
         void* _ = egMapBuffer(self.bufferType, access);
         if(_ != nil) _mappedData = [PGMappedBufferData mappedBufferDataWithBuffer:self pointer:_];

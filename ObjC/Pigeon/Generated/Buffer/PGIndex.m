@@ -50,14 +50,14 @@ static CNClassType* _PGIBO_type;
 + (PGImmutableIndexBuffer*)applyPointer:(unsigned int*)pointer count:(unsigned int)count {
     PGImmutableIndexBuffer* ib = [PGImmutableIndexBuffer immutableIndexBufferWithHandle:egGenBuffer() mode:GL_TRIANGLES length:((NSUInteger)(count * 4)) count:((NSUInteger)(count))];
     [ib bind];
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ((long)(count * 4)), pointer, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ((int)(count * 4)), pointer, GL_STATIC_DRAW);
     return ib;
 }
 
 + (PGImmutableIndexBuffer*)applyData:(CNPArray*)data {
     PGImmutableIndexBuffer* ib = [PGImmutableIndexBuffer immutableIndexBufferWithHandle:egGenBuffer() mode:GL_TRIANGLES length:data.length count:data.count];
     [ib bind];
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ((long)(data.length)), data.bytes, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ((int)(data.length)), data.bytes, GL_STATIC_DRAW);
     return ib;
 }
 

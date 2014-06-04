@@ -12,7 +12,7 @@ public abstract class IndexBuffer_impl extends IndexSource_impl implements Index
         Global.context.draw();
         final int n = this.count();
         if(n > 0) {
-            GLES20.glDrawElements(this.mode(), ((int)(n)), GLES20.GL_UNSIGNED_INT, ERROR: Unknown null<uint4>);
+            GLES20.glDrawElements(this.mode(), ((int)(n)), GLES20.GL_UNSIGNED_INT, null);
         }
         eg.egCheckError();
     }

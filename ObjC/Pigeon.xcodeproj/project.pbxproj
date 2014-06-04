@@ -884,6 +884,7 @@
 		6F3DF0C6512EE4A3CB858AAD /* ViewportSurface.od */ = {isa = PBXFileReference; lastKnownFileType = file.od; path = ViewportSurface.od; sourceTree = "<group>"; };
 		6F3DF0D3AF10E1767B51B559 /* fr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = fr; path = Localizable.strings; sourceTree = "<group>"; };
 		6F3DF0E13B4EB62C562AAB1B /* btOverlappingPairCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = btOverlappingPairCache.cpp; sourceTree = "<group>"; };
+		6F3DF0E599B19F5E7DE391DC /* build-java.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "build-java.sh"; path = "../build-java.sh"; sourceTree = "<group>"; };
 		6F3DF0E62CF06E3D5E5EB54C /* PGPerlinTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPerlinTest.m; sourceTree = "<group>"; };
 		6F3DF0E62F9BA719ACB44BF7 /* NSDictionary+CNChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+CNChain.h"; sourceTree = "<group>"; };
 		6F3DF0E6D1666BF9441CFF94 /* zh-Hant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = Localizable.strings; sourceTree = "<group>"; };
@@ -1894,6 +1895,7 @@
 				0292ED1218869E5200DF540E /* Products */,
 				6F3DFA3EE1CF1D6ECA60B9CD /* Pigeon */,
 				6F3DF5767F3BD2DA56663D3C /* build.sh */,
+				6F3DF0E599B19F5E7DE391DC /* build-java.sh */,
 			);
 			sourceTree = "<group>";
 		};
