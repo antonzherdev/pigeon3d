@@ -1,7 +1,0 @@
-package objd.lang
-
-stub class Java
-
-stub class ObjC
-
-stub class GenName(name : string)

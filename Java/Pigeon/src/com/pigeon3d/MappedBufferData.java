@@ -4,7 +4,7 @@ import objd.lang.*;
 import objd.concurrent.ConditionLock;
 
 public class MappedBufferData<T> {
-    public final MutableBuffer<T> buffer;
+    public final MutableGlBuffer<T> buffer;
     public final Pointer pointer;
     private final ConditionLock lock;
     private boolean finished;
@@ -41,7 +41,7 @@ public class MappedBufferData<T> {
         this.finished = true;
         this.lock.unlock();
     }
-    public MappedBufferData(final MutableBuffer<T> buffer, final Pointer pointer) {
+    public MappedBufferData(final MutableGlBuffer<T> buffer, final Pointer pointer) {
         this.buffer = buffer;
         this.pointer = pointer;
         this.lock = new ConditionLock(0);

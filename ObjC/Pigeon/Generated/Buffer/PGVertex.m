@@ -95,6 +95,13 @@ static CNClassType* _PGVBO_type;
     return vb;
 }
 
++ (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc buffer:(CNBuffer*)buffer {
+    PGImmutableVertexBuffer* vb = [PGImmutableVertexBuffer immutableVertexBufferWithDesc:desc handle:egGenBuffer() length:[buffer length] count:((NSUInteger)(buffer.count))];
+    [vb bind];
+    glBufferData(GL_ARRAY_BUFFER, ((int)([buffer length])), buffer.bytes, GL_STATIC_DRAW);
+    return vb;
+}
+
 + (id<PGVertexBuffer>)vec4Data:(CNPArray*)data {
     return [PGVBO applyDesc:[PGVertexBufferDesc Vec4] data:data];
 }

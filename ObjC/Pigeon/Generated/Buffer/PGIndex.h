@@ -60,7 +60,7 @@
 @end
 
 
-@interface PGImmutableIndexBuffer : PGBuffer<PGIndexBuffer> {
+@interface PGImmutableIndexBuffer : PGGlBuffer<PGIndexBuffer> {
 @protected
     unsigned int _mode;
     NSUInteger _length;
@@ -79,7 +79,7 @@
 @end
 
 
-@interface PGMutableIndexBuffer : PGMutableBuffer<PGIndexBuffer> {
+@interface PGMutableIndexBuffer : PGMutableGlBuffer<PGIndexBuffer> {
 @protected
     unsigned int _mode;
 }

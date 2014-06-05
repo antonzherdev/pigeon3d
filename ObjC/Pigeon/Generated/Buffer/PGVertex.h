@@ -46,6 +46,7 @@
 - (CNClassType*)type;
 + (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc array:(void*)array count:(unsigned int)count;
 + (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc data:(CNPArray*)data;
++ (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc buffer:(CNBuffer*)buffer;
 + (id<PGVertexBuffer>)vec4Data:(CNPArray*)data;
 + (id<PGVertexBuffer>)vec3Data:(CNPArray*)data;
 + (id<PGVertexBuffer>)vec2Data:(CNPArray*)data;
@@ -76,7 +77,7 @@
 @end
 
 
-@interface PGImmutableVertexBuffer : PGBuffer<PGVertexBuffer> {
+@interface PGImmutableVertexBuffer : PGGlBuffer<PGVertexBuffer> {
 @protected
     PGVertexBufferDesc* _desc;
     NSUInteger _length;
@@ -95,7 +96,7 @@
 @end
 
 
-@interface PGMutableVertexBuffer : PGMutableBuffer<PGVertexBuffer> {
+@interface PGMutableVertexBuffer : PGMutableGlBuffer<PGVertexBuffer> {
 @protected
     PGVertexBufferDesc* _desc;
 }

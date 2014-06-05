@@ -1,5 +1,7 @@
 package com.pigeon3d.geometry
 
+import java.nio._
+
 struct vec2(val x : float4, val y : float4) {
     static def apply(vec2i : vec2i) = vec2(vec2i.x, vec2i.y)
     static def apply(f : float) = vec2(f, f)
@@ -56,6 +58,25 @@ struct vec2(val x : float4, val y : float4) {
     def abs = vec2(x.abs, y.abs)
     def ratio : float4 = x/y
 }
+
+@ObjC
+class Vec2Buffer(count : uint) extends Buffer<vec2>(vec2.type, count) {
+    def get : vec2 = _get
+    def set(v : vec2) {
+        _set(v)
+    }
+}
+
+@Java
+class Vec2Buffer(count : uint) extends Buffer<vec2>(count, 8) {
+    override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
+    inline def get : vec2 = vec2(bytes.get, bytes.get)
+    inline def set(v: vec2) {
+        bytes.put(v.x)
+        bytes.put(v.y)
+    }
+}
+
 
 struct vec2i(val x : int, val y : int) {
     static def apply(vec2 : vec2) = vec2i(vec2.x.round, vec2.y.round)

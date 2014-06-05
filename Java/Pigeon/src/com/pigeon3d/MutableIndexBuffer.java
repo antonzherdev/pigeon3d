@@ -4,7 +4,7 @@ import objd.lang.*;
 import android.opengl.GLES20;
 import com.pigeon3d.gl.eg;
 
-public class MutableIndexBuffer extends MutableBuffer<Integer> implements IndexBuffer {
+public class MutableIndexBuffer extends MutableGlBuffer<Integer> implements IndexBuffer {
     public final int mode;
     @Override
     public int mode() {

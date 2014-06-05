@@ -4,6 +4,7 @@
 @class CNChain;
 @class CNSortBuilder;
 
+@class PGVec2Buffer;
 typedef struct PGVec2 PGVec2;
 typedef struct PGVec2i PGVec2i;
 typedef struct PGVec3 PGVec3;
@@ -79,6 +80,17 @@ CNPType* pgVec2Type();
 - (id)initWithValue:(PGVec2)value;
 @end
 
+
+
+@interface PGVec2Buffer : CNBuffer
++ (instancetype)vec2BufferWithCount:(NSUInteger)count;
+- (instancetype)initWithCount:(NSUInteger)count;
+- (CNClassType*)type;
+- (PGVec2)get;
+- (void)setV:(PGVec2)v;
+- (NSString*)description;
++ (CNClassType*)type;
+@end
 
 
 struct PGVec2i {

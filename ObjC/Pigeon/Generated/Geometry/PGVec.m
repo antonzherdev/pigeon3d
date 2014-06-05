@@ -192,6 +192,57 @@ CNPType* pgVec2Type() {
 @end
 
 
+@implementation PGVec2Buffer
+static CNClassType* _PGVec2Buffer_type;
+
++ (instancetype)vec2BufferWithCount:(NSUInteger)count {
+    return [[PGVec2Buffer alloc] initWithCount:count];
+}
+
+- (instancetype)initWithCount:(NSUInteger)count {
+    self = [super initWithTp:pgVec2Type() count:((unsigned int)(count))];
+    
+    return self;
+}
+
++ (void)initialize {
+    [super initialize];
+    if(self == [PGVec2Buffer class]) _PGVec2Buffer_type = [CNClassType classTypeWithCls:[PGVec2Buffer class]];
+}
+
+- (PGVec2)get {
+    if(__position >= _count) @throw @"Out of bound";
+    PGVec2 __il_r = *(((PGVec2*)(__pointer)));
+    __pointer = ((PGVec2*)(__pointer)) + 1;
+    __position++;
+    return __il_r;
+}
+
+- (void)setV:(PGVec2)v {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((PGVec2*)(__pointer))) = v;
+    __pointer = ((PGVec2*)(__pointer)) + 1;
+    __position++;
+}
+
+- (NSString*)description {
+    return @"Vec2Buffer";
+}
+
+- (CNClassType*)type {
+    return [PGVec2Buffer type];
+}
+
++ (CNClassType*)type {
+    return _PGVec2Buffer_type;
+}
+
+- (id)copyWithZone:(NSZone*)zone {
+    return self;
+}
+
+@end
+
 PGVec2i pgVec2iApplyVec2(PGVec2 vec2) {
     return PGVec2iMake(float4Round(vec2.x), float4Round(vec2.y));
 }

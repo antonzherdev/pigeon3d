@@ -3,12 +3,12 @@
 @class PGContext;
 @class NSConditionLock;
 
-@class PGBuffer;
-@class PGMutableBuffer;
+@class PGGlBuffer;
+@class PGMutableGlBuffer;
 @class PGMappedBufferData;
 @class PGBufferRing;
 
-@interface PGBuffer : NSObject {
+@interface PGGlBuffer : NSObject {
 @protected
     CNPType* _dataType;
     unsigned int _bufferType;
@@ -18,7 +18,7 @@
 @property (nonatomic, readonly) unsigned int bufferType;
 @property (nonatomic, readonly) unsigned int handle;
 
-+ (instancetype)bufferWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle;
++ (instancetype)glBufferWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle;
 - (instancetype)initWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle;
 - (CNClassType*)type;
 - (NSUInteger)length;
@@ -31,7 +31,7 @@
 @end
 
 
-@interface PGMutableBuffer : PGBuffer {
+@interface PGMutableGlBuffer : PGGlBuffer {
 @protected
     unsigned int _usage;
     NSUInteger __length;
@@ -40,7 +40,7 @@
 }
 @property (nonatomic, readonly) unsigned int usage;
 
-+ (instancetype)mutableBufferWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle usage:(unsigned int)usage;
++ (instancetype)mutableGlBufferWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle usage:(unsigned int)usage;
 - (instancetype)initWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle usage:(unsigned int)usage;
 - (CNClassType*)type;
 - (NSUInteger)length;
@@ -60,17 +60,17 @@
 
 @interface PGMappedBufferData : NSObject {
 @protected
-    PGMutableBuffer* _buffer;
+    PGMutableGlBuffer* _buffer;
     void* _pointer;
     NSConditionLock* _lock;
     BOOL _finished;
     BOOL _updated;
 }
-@property (nonatomic, readonly) PGMutableBuffer* buffer;
+@property (nonatomic, readonly) PGMutableGlBuffer* buffer;
 @property (nonatomic, readonly) void* pointer;
 
-+ (instancetype)mappedBufferDataWithBuffer:(PGMutableBuffer*)buffer pointer:(void*)pointer;
-- (instancetype)initWithBuffer:(PGMutableBuffer*)buffer pointer:(void*)pointer;
++ (instancetype)mappedBufferDataWithBuffer:(PGMutableGlBuffer*)buffer pointer:(void*)pointer;
+- (instancetype)initWithBuffer:(PGMutableGlBuffer*)buffer pointer:(void*)pointer;
 - (CNClassType*)type;
 - (BOOL)wasUpdated;
 - (BOOL)beginWrite;

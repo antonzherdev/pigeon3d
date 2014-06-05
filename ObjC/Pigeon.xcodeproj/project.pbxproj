@@ -1437,6 +1437,7 @@
 		6F3DF9B201A41C2DFC9039A6 /* PGAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGAlert.h; sourceTree = "<group>"; };
 		6F3DF9B8334CA72E1CDA9A30 /* PGCircle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGCircle.m; sourceTree = "<group>"; };
 		6F3DF9BB7B96DD5074FE798B /* btConvexInternalShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = btConvexInternalShape.cpp; sourceTree = "<group>"; };
+		6F3DF9BB89F0A204FE2CC6D1 /* build-lib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "build-lib.sh"; path = "../build-lib.sh"; sourceTree = "<group>"; };
 		6F3DF9BFFF5B745253BE48F4 /* NSMutableDictionary+CNChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+CNChain.h"; sourceTree = "<group>"; };
 		6F3DF9C04FA9F42F29E24712 /* PGCollisionWorld.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PGCollisionWorld.mm; sourceTree = "<group>"; };
 		6F3DF9C5B3E7F63BB67CB9DF /* SphereTriangleDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphereTriangleDetector.h; sourceTree = "<group>"; };
@@ -1904,6 +1905,7 @@
 				6F3DFA3EE1CF1D6ECA60B9CD /* Pigeon */,
 				6F3DF5767F3BD2DA56663D3C /* build.sh */,
 				6F3DF0E599B19F5E7DE391DC /* build-java.sh */,
+				6F3DF9BB89F0A204FE2CC6D1 /* build-lib.sh */,
 			);
 			sourceTree = "<group>";
 		};

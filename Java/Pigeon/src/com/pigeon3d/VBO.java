@@ -4,6 +4,8 @@ import objd.lang.*;
 import com.pigeon3d.gl.eg;
 import android.opengl.GLES20;
 import objd.collection.PArray;
+import java.nio.Buffer;
+import objd.collection.Buffer;
 import com.pigeon3d.geometry.vec4;
 import com.pigeon3d.geometry.vec3;
 import com.pigeon3d.geometry.vec2;
@@ -17,9 +19,15 @@ public class VBO {
         return vb;
     }
     public static <T> VertexBuffer<T> applyDescData(final VertexBufferDesc<T> desc, final PArray<T> data) {
-        final ImmutableVertexBuffer<T> vb = new ImmutableVertexBuffer<T>(desc, eg.egGenBuffer(), data.length, data.count);
+        final ImmutableVertexBuffer<T> vb = new ImmutableVertexBuffer<T>(desc, eg.egGenBuffer(), data.length(), data.count());
         vb.bind();
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, ((long)(data.length)), data.bytes, GLES20.GL_STATIC_DRAW);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, ((long)(data.length())), data.bytes(), GLES20.GL_STATIC_DRAW);
+        return vb;
+    }
+    public static <T> VertexBuffer<T> applyDescBuffer(final VertexBufferDesc<T> desc, final Buffer<T> buffer) {
+        final ImmutableVertexBuffer<T> vb = new ImmutableVertexBuffer<T>(desc, eg.egGenBuffer(), ((int)(buffer.length)), ((int)(buffer.count)));
+        vb.bind();
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, ((long)(buffer.length)), ((Buffer<Object>)(((Buffer)(buffer.bytes())))), GLES20.GL_STATIC_DRAW);
         return vb;
     }
     public static VertexBuffer<vec4> vec4Data(final PArray<vec4> data) {

@@ -26,6 +26,13 @@ object VBO {
         glBufferData(GL_ARRAY_BUFFER, data.length, data.bytes, GL_STATIC_DRAW)
         vb
     }
+
+    static def apply<T>(desc : VertexBufferDesc<T>, buffer : Buffer<T>) : VertexBuffer<T> = {
+        val vb = ImmutableVertexBuffer<T>(desc, egGenBuffer, buffer.length, buffer.count)
+        vb.bind
+        glBufferData(GL_ARRAY_BUFFER, buffer.length, buffer.bytes, GL_STATIC_DRAW)
+        vb
+    }
     static def vec4(data : PArray<vec4>) = VBO<vec4>(VertexBufferDesc.Vec4, data)
     static def vec3(data : PArray<vec3>) = VBO<vec3>(VertexBufferDesc.Vec3, data)
     static def vec2(data : PArray<vec2>) = VBO<vec2>(VertexBufferDesc.Vec2, data)

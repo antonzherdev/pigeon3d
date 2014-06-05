@@ -3,7 +3,7 @@ package com.pigeon3d;
 import objd.lang.*;
 import android.opengl.GLES20;
 
-public class ImmutableVertexBuffer<T> extends Buffer<T> implements VertexBuffer<T> {
+public class ImmutableVertexBuffer<T> extends GlBuffer<T> implements VertexBuffer<T> {
     public final VertexBufferDesc<T> desc;
     @Override
     public VertexBufferDesc<T> desc() {

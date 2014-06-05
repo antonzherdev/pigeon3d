@@ -3,14 +3,14 @@
 #import "PGContext.h"
 #import "GL.h"
 #import "CNLock.h"
-@implementation PGBuffer
-static CNClassType* _PGBuffer_type;
+@implementation PGGlBuffer
+static CNClassType* _PGGlBuffer_type;
 @synthesize dataType = _dataType;
 @synthesize bufferType = _bufferType;
 @synthesize handle = _handle;
 
-+ (instancetype)bufferWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle {
-    return [[PGBuffer alloc] initWithDataType:dataType bufferType:bufferType handle:handle];
++ (instancetype)glBufferWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle {
+    return [[PGGlBuffer alloc] initWithDataType:dataType bufferType:bufferType handle:handle];
 }
 
 - (instancetype)initWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle {
@@ -26,7 +26,7 @@ static CNClassType* _PGBuffer_type;
 
 + (void)initialize {
     [super initialize];
-    if(self == [PGBuffer class]) _PGBuffer_type = [CNClassType classTypeWithCls:[PGBuffer class]];
+    if(self == [PGGlBuffer class]) _PGGlBuffer_type = [CNClassType classTypeWithCls:[PGGlBuffer class]];
 }
 
 - (NSUInteger)length {
@@ -50,15 +50,15 @@ static CNClassType* _PGBuffer_type;
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"Buffer(%@, %u, %u)", _dataType, _bufferType, _handle];
+    return [NSString stringWithFormat:@"GlBuffer(%@, %u, %u)", _dataType, _bufferType, _handle];
 }
 
 - (CNClassType*)type {
-    return [PGBuffer type];
+    return [PGGlBuffer type];
 }
 
 + (CNClassType*)type {
-    return _PGBuffer_type;
+    return _PGGlBuffer_type;
 }
 
 - (id)copyWithZone:(NSZone*)zone {
@@ -67,12 +67,12 @@ static CNClassType* _PGBuffer_type;
 
 @end
 
-@implementation PGMutableBuffer
-static CNClassType* _PGMutableBuffer_type;
+@implementation PGMutableGlBuffer
+static CNClassType* _PGMutableGlBuffer_type;
 @synthesize usage = _usage;
 
-+ (instancetype)mutableBufferWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle usage:(unsigned int)usage {
-    return [[PGMutableBuffer alloc] initWithDataType:dataType bufferType:bufferType handle:handle usage:usage];
++ (instancetype)mutableGlBufferWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle usage:(unsigned int)usage {
+    return [[PGMutableGlBuffer alloc] initWithDataType:dataType bufferType:bufferType handle:handle usage:usage];
 }
 
 - (instancetype)initWithDataType:(CNPType*)dataType bufferType:(unsigned int)bufferType handle:(unsigned int)handle usage:(unsigned int)usage {
@@ -88,7 +88,7 @@ static CNClassType* _PGMutableBuffer_type;
 
 + (void)initialize {
     [super initialize];
-    if(self == [PGMutableBuffer class]) _PGMutableBuffer_type = [CNClassType classTypeWithCls:[PGMutableBuffer class]];
+    if(self == [PGMutableGlBuffer class]) _PGMutableGlBuffer_type = [CNClassType classTypeWithCls:[PGMutableGlBuffer class]];
 }
 
 - (NSUInteger)length {
@@ -166,15 +166,15 @@ static CNClassType* _PGMutableBuffer_type;
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"MutableBuffer(%u)", _usage];
+    return [NSString stringWithFormat:@"MutableGlBuffer(%u)", _usage];
 }
 
 - (CNClassType*)type {
-    return [PGMutableBuffer type];
+    return [PGMutableGlBuffer type];
 }
 
 + (CNClassType*)type {
-    return _PGMutableBuffer_type;
+    return _PGMutableGlBuffer_type;
 }
 
 - (id)copyWithZone:(NSZone*)zone {
@@ -188,11 +188,11 @@ static CNClassType* _PGMappedBufferData_type;
 @synthesize buffer = _buffer;
 @synthesize pointer = _pointer;
 
-+ (instancetype)mappedBufferDataWithBuffer:(PGMutableBuffer*)buffer pointer:(void*)pointer {
++ (instancetype)mappedBufferDataWithBuffer:(PGMutableGlBuffer*)buffer pointer:(void*)pointer {
     return [[PGMappedBufferData alloc] initWithBuffer:buffer pointer:pointer];
 }
 
-- (instancetype)initWithBuffer:(PGMutableBuffer*)buffer pointer:(void*)pointer {
+- (instancetype)initWithBuffer:(PGMutableGlBuffer*)buffer pointer:(void*)pointer {
     self = [super init];
     if(self) {
         _buffer = buffer;

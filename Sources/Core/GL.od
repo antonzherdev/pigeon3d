@@ -2,6 +2,7 @@ package com.pigeon3d.gl
 
 import com.pigeon3d.geometry._
 import com.pigeon3d._
+import java.nio._
 
 @ObjC
 stub object gl {
@@ -266,6 +267,8 @@ stub object gl {
     def glBindBuffer(target : uint4, handle : uint4) : uint4
     @GenName("glBufferData")
     def glBufferData(target : uint4, size : int8, data : Pointer<_>, usage : uint4)
+    @GenName("glBufferData")
+    def glBufferData(target : uint4, size : int8, data : JavaBuffer<_>, usage : uint4)
     @GenName("glBufferSubData")
     def glBufferSubData(target : uint4, offset : int8 ,size : int8, data : Pointer<_>)
     @GenName("glDrawElements")

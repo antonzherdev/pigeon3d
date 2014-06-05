@@ -3,7 +3,7 @@ package com.pigeon3d;
 import objd.lang.*;
 import objd.collection.MQueue;
 
-public class BufferRing<T, B extends MutableBuffer<T>> {
+public class BufferRing<T, B extends MutableGlBuffer<T>> {
     public final int ringSize;
     public final F0<B> creator;
     private final MQueue<B> _ring;

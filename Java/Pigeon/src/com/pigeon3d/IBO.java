@@ -13,9 +13,9 @@ public class IBO {
         return ib;
     }
     public static ImmutableIndexBuffer applyData(final PArray<Integer> data) {
-        final ImmutableIndexBuffer ib = new ImmutableIndexBuffer(eg.egGenBuffer(), GLES20.GL_TRIANGLES, data.length, data.count);
+        final ImmutableIndexBuffer ib = new ImmutableIndexBuffer(eg.egGenBuffer(), GLES20.GL_TRIANGLES, data.length(), data.count());
         ib.bind();
-        GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, ((long)(data.length)), data.bytes, GLES20.GL_STATIC_DRAW);
+        GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, ((long)(data.length())), data.bytes(), GLES20.GL_STATIC_DRAW);
         return ib;
     }
     public static MutableIndexBuffer mutModeUsage(final int mode, final int usage) {

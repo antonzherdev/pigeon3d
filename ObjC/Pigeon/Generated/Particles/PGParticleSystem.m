@@ -135,28 +135,6 @@ static CNClassType* _PGFixedParticleSystem_type;
     if(self == [PGFixedParticleSystem class]) _PGFixedParticleSystem_type = [CNClassType classTypeWithCls:[PGFixedParticleSystem class]];
 }
 
-- (void)forParticlesBy:(void(^)(void*))by {
-    NSInteger i = 0;
-    void* p = self.particles;
-    while(i < self.maxCount) {
-        by(p);
-        i++;
-        p++;
-    }
-}
-
-- (unsigned int)writeParticlesArray:(void*)array by:(void*(^)(void*, void*))by {
-    NSInteger i = 0;
-    void* p = self.particles;
-    void* a = array;
-    while(i < self.maxCount) {
-        a = by(a, p);
-        i++;
-        p++;
-    }
-    return self.maxCount;
-}
-
 - (NSString*)description {
     return @"FixedParticleSystem";
 }
@@ -201,58 +179,6 @@ static CNClassType* _PGEmissiveParticleSystem_type;
 + (void)initialize {
     [super initialize];
     if(self == [PGEmissiveParticleSystem class]) _PGEmissiveParticleSystem_type = [CNClassType classTypeWithCls:[PGEmissiveParticleSystem class]];
-}
-
-- (void)updateParticlesBy:(BOOL(^)(void*))by {
-    NSInteger i = 0;
-    void* p = self.particles;
-    while(i < self.maxCount) {
-        if(*(((char*)(p))) != 0) {
-            BOOL ch = by(p);
-            if(!(ch)) {
-                *(((char*)(p))) = 0;
-                __lifeCount--;
-                __nextInvalidRef = p;
-                __nextInvalidNumber = i;
-            }
-        }
-        i++;
-        p++;
-    }
-}
-
-- (void)emitBy:(void(^)(void*))by {
-    if(__lifeCount < self.maxCount) {
-        void* p = __nextInvalidRef;
-        BOOL round = NO;
-        while(*(((char*)(p))) != 0) {
-            __nextInvalidNumber++;
-            if(__nextInvalidNumber >= self.maxCount) {
-                if(round) return ;
-                round = YES;
-                __nextInvalidNumber = 0;
-                p = self.particles;
-            } else {
-                p++;
-            }
-        }
-        *(((char*)(p))) = 1;
-        by(p);
-        __nextInvalidRef = p;
-        __lifeCount++;
-    }
-}
-
-- (unsigned int)writeParticlesArray:(void*)array by:(void*(^)(void*, void*))by {
-    NSInteger i = 0;
-    void* p = self.particles;
-    void* a = array;
-    while(i < self.maxCount) {
-        if(*(((char*)(p))) != 0) a = by(a, p);
-        i++;
-        p++;
-    }
-    return ((unsigned int)(__lifeCount));
 }
 
 - (NSString*)description {

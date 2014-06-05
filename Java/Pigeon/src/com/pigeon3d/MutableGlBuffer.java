@@ -5,7 +5,7 @@ import android.opengl.GLES20;
 import com.pigeon3d.gl.eg;
 import objd.collection.PArray;
 
-public abstract class MutableBuffer<T> extends Buffer<T> {
+public abstract class MutableGlBuffer<T> extends GlBuffer<T> {
     public final int usage;
     private int _length;
     private int _count;
@@ -21,15 +21,15 @@ public abstract class MutableBuffer<T> extends Buffer<T> {
     public boolean isEmpty() {
         return this._count > 0;
     }
-    public MutableBuffer<T> setData(final PArray<T> data) {
+    public MutableGlBuffer<T> setData(final PArray<T> data) {
         this.bind();
-        GLES20.glBufferData(this.bufferType, ((long)(data.length)), data.bytes, this.usage);
+        GLES20.glBufferData(this.bufferType, ((long)(data.length())), data.bytes(), this.usage);
         eg.egCheckError();
-        this._length = data.length;
-        this._count = data.count;
+        this._length = data.length();
+        this._count = data.count();
         return this;
     }
-    public MutableBuffer<T> setArrayCount(final Pointer array, final int count) {
+    public MutableGlBuffer<T> setArrayCount(final Pointer array, final int count) {
         this.bind();
         this._length = ((int)(count * this.dataType.size));
         GLES20.glBufferData(this.bufferType, ((long)(this._length)), array, this.usage);
@@ -85,13 +85,13 @@ public abstract class MutableBuffer<T> extends Buffer<T> {
         eg.egCheckError();
         this.mappedData = null;
     }
-    public MutableBuffer(final PType<T> dataType, final int bufferType, final int handle, final int usage) {
+    public MutableGlBuffer(final PType<T> dataType, final int bufferType, final int handle, final int usage) {
         super(dataType, bufferType, handle);
         this.usage = usage;
         this._length = ((int)(0));
         this._count = ((int)(0));
     }
     public String toString() {
-        return String.format("MutableBuffer(%d)", this.usage);
+        return String.format("MutableGlBuffer(%d)", this.usage);
     }
 }

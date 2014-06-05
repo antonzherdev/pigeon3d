@@ -45,4 +45,7 @@ class PArrayIterator<T>(val array : PArray<T>) extends Iterator<T> {
 @Java
 stub final class PArray<T> extends ImSeq<T> {
     def forRef(each : Pointer<T> -> void)
+
+    def length : uint
+    def bytes : Pointer<T>
 }
