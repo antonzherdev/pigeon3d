@@ -43,9 +43,10 @@ public abstract class Shader<P> {
     private Integer uniformOptName(final String name) {
         final int h = GLES20.glGetUniformLocation(this.program.handle, name);
         if(h < 0) {
-            null;
+            return null;
+        } else {
+            return h;
         }
-        return h;
     }
     public ShaderUniformMat4 uniformMat4Name(final String name) {
         return new ShaderUniformMat4(((int)(uniformName(name))));

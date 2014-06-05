@@ -6,8 +6,10 @@ import com.pigeon3d.geometry.vec2;
 import objd.collection.ImArray;
 import objd.collection.Iterator;
 import com.pigeon3d.geometry.vec4;
+import objd.collection.Int4Buffer;
 import objd.collection.MArray;
 import com.pigeon3d.geometry.Rect;
+import objd.collection.Buffer;
 import com.pigeon3d.geometry.vec3;
 import android.opengl.GLES20;
 
@@ -89,11 +91,9 @@ public abstract class Font {
         final ImArray<FontSymbolDesc> symbolsArr = pair.a;
         final int newLines = pair.b;
         final int symbolsCount = symbolsArr.count() - newLines;
-        final Pointer vertexes = new Pointer<FontPrintData>(FontPrintData.type, symbolsCount * 4);
-        final Pointer indexes = new Pointer<Integer>(((PType<Integer>)(((PType)(UInt4.type)))), symbolsCount * 6);
+        final FontPrintDataBuffer vertexes = new FontPrintDataBuffer(symbolsCount * 4);
+        final Int4Buffer indexes = new Int4Buffer(((int)(symbolsCount * 6)));
         final vec2 vpSize = vec2i.divF(Global.context.viewport().size, 2.0);
-        Pointer vp = vertexes;
-        Pointer ip = indexes;
         int n = ((int)(0));
         MArray<Integer> linesWidth = new MArray<Integer>();
         Iterator<Integer> linesWidthIterator;
@@ -101,9 +101,9 @@ public abstract class Font {
         if(alignment.x != -1) {
             int lineWidth = 0;
             {
-                final Iterator<FontSymbolDesc> __il__14t_1i = symbolsArr.iterator();
-                while(__il__14t_1i.hasNext()) {
-                    final FontSymbolDesc s = __il__14t_1i.next();
+                final Iterator<FontSymbolDesc> __il__12t_1i = symbolsArr.iterator();
+                while(__il__12t_1i.hasNext()) {
+                    final FontSymbolDesc s = __il__12t_1i.next();
                     if(s.isNewLine) {
                         linesWidth.appendItem(lineWidth);
                         lineWidth = 0;
@@ -122,9 +122,9 @@ public abstract class Font {
         final float hh = ((float)(this.height())) / vpSize.y;
         float y = ((alignment.baseline) ? (pos.y + ((float)(this.size())) / vpSize.y) : (pos.y - hh * (newLines + 1) * (alignment.y / 2 - 0.5)));
         {
-            final Iterator<FontSymbolDesc> __il__17i = symbolsArr.iterator();
-            while(__il__17i.hasNext()) {
-                final FontSymbolDesc s = __il__17i.next();
+            final Iterator<FontSymbolDesc> __il__15i = symbolsArr.iterator();
+            while(__il__15i.hasNext()) {
+                final FontSymbolDesc s = __il__15i.next();
                 if(s.isNewLine) {
                     if(linesWidthIterator == null) {
                         throw new NullPointerException();
@@ -135,34 +135,55 @@ public abstract class Font {
                     final vec2 size = vec2.divVec2(s.size, vpSize);
                     final Rect tr = s.textureRect;
                     final vec2 v0 = new vec2(x + s.offset.x / vpSize.x, y - s.offset.y / vpSize.y);
-                    ERROR: Unknown <lm>vp\§^FontPrintData#S§*\-><fIUms>position\vec2#S\ = v0;
-                    ERROR: Unknown <lm>vp\§^FontPrintData#S§*\-><fIUms>uv\vec2#S\ = tr.p;
-                    vp++;
-                    ERROR: Unknown <lm>vp\§^FontPrintData#S§*\-><fIUms>position\vec2#S\ = new vec2(v0.x, v0.y - size.y);
-                    ERROR: Unknown <lm>vp\§^FontPrintData#S§*\-><fIUms>uv\vec2#S\ = Rect.ph(tr);
-                    vp++;
-                    ERROR: Unknown <lm>vp\§^FontPrintData#S§*\-><fIUms>position\vec2#S\ = new vec2(v0.x + size.x, v0.y - size.y);
-                    ERROR: Unknown <lm>vp\§^FontPrintData#S§*\-><fIUms>uv\vec2#S\ = Rect.phw(tr);
-                    vp++;
-                    ERROR: Unknown <lm>vp\§^FontPrintData#S§*\-><fIUms>position\vec2#S\ = new vec2(v0.x + size.x, v0.y);
-                    ERROR: Unknown <lm>vp\§^FontPrintData#S§*\-><fIUms>uv\vec2#S\ = Rect.pw(tr);
-                    vp++;
-                    ERROR: Unknown *((<lm>ip\§^uint4§*\ + 0)) = n;
-                    ERROR: Unknown *((<lm>ip\§^uint4§*\ + 1)) = n + 1;
-                    ERROR: Unknown *((<lm>ip\§^uint4§*\ + 2)) = n + 2;
-                    ERROR: Unknown *((<lm>ip\§^uint4§*\ + 3)) = n + 2;
-                    ERROR: Unknown *((<lm>ip\§^uint4§*\ + 4)) = n + 3;
-                    ERROR: Unknown *((<lm>ip\§^uint4§*\ + 5)) = n;
-                    ip += 6;
+                    {
+                        final FontPrintData __tmp__il__15rf_3v = new FontPrintData(v0, tr.p);
+                        {
+                            vertexes.bytes.put(__tmp__il__15rf_3v.position.x);
+                            vertexes.bytes.put(__tmp__il__15rf_3v.position.y);
+                            vertexes.bytes.put(__tmp__il__15rf_3v.uv.x);
+                            vertexes.bytes.put(__tmp__il__15rf_3v.uv.y);
+                        }
+                    }
+                    {
+                        final FontPrintData __tmp__il__15rf_4v = new FontPrintData(new vec2(v0.x, v0.y - size.y), Rect.ph(tr));
+                        {
+                            vertexes.bytes.put(__tmp__il__15rf_4v.position.x);
+                            vertexes.bytes.put(__tmp__il__15rf_4v.position.y);
+                            vertexes.bytes.put(__tmp__il__15rf_4v.uv.x);
+                            vertexes.bytes.put(__tmp__il__15rf_4v.uv.y);
+                        }
+                    }
+                    {
+                        final FontPrintData __tmp__il__15rf_5v = new FontPrintData(new vec2(v0.x + size.x, v0.y - size.y), Rect.phw(tr));
+                        {
+                            vertexes.bytes.put(__tmp__il__15rf_5v.position.x);
+                            vertexes.bytes.put(__tmp__il__15rf_5v.position.y);
+                            vertexes.bytes.put(__tmp__il__15rf_5v.uv.x);
+                            vertexes.bytes.put(__tmp__il__15rf_5v.uv.y);
+                        }
+                    }
+                    {
+                        final FontPrintData __tmp__il__15rf_6v = new FontPrintData(new vec2(v0.x + size.x, v0.y), Rect.pw(tr));
+                        {
+                            vertexes.bytes.put(__tmp__il__15rf_6v.position.x);
+                            vertexes.bytes.put(__tmp__il__15rf_6v.position.y);
+                            vertexes.bytes.put(__tmp__il__15rf_6v.uv.x);
+                            vertexes.bytes.put(__tmp__il__15rf_6v.uv.y);
+                        }
+                    }
+                    indexes.bytes.put(((int)(n)));
+                    indexes.bytes.put(((int)(n + 1)));
+                    indexes.bytes.put(((int)(n + 2)));
+                    indexes.bytes.put(((int)(n + 2)));
+                    indexes.bytes.put(((int)(n + 3)));
+                    indexes.bytes.put(((int)(n)));
                     x += s.width / vpSize.x;
                     n += ((int)(4));
                 }
             }
         }
-        final VertexBuffer<FontPrintData> vb = VBO.<FontPrintData>applyDescArrayCount(Font.vbDesc, vertexes, ((int)(symbolsCount * 4)));
-        final ImmutableIndexBuffer ib = IBO.applyPointerCount(indexes, ((int)(symbolsCount * 6)));
-        Pointer.free(vertexes);
-        Pointer.free(indexes);
+        final VertexBuffer<FontPrintData> vb = VBO.<FontPrintData>applyDescBuffer(Font.vbDesc, ((Buffer<FontPrintData>)(((Buffer)(vertexes)))));
+        final ImmutableIndexBuffer ib = IBO.applyData(indexes);
         return FontShader.instance.vaoVboIbo(((VertexBuffer<Object>)(((VertexBuffer)(vb)))), ib);
     }
     public void drawTextAtAlignmentColor(final String text, final vec3 at, final TextAlignment alignment, final vec4 color) {

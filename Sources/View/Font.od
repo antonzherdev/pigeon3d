@@ -1,5 +1,7 @@
 package com.pigeon3d
 
+import java.nio._
+
 struct TextAlignment(val x : float4, val y : float4, val baseline : bool, val shift : vec2) {
     static def apply(x : float4, y : float4) = TextAlignment(x, y, false, vec2(0, 0))
     static def apply(x : float4, y : float4, shift : vec2) = TextAlignment(x, y, false, shift)
@@ -72,12 +74,10 @@ abstract class Font {
         val symbolsArr = pair.a
         val newLines = pair.b
         val symbolsCount = symbolsArr.count - newLines
-        val vertexes = Pointer(FontPrintData.type, symbolsCount * 4)
-        val indexes = Pointer<uint4>(UInt4.type, symbolsCount * 6)
+        val vertexes = FontPrintDataBuffer(symbolsCount * 4)
+        val indexes = Int4Buffer(symbolsCount * 6)
         val vpSize = context.viewport.size/2.0
 
-        var vp = vertexes
-        var ip = indexes
         var n : uint4 = 0
 
         var linesWidth = MArray<int>()
@@ -112,34 +112,24 @@ abstract class Font {
             val tr = s.textureRect
             val v0 = vec2(x + s.offset.x/vpSize.x, y - s.offset.y/vpSize.y)
 
-            vp.position = v0
-            vp.uv = tr.p
-            vp++
-            vp.position = vec2(v0.x, v0.y - size.y)
-            vp.uv = tr.ph
-            vp++
-            vp.position = vec2(v0.x + size.x, v0.y - size.y)
-            vp.uv = tr.phw
-            vp++
-            vp.position = vec2(v0.x + size.x, v0.y)
-            vp.uv = tr.pw
-            vp++
+            vertexes.set(FontPrintData(v0, tr.p))
+            vertexes.set(FontPrintData(vec2(v0.x, v0.y - size.y), tr.ph))
+            vertexes.set(FontPrintData(vec2(v0.x + size.x, v0.y - size.y), tr.phw))
+            vertexes.set(FontPrintData(vec2(v0.x + size.x, v0.y), tr.pw))
 
-            ip.set(0, n)
-            ip.set(1, n + 1)
-            ip.set(2, n + 2)
-            ip.set(3, n + 2)
-            ip.set(4, n + 3)
-            ip.set(5, n)
-            ip += 6
+            indexes.set(n)
+            indexes.set(n + 1)
+            indexes.set(n + 2)
+            indexes.set(n + 2)
+            indexes.set(n + 3)
+            indexes.set(n)
+
             x += s.width/vpSize.x
             n += 4
         }
         }
-        val vb = VBO(vbDesc, vertexes, symbolsCount * 4)
-        val ib = IBO(indexes, symbolsCount * 6)
-        vertexes.free
-        indexes.free
+        val vb = VBO(vbDesc, vertexes)
+        val ib = IBO(indexes)
         FontShader.instance.vao(vb, ib)
     }
 
@@ -160,3 +150,25 @@ abstract class Font {
 
 case class FontSymbolDesc(val width : float4, val offset : vec2, val size : vec2, val textureRect : Rect, val isNewLine : bool)
 struct FontPrintData(var position : vec2, var uv : vec2)
+
+@ObjC
+class FontPrintDataBuffer(count : uint4) extends UBuffer<FontPrintData>(FontPrintData.type, count)
+{
+    inline def get : FontPrintData = _get
+    inline def set(v : FontPrintData) {
+        _set(v)
+    }
+}
+
+@Java
+class FontPrintDataBuffer(count : uint) extends Buffer<FontPrintData>(count, 44) {
+    override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
+    inline def get : FontPrintData = FontPrintData(vec2(bytes.get, bytes.get), vec2(bytes.get, bytes.get))
+    inline def set(v: FontPrintData) {
+        bytes.put(v.position.x)
+        bytes.put(v.position.y)
+        bytes.put(v.uv.x)
+        bytes.put(v.uv.y)
+    }
+}
+

@@ -19,6 +19,7 @@
 
 @class PGFont;
 @class PGFontSymbolDesc;
+@class PGFontPrintDataBuffer;
 typedef struct PGTextAlignment PGTextAlignment;
 typedef struct PGFontPrintData PGFontPrintData;
 
@@ -120,5 +121,14 @@ CNPType* pgFontPrintDataType();
 - (id)initWithValue:(PGFontPrintData)value;
 @end
 
+
+
+@interface PGFontPrintDataBuffer : CNUBuffer
++ (instancetype)fontPrintDataBufferWithCount:(unsigned int)count;
+- (instancetype)initWithCount:(unsigned int)count;
+- (CNClassType*)type;
+- (NSString*)description;
++ (CNClassType*)type;
+@end
 
 

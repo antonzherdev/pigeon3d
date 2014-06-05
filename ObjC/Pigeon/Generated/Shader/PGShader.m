@@ -169,8 +169,8 @@ static CNClassType* _PGShader_type;
 
 - (id)uniformOptName:(NSString*)name {
     int h = egGetUniformLocation(_program->_handle, name);
-    if(h < 0) nil;
-    return numi4(h);
+    if(h < 0) return nil;
+    else return numi4(h);
 }
 
 - (PGShaderUniformMat4*)uniformMat4Name:(NSString*)name {

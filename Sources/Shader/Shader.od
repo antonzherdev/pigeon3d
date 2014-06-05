@@ -87,7 +87,7 @@ abstract class Shader<P>(val program : ShaderProgram) {
     private def uniformOpt(name : string) : int4? = {
         val h = egGetUniformLocation(program.handle, name)
         if(h < 0) nil
-        h
+        else h
     }
 
     def uniformMat4(name : string) : ShaderUniformMat4 = ShaderUniformMat4(uniform(name))

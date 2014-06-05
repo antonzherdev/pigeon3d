@@ -46,23 +46,14 @@ object D2D {
     }
 
     private val lineVb = VBO.mutMesh(GL_STREAM_DRAW)
-    private val lineVertexes = {
-        val pp = Pointer(MeshData.type, 2)
-        var p = pp
-        p.uv = vec2(0, 0)
-        p.normal = vec3(0, 0, 1)
-        p++
-        p.uv = vec2(1, 1)
-        p.normal = vec3(0, 0, 1)
-        pp
-    }
+    private val lineVertexes = MeshDataBuffer(2)
+
     private val lineVao = Mesh(lineVb, EmptyIndexSource.lines).vao(SimpleShaderSystem.colorShader)
     def drawLine(material : ColorSource, p0 : vec2, p1 : vec2) {
-        var v = lineVertexes
-        v.position = vec3(p0, 0)
-        v++
-        v.position = vec3(p1, 0)
-        lineVb.set(lineVertexes, 2)
+        lineVertexes.reset
+        lineVertexes.set(MeshData(uv = vec2(0, 0), normal = vec3(0, 0, 1), position = vec3(p0, 0)))
+        lineVertexes.set(MeshData(uv = vec2(1, 1), normal = vec3(0, 0, 1), position = vec3(p1, 0)))
+        lineVb.set(lineVertexes)
 
         context.cullFace.disabled {
             lineVao.draw(material)

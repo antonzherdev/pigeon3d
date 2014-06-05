@@ -191,11 +191,9 @@ static CNClassType* _PGFont_type;
     NSArray* symbolsArr = pair->_a;
     NSInteger newLines = unumi(pair->_b);
     NSUInteger symbolsCount = [symbolsArr count] - newLines;
-    PGFontPrintData* vertexes = cnPointerApplyTpCount(pgFontPrintDataType(), symbolsCount * 4);
-    unsigned int* indexes = cnPointerApplyTpCount(cnuInt4Type(), symbolsCount * 6);
+    PGFontPrintDataBuffer* vertexes = [PGFontPrintDataBuffer fontPrintDataBufferWithCount:((unsigned int)(symbolsCount * 4))];
+    CNInt4Buffer* indexes = [CNInt4Buffer int4BufferWithCount:((unsigned int)(symbolsCount * 6))];
     PGVec2 vpSize = pgVec2iDivF([[PGGlobal context] viewport].size, 2.0);
-    __block PGFontPrintData* vp = vertexes;
-    __block unsigned int* ip = indexes;
     __block unsigned int n = 0;
     CNMArray* linesWidth = [CNMArray array];
     id<CNIterator> linesWidthIterator;
@@ -224,33 +222,34 @@ static CNClassType* _PGFont_type;
             PGVec2 size = pgVec2DivVec2(((PGFontSymbolDesc*)(s))->_size, vpSize);
             PGRect tr = ((PGFontSymbolDesc*)(s))->_textureRect;
             PGVec2 v0 = PGVec2Make(x + ((PGFontSymbolDesc*)(s))->_offset.x / vpSize.x, y - ((PGFontSymbolDesc*)(s))->_offset.y / vpSize.y);
-            vp->position = v0;
-            vp->uv = tr.p;
-            vp++;
-            vp->position = PGVec2Make(v0.x, v0.y - size.y);
-            vp->uv = pgRectPh(tr);
-            vp++;
-            vp->position = PGVec2Make(v0.x + size.x, v0.y - size.y);
-            vp->uv = pgRectPhw(tr);
-            vp++;
-            vp->position = PGVec2Make(v0.x + size.x, v0.y);
-            vp->uv = pgRectPw(tr);
-            vp++;
-            *(ip + 0) = n;
-            *(ip + 1) = n + 1;
-            *(ip + 2) = n + 2;
-            *(ip + 3) = n + 2;
-            *(ip + 4) = n + 3;
-            *(ip + 5) = n;
-            ip += 6;
+            if(vertexes->__position >= vertexes->_count) @throw @"Out of bound";
+            *(((PGFontPrintData*)(vertexes->__pointer))) = PGFontPrintDataMake(v0, tr.p);
+            vertexes->__pointer = ((PGFontPrintData*)(vertexes->__pointer)) + 1;
+            vertexes->__position++;
+            if(vertexes->__position >= vertexes->_count) @throw @"Out of bound";
+            *(((PGFontPrintData*)(vertexes->__pointer))) = PGFontPrintDataMake((PGVec2Make(v0.x, v0.y - size.y)), pgRectPh(tr));
+            vertexes->__pointer = ((PGFontPrintData*)(vertexes->__pointer)) + 1;
+            vertexes->__position++;
+            if(vertexes->__position >= vertexes->_count) @throw @"Out of bound";
+            *(((PGFontPrintData*)(vertexes->__pointer))) = PGFontPrintDataMake((PGVec2Make(v0.x + size.x, v0.y - size.y)), pgRectPhw(tr));
+            vertexes->__pointer = ((PGFontPrintData*)(vertexes->__pointer)) + 1;
+            vertexes->__position++;
+            if(vertexes->__position >= vertexes->_count) @throw @"Out of bound";
+            *(((PGFontPrintData*)(vertexes->__pointer))) = PGFontPrintDataMake((PGVec2Make(v0.x + size.x, v0.y)), pgRectPw(tr));
+            vertexes->__pointer = ((PGFontPrintData*)(vertexes->__pointer)) + 1;
+            vertexes->__position++;
+            [indexes setV:((int)(n))];
+            [indexes setV:((int)(n + 1))];
+            [indexes setV:((int)(n + 2))];
+            [indexes setV:((int)(n + 2))];
+            [indexes setV:((int)(n + 3))];
+            [indexes setV:((int)(n))];
             x += ((PGFontSymbolDesc*)(s))->_width / vpSize.x;
             n += 4;
         }
     }
-    id<PGVertexBuffer> vb = [PGVBO applyDesc:_PGFont_vbDesc array:vertexes count:((unsigned int)(symbolsCount * 4))];
-    PGImmutableIndexBuffer* ib = [PGIBO applyPointer:indexes count:((unsigned int)(symbolsCount * 6))];
-    cnPointerFree(vertexes);
-    cnPointerFree(indexes);
+    id<PGVertexBuffer> vb = [PGVBO applyDesc:_PGFont_vbDesc buffer:vertexes];
+    PGImmutableIndexBuffer* ib = [PGIBO applyData:indexes];
     return [[PGFontShader instance] vaoVbo:vb ibo:ib];
 }
 
@@ -423,4 +422,55 @@ CNPType* pgFontPrintDataType() {
 
 @end
 
+
+@implementation PGFontPrintDataBuffer
+static CNClassType* _PGFontPrintDataBuffer_type;
+
++ (instancetype)fontPrintDataBufferWithCount:(unsigned int)count {
+    return [[PGFontPrintDataBuffer alloc] initWithCount:count];
+}
+
+- (instancetype)initWithCount:(unsigned int)count {
+    self = [super initWithTp:pgFontPrintDataType() count:count];
+    
+    return self;
+}
+
++ (void)initialize {
+    [super initialize];
+    if(self == [PGFontPrintDataBuffer class]) _PGFontPrintDataBuffer_type = [CNClassType classTypeWithCls:[PGFontPrintDataBuffer class]];
+}
+
+- (PGFontPrintData)get {
+    if(__position >= _count) @throw @"Out of bound";
+    PGFontPrintData __il_r = *(((PGFontPrintData*)(__pointer)));
+    __pointer = ((PGFontPrintData*)(__pointer)) + 1;
+    __position++;
+    return __il_r;
+}
+
+- (void)setV:(PGFontPrintData)v {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((PGFontPrintData*)(__pointer))) = v;
+    __pointer = ((PGFontPrintData*)(__pointer)) + 1;
+    __position++;
+}
+
+- (NSString*)description {
+    return @"FontPrintDataBuffer";
+}
+
+- (CNClassType*)type {
+    return [PGFontPrintDataBuffer type];
+}
+
++ (CNClassType*)type {
+    return _PGFontPrintDataBuffer_type;
+}
+
+- (id)copyWithZone:(NSZone*)zone {
+    return self;
+}
+
+@end
 

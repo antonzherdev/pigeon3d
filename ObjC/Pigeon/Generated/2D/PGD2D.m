@@ -18,7 +18,7 @@ static PGMutableVertexBuffer* _PGD2D_vb;
 static PGVertexArray* _PGD2D_vaoForColor;
 static PGVertexArray* _PGD2D_vaoForTexture;
 static PGMutableVertexBuffer* _PGD2D_lineVb;
-static PGMeshData* _PGD2D_lineVertexes;
+static PGMeshDataBuffer* _PGD2D_lineVertexes;
 static PGVertexArray* _PGD2D_lineVao;
 static CNLazy* _PGD2D__lazy_circleVaoWithSegment;
 static CNLazy* _PGD2D__lazy_circleVaoWithoutSegment;
@@ -33,16 +33,7 @@ static CNClassType* _PGD2D_type;
         _PGD2D_vaoForColor = [[PGMesh meshWithVertex:_PGD2D_vb index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGBillboardShaderSystem shaderForKey:[PGBillboardShaderKey billboardShaderKeyWithTexture:NO alpha:NO shadow:NO modelSpace:PGBillboardShaderSpace_camera]]];
         _PGD2D_vaoForTexture = [[PGMesh meshWithVertex:_PGD2D_vb index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGBillboardShaderSystem shaderForKey:[PGBillboardShaderKey billboardShaderKeyWithTexture:YES alpha:NO shadow:NO modelSpace:PGBillboardShaderSpace_camera]]];
         _PGD2D_lineVb = [PGVBO mutMeshUsage:GL_STREAM_DRAW];
-        _PGD2D_lineVertexes = ({
-            PGMeshData* pp = cnPointerApplyTpCount(pgMeshDataType(), 2);
-            PGMeshData* p = pp;
-            p->uv = PGVec2Make(0.0, 0.0);
-            p->normal = PGVec3Make(0.0, 0.0, 1.0);
-            p++;
-            p->uv = PGVec2Make(1.0, 1.0);
-            p->normal = PGVec3Make(0.0, 0.0, 1.0);
-            pp;
-        });
+        _PGD2D_lineVertexes = [PGMeshDataBuffer applyCount:2];
         _PGD2D_lineVao = [[PGMesh meshWithVertex:_PGD2D_lineVb index:[PGEmptyIndexSource lines]] vaoShader:[PGSimpleShaderSystem colorShader]];
         _PGD2D__lazy_circleVaoWithSegment = [CNLazy lazyWithF:^PGVertexArray*() {
             return [[PGMesh meshWithVertex:[PGVBO vec2Data:({
@@ -198,17 +189,22 @@ static CNClassType* _PGD2D_type;
 }
 
 + (void)drawLineMaterial:(PGColorSource*)material p0:(PGVec2)p0 p1:(PGVec2)p1 {
-    PGMeshData* v = _PGD2D_lineVertexes;
-    v->position = pgVec3ApplyVec2Z(p0, 0.0);
-    v++;
-    v->position = pgVec3ApplyVec2Z(p1, 0.0);
-    [_PGD2D_lineVb setArray:_PGD2D_lineVertexes count:2];
+    [_PGD2D_lineVertexes reset];
+    if(_PGD2D_lineVertexes->__position >= _PGD2D_lineVertexes->_count) @throw @"Out of bound";
+    *(((PGMeshData*)(_PGD2D_lineVertexes->__pointer))) = PGMeshDataMake((PGVec2Make(0.0, 0.0)), (PGVec3Make(0.0, 0.0, 1.0)), (pgVec3ApplyVec2Z(p0, 0.0)));
+    _PGD2D_lineVertexes->__pointer = ((PGMeshData*)(_PGD2D_lineVertexes->__pointer)) + 1;
+    _PGD2D_lineVertexes->__position++;
+    if(_PGD2D_lineVertexes->__position >= _PGD2D_lineVertexes->_count) @throw @"Out of bound";
+    *(((PGMeshData*)(_PGD2D_lineVertexes->__pointer))) = PGMeshDataMake((PGVec2Make(1.0, 1.0)), (PGVec3Make(0.0, 0.0, 1.0)), (pgVec3ApplyVec2Z(p1, 0.0)));
+    _PGD2D_lineVertexes->__pointer = ((PGMeshData*)(_PGD2D_lineVertexes->__pointer)) + 1;
+    _PGD2D_lineVertexes->__position++;
+    [_PGD2D_lineVb setData:_PGD2D_lineVertexes];
     {
-        PGCullFace* __tmp__il__5self = [PGGlobal context]->_cullFace;
+        PGCullFace* __tmp__il__4self = [PGGlobal context]->_cullFace;
         {
-            unsigned int __il__5oldValue = [__tmp__il__5self disable];
+            unsigned int __il__4oldValue = [__tmp__il__4self disable];
             [_PGD2D_lineVao drawParam:material];
-            if(__il__5oldValue != GL_NONE) [__tmp__il__5self setValue:__il__5oldValue];
+            if(__il__4oldValue != GL_NONE) [__tmp__il__4self setValue:__il__4oldValue];
         }
     }
 }

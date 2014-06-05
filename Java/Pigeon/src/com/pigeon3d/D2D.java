@@ -18,7 +18,7 @@ public class D2D {
     private static final VertexArray<ColorSource> vaoForColor;
     private static final VertexArray<ColorSource> vaoForTexture;
     private static final MutableVertexBuffer<MeshData> lineVb;
-    private static final Pointer lineVertexes;
+    private static final MeshDataBuffer lineVertexes;
     private static final VertexArray<ColorSource> lineVao;
     private static VertexArray<CircleParam> circleVaoWithSegment() {
         return _lazy_circleVaoWithSegment.get();
@@ -196,18 +196,41 @@ public class D2D {
         in.bytes.put(((int)(i + 3)));
     }
     public static void drawLineMaterialP0P1(final ColorSource material, final vec2 p0, final vec2 p1) {
-        Pointer v = D2D.lineVertexes;
-        ERROR: Unknown <lm>v\§^MeshData#S§*\-><fIUms>position\vec3#S\ = vec3.applyVec2Z(p0, ((float)(0)));
-        v++;
-        ERROR: Unknown <lm>v\§^MeshData#S§*\-><fIUms>position\vec3#S\ = vec3.applyVec2Z(p1, ((float)(0)));
-        D2D.lineVb.setArrayCount(D2D.lineVertexes, ((int)(2)));
+        D2D.lineVertexes.reset();
         {
-            final CullFace __tmp__il__5self = Global.context.cullFace;
+            final MeshData __tmp__il__1v = new MeshData(new vec2(((float)(0)), ((float)(0))), new vec3(((float)(0)), ((float)(0)), ((float)(1))), vec3.applyVec2Z(p0, ((float)(0))));
             {
-                final int __il__5oldValue = __tmp__il__5self.disable();
+                D2D.lineVertexes.bytes.put(__tmp__il__1v.uv.x);
+                D2D.lineVertexes.bytes.put(__tmp__il__1v.uv.y);
+                D2D.lineVertexes.bytes.put(__tmp__il__1v.normal.x);
+                D2D.lineVertexes.bytes.put(__tmp__il__1v.normal.y);
+                D2D.lineVertexes.bytes.put(__tmp__il__1v.normal.z);
+                D2D.lineVertexes.bytes.put(__tmp__il__1v.position.x);
+                D2D.lineVertexes.bytes.put(__tmp__il__1v.position.y);
+                D2D.lineVertexes.bytes.put(__tmp__il__1v.position.z);
+            }
+        }
+        {
+            final MeshData __tmp__il__2v = new MeshData(new vec2(((float)(1)), ((float)(1))), new vec3(((float)(0)), ((float)(0)), ((float)(1))), vec3.applyVec2Z(p1, ((float)(0))));
+            {
+                D2D.lineVertexes.bytes.put(__tmp__il__2v.uv.x);
+                D2D.lineVertexes.bytes.put(__tmp__il__2v.uv.y);
+                D2D.lineVertexes.bytes.put(__tmp__il__2v.normal.x);
+                D2D.lineVertexes.bytes.put(__tmp__il__2v.normal.y);
+                D2D.lineVertexes.bytes.put(__tmp__il__2v.normal.z);
+                D2D.lineVertexes.bytes.put(__tmp__il__2v.position.x);
+                D2D.lineVertexes.bytes.put(__tmp__il__2v.position.y);
+                D2D.lineVertexes.bytes.put(__tmp__il__2v.position.z);
+            }
+        }
+        D2D.lineVb.setData(((Buffer<MeshData>)(((Buffer)(D2D.lineVertexes)))));
+        {
+            final CullFace __tmp__il__4self = Global.context.cullFace;
+            {
+                final int __il__4oldValue = __tmp__il__4self.disable();
                 D2D.lineVao.drawParam(material);
-                if(__il__5oldValue != GLES20.GL_NONE) {
-                    __tmp__il__5self.setValue(__il__5oldValue);
+                if(__il__4oldValue != GLES20.GL_NONE) {
+                    __tmp__il__4self.setValue(__il__4oldValue);
                 }
             }
         }
@@ -251,7 +274,7 @@ public class D2D {
         vaoForColor = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.vb)))), EmptyIndexSource.triangleStrip).<ColorSource>vaoShader(((Shader<ColorSource>)(((Shader)(BillboardShaderSystem.shaderForKey(new BillboardShaderKey(false, false, false, BillboardShaderSpace.camera)))))));
         vaoForTexture = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.vb)))), EmptyIndexSource.triangleStrip).<ColorSource>vaoShader(((Shader<ColorSource>)(((Shader)(BillboardShaderSystem.shaderForKey(new BillboardShaderKey(true, false, false, BillboardShaderSpace.camera)))))));
         lineVb = VBO.mutMeshUsage(GLES20.GL_STREAM_DRAW);
-        lineVertexes = pp;
+        lineVertexes = new MeshDataBuffer(((int)(2)));
         lineVao = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.lineVb)))), EmptyIndexSource.lines).<ColorSource>vaoShader(SimpleShaderSystem.colorShader());
         _lazy_circleVaoWithSegment = new Lazy<VertexArray<CircleParam>>(new F0<VertexArray<CircleParam>>() {
             @Override
