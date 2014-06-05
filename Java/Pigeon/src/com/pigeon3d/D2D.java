@@ -8,7 +8,7 @@ import android.opengl.GLES20;
 import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.vec4;
 import com.pigeon3d.geometry.vec2i;
-import objd.collection.ImArray;
+import com.pigeon3d.geometry.Vec2Buffer;
 
 public class D2D {
     private static final Pointer vertexes;
@@ -168,13 +168,31 @@ public class D2D {
         _lazy_circleVaoWithSegment = new Lazy<VertexArray<CircleParam>>(new F0<VertexArray<CircleParam>>() {
             @Override
             public VertexArray<CircleParam> apply() {
-                return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(((vec2[0])(ImArray.fromObjects(new vec2(((float)(-1)), ((float)(-1))), new vec2(((float)(-1)), ((float)(1))), new vec2(((float)(1)), ((float)(-1))), new vec2(((float)(1)), ((float)(1))))))))))), EmptyIndexSource.triangleStrip).<CircleParam>vaoShader(((Shader<CircleParam>)(((Shader)(CircleShader.withSegment)))));
+                final Vec2Buffer b = new Vec2Buffer(((int)(4)));
+                b.bytes.put(((float)(-1)));
+                b.bytes.put(((float)(-1)));
+                b.bytes.put(((float)(-1)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(-1)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(1)));
+                return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(b))))), EmptyIndexSource.triangleStrip).<CircleParam>vaoShader(((Shader<CircleParam>)(((Shader)(CircleShader.withSegment)))));
             }
         });
         _lazy_circleVaoWithoutSegment = new Lazy<VertexArray<CircleParam>>(new F0<VertexArray<CircleParam>>() {
             @Override
             public VertexArray<CircleParam> apply() {
-                return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(((vec2[0])(ImArray.fromObjects(new vec2(((float)(-1)), ((float)(-1))), new vec2(((float)(-1)), ((float)(1))), new vec2(((float)(1)), ((float)(-1))), new vec2(((float)(1)), ((float)(1))))))))))), EmptyIndexSource.triangleStrip).<CircleParam>vaoShader(((Shader<CircleParam>)(((Shader)(CircleShader.withoutSegment)))));
+                final Vec2Buffer b = new Vec2Buffer(((int)(4)));
+                b.bytes.put(((float)(-1)));
+                b.bytes.put(((float)(-1)));
+                b.bytes.put(((float)(-1)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(-1)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(1)));
+                return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(b))))), EmptyIndexSource.triangleStrip).<CircleParam>vaoShader(((Shader<CircleParam>)(((Shader)(CircleShader.withoutSegment)))));
             }
         });
     }

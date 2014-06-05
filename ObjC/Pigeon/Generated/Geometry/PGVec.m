@@ -192,67 +192,6 @@ CNPType* pgVec2Type() {
 @end
 
 
-@implementation PGVec2Buffer
-static CNClassType* _PGVec2Buffer_type;
-
-+ (instancetype)vec2BufferWithCount:(NSUInteger)count {
-    return [[PGVec2Buffer alloc] initWithCount:count];
-}
-
-- (instancetype)initWithCount:(NSUInteger)count {
-    self = [super initWithTp:pgVec2Type() count:((unsigned int)(count))];
-    
-    return self;
-}
-
-+ (void)initialize {
-    [super initialize];
-    if(self == [PGVec2Buffer class]) _PGVec2Buffer_type = [CNClassType classTypeWithCls:[PGVec2Buffer class]];
-}
-
-- (PGVec2)get {
-    if(__position >= _count) @throw @"Out of bound";
-    PGVec2 __il_r = *(((PGVec2*)(__pointer)));
-    __pointer = ((PGVec2*)(__pointer)) + 1;
-    __position++;
-    return __il_r;
-}
-
-- (void)setX:(float)x y:(float)y {
-    if(__position >= _count) @throw @"Out of bound";
-    *(((float*)(self._pointer))) = x;
-    *(((float*)(self._pointer)) + 1) = y;
-    {
-        __pointer = ((PGVec2*)(__pointer)) + 1;
-        __position++;
-    }
-}
-
-- (void)setV:(PGVec2)v {
-    if(__position >= _count) @throw @"Out of bound";
-    *(((PGVec2*)(__pointer))) = v;
-    __pointer = ((PGVec2*)(__pointer)) + 1;
-    __position++;
-}
-
-- (NSString*)description {
-    return @"Vec2Buffer";
-}
-
-- (CNClassType*)type {
-    return [PGVec2Buffer type];
-}
-
-+ (CNClassType*)type {
-    return _PGVec2Buffer_type;
-}
-
-- (id)copyWithZone:(NSZone*)zone {
-    return self;
-}
-
-@end
-
 PGVec2i pgVec2iApplyVec2(PGVec2 vec2) {
     return PGVec2iMake(float4Round(vec2.x), float4Round(vec2.y));
 }
@@ -1493,4 +1432,190 @@ CNPType* pgQuad3Type() {
 
 @end
 
+
+@implementation PGVec2Buffer
+static CNClassType* _PGVec2Buffer_type;
+
++ (instancetype)vec2BufferWithCount:(NSUInteger)count {
+    return [[PGVec2Buffer alloc] initWithCount:count];
+}
+
+- (instancetype)initWithCount:(NSUInteger)count {
+    self = [super initWithTp:pgVec2Type() count:((unsigned int)(count))];
+    
+    return self;
+}
+
++ (void)initialize {
+    [super initialize];
+    if(self == [PGVec2Buffer class]) _PGVec2Buffer_type = [CNClassType classTypeWithCls:[PGVec2Buffer class]];
+}
+
+- (PGVec2)get {
+    if(__position >= _count) @throw @"Out of bound";
+    PGVec2 __il_r = *(((PGVec2*)(__pointer)));
+    __pointer = ((PGVec2*)(__pointer)) + 1;
+    __position++;
+    return __il_r;
+}
+
+- (void)setX:(float)x y:(float)y {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((float*)(self._pointer))) = x;
+    *(((float*)(self._pointer)) + 1) = y;
+    {
+        __pointer = ((PGVec2*)(__pointer)) + 1;
+        __position++;
+    }
+}
+
+- (void)setV:(PGVec2)v {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((PGVec2*)(__pointer))) = v;
+    __pointer = ((PGVec2*)(__pointer)) + 1;
+    __position++;
+}
+
+- (NSString*)description {
+    return @"Vec2Buffer";
+}
+
+- (CNClassType*)type {
+    return [PGVec2Buffer type];
+}
+
++ (CNClassType*)type {
+    return _PGVec2Buffer_type;
+}
+
+- (id)copyWithZone:(NSZone*)zone {
+    return self;
+}
+
+@end
+
+@implementation PGVec3Buffer
+static CNClassType* _PGVec3Buffer_type;
+
++ (instancetype)vec3BufferWithCount:(NSUInteger)count {
+    return [[PGVec3Buffer alloc] initWithCount:count];
+}
+
+- (instancetype)initWithCount:(NSUInteger)count {
+    self = [super initWithTp:pgVec3Type() count:((unsigned int)(count))];
+    
+    return self;
+}
+
++ (void)initialize {
+    [super initialize];
+    if(self == [PGVec3Buffer class]) _PGVec3Buffer_type = [CNClassType classTypeWithCls:[PGVec3Buffer class]];
+}
+
+- (PGVec3)get {
+    if(__position >= _count) @throw @"Out of bound";
+    PGVec3 __il_r = *(((PGVec3*)(__pointer)));
+    __pointer = ((PGVec3*)(__pointer)) + 1;
+    __position++;
+    return __il_r;
+}
+
+- (void)setX:(float)x y:(float)y z:(float)z {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((float*)(self._pointer))) = x;
+    *(((float*)(self._pointer)) + 1) = y;
+    *(((float*)(self._pointer)) + 2) = z;
+    {
+        __pointer = ((PGVec3*)(__pointer)) + 1;
+        __position++;
+    }
+}
+
+- (void)setV:(PGVec3)v {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((PGVec3*)(__pointer))) = v;
+    __pointer = ((PGVec3*)(__pointer)) + 1;
+    __position++;
+}
+
+- (NSString*)description {
+    return @"Vec3Buffer";
+}
+
+- (CNClassType*)type {
+    return [PGVec3Buffer type];
+}
+
++ (CNClassType*)type {
+    return _PGVec3Buffer_type;
+}
+
+- (id)copyWithZone:(NSZone*)zone {
+    return self;
+}
+
+@end
+
+@implementation PGVec4Buffer
+static CNClassType* _PGVec4Buffer_type;
+
++ (instancetype)vec4BufferWithCount:(NSUInteger)count {
+    return [[PGVec4Buffer alloc] initWithCount:count];
+}
+
+- (instancetype)initWithCount:(NSUInteger)count {
+    self = [super initWithTp:pgVec4Type() count:((unsigned int)(count))];
+    
+    return self;
+}
+
++ (void)initialize {
+    [super initialize];
+    if(self == [PGVec4Buffer class]) _PGVec4Buffer_type = [CNClassType classTypeWithCls:[PGVec4Buffer class]];
+}
+
+- (PGVec4)get {
+    if(__position >= _count) @throw @"Out of bound";
+    PGVec4 __il_r = *(((PGVec4*)(__pointer)));
+    __pointer = ((PGVec4*)(__pointer)) + 1;
+    __position++;
+    return __il_r;
+}
+
+- (void)setX:(float)x y:(float)y z:(float)z w:(float)w {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((float*)(self._pointer))) = x;
+    *(((float*)(self._pointer)) + 1) = y;
+    *(((float*)(self._pointer)) + 2) = z;
+    *(((float*)(self._pointer)) + 3) = w;
+    {
+        __pointer = ((PGVec4*)(__pointer)) + 1;
+        __position++;
+    }
+}
+
+- (void)setV:(PGVec4)v {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((PGVec4*)(__pointer))) = v;
+    __pointer = ((PGVec4*)(__pointer)) + 1;
+    __position++;
+}
+
+- (NSString*)description {
+    return @"Vec4Buffer";
+}
+
+- (CNClassType*)type {
+    return [PGVec4Buffer type];
+}
+
++ (CNClassType*)type {
+    return _PGVec4Buffer_type;
+}
+
+- (id)copyWithZone:(NSZone*)zone {
+    return self;
+}
+
+@end
 

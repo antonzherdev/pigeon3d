@@ -4,7 +4,14 @@ package com.pigeon3d
 class MapSsoView(val map : MapSso, val material : Material) {
     lazy val axisVertexBuffer = {
         val mi = CameraIso.m.inverse
-        VBO.vec4([mi*vec4(0, 0, 0, 1), mi*vec4(1, 0, 0, 1), mi*vec4(0, 1, 0, 1), mi*vec4(0, 0, 1, 1)])
+        VBO.vec4({
+            val b = Vec4Buffer(4)
+            b.set(mi*vec4(0, 0, 0, 1))
+            b.set(mi*vec4(1, 0, 0, 1))
+            b.set(mi*vec4(0, 1, 0, 1))
+            b.set(mi*vec4(0, 0, 1, 1))
+            b
+        })
     }
 
     def drawLayout {
@@ -69,12 +76,14 @@ class MapSsoView(val map : MapSso, val material : Material) {
         val b = limits.y2 + 1.5
         val w = limits.width + 7
         val h = limits.height + 7
-        Mesh(VBO.mesh([
-            MeshData(vec2(0, 0), vec3(0, 1, 0), vec3(l, 0, b)),
-            MeshData(vec2(w, 0), vec3(0, 1, 0), vec3(r, 0, b)),
-            MeshData(vec2(0, h), vec3(0, 1, 0), vec3(l, 0, t)),
-            MeshData(vec2(w, h), vec3(0, 1, 0), vec3(r, 0, t))
-        ]), EmptyIndexSource.triangleStrip)
+        Mesh(VBO.mesh({
+            val buf = MeshDataBuffer(4)
+            buf.set(MeshData(vec2(0, 0), vec3(0, 1, 0), vec3(l, 0, b)))
+            buf.set(MeshData(vec2(w, 0), vec3(0, 1, 0), vec3(r, 0, b)))
+            buf.set(MeshData(vec2(0, h), vec3(0, 1, 0), vec3(l, 0, t)))
+            buf.set(MeshData(vec2(w, h), vec3(0, 1, 0), vec3(r, 0, t)))
+            buf
+        }), EmptyIndexSource.triangleStrip)
     }
 
     private val planeVao = plane.vao(material, false)

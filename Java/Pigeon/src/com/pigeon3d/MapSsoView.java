@@ -5,6 +5,7 @@ import com.pigeon3d.geometry.vec4;
 import objd.collection.ImArray;
 import android.opengl.GLES20;
 import com.pigeon3d.geometry.mat4;
+import com.pigeon3d.geometry.Vec4Buffer;
 import com.pigeon3d.geometry.RectI;
 import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.vec3;
@@ -42,10 +43,39 @@ public class MapSsoView {
             @Override
             public VertexBuffer<vec4> apply() {
                 final mat4 mi = CameraIso.m.inverse();
-                return VBO.vec4Data(((vec4[0])(ImArray.fromObjects(mi.mulVec4(new vec4(((float)(0)), ((float)(0)), ((float)(0)), ((float)(1)))), mi.mulVec4(new vec4(((float)(1)), ((float)(0)), ((float)(0)), ((float)(1)))), mi.mulVec4(new vec4(((float)(0)), ((float)(1)), ((float)(0)), ((float)(1)))), mi.mulVec4(new vec4(((float)(0)), ((float)(0)), ((float)(1)), ((float)(1))))))));
+                final Vec4Buffer b = new Vec4Buffer(((int)(4)));
+                final vec4 __tmp__il__1rp0_1v = mi.mulVec4(new vec4(((float)(0)), ((float)(0)), ((float)(0)), ((float)(1))));
+                {
+                    b.bytes.put(__tmp__il__1rp0_1v.x);
+                    b.bytes.put(__tmp__il__1rp0_1v.y);
+                    b.bytes.put(__tmp__il__1rp0_1v.z);
+                    b.bytes.put(__tmp__il__1rp0_1v.w);
+                }
+                final vec4 __tmp__il__1rp0_2v = mi.mulVec4(new vec4(((float)(1)), ((float)(0)), ((float)(0)), ((float)(1))));
+                {
+                    b.bytes.put(__tmp__il__1rp0_2v.x);
+                    b.bytes.put(__tmp__il__1rp0_2v.y);
+                    b.bytes.put(__tmp__il__1rp0_2v.z);
+                    b.bytes.put(__tmp__il__1rp0_2v.w);
+                }
+                final vec4 __tmp__il__1rp0_3v = mi.mulVec4(new vec4(((float)(0)), ((float)(1)), ((float)(0)), ((float)(1))));
+                {
+                    b.bytes.put(__tmp__il__1rp0_3v.x);
+                    b.bytes.put(__tmp__il__1rp0_3v.y);
+                    b.bytes.put(__tmp__il__1rp0_3v.z);
+                    b.bytes.put(__tmp__il__1rp0_3v.w);
+                }
+                final vec4 __tmp__il__1rp0_4v = mi.mulVec4(new vec4(((float)(0)), ((float)(0)), ((float)(1)), ((float)(1))));
+                {
+                    b.bytes.put(__tmp__il__1rp0_4v.x);
+                    b.bytes.put(__tmp__il__1rp0_4v.y);
+                    b.bytes.put(__tmp__il__1rp0_4v.z);
+                    b.bytes.put(__tmp__il__1rp0_4v.w);
+                }
+                return VBO.vec4Data(b);
             }
         });
-        this.plane = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.meshData(((MeshData[0])(ImArray.fromObjects(new MeshData(new vec2(((float)(0)), ((float)(0))), new vec3(((float)(0)), ((float)(1)), ((float)(0))), new vec3(((float)(l)), ((float)(0)), ((float)(b)))), new MeshData(new vec2(((float)(w)), ((float)(0))), new vec3(((float)(0)), ((float)(1)), ((float)(0))), new vec3(((float)(r)), ((float)(0)), ((float)(b)))), new MeshData(new vec2(((float)(0)), ((float)(h))), new vec3(((float)(0)), ((float)(1)), ((float)(0))), new vec3(((float)(l)), ((float)(0)), ((float)(t)))), new MeshData(new vec2(((float)(w)), ((float)(h))), new vec3(((float)(0)), ((float)(1)), ((float)(0))), new vec3(((float)(r)), ((float)(0)), ((float)(t)))))))))))), EmptyIndexSource.triangleStrip);
+        this.plane = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.meshData(buf))))), EmptyIndexSource.triangleStrip);
         this.planeVao = this.plane.<Material>vaoMaterialShadow(material, false);
     }
     public String toString() {

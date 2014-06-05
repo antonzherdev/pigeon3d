@@ -23,6 +23,7 @@
 @class PGMatrixStack;
 @class PGMMatrixModel;
 
+@class PGMeshDataBuffer;
 @class PGMeshDataModel;
 @class PGMesh;
 @class PGMeshModel;
@@ -53,6 +54,15 @@ CNPType* pgMeshDataType();
 
 
 
+@interface PGMeshDataBuffer : CNBuffer
++ (instancetype)meshDataBufferWithCount:(NSUInteger)count;
+- (instancetype)initWithCount:(NSUInteger)count;
+- (CNClassType*)type;
+- (NSString*)description;
++ (CNClassType*)type;
+@end
+
+
 @interface PGMeshDataModel : NSObject {
 @public
     CNPArray* _vertex;
@@ -80,8 +90,8 @@ CNPType* pgMeshDataType();
 + (instancetype)meshWithVertex:(id<PGVertexBuffer>)vertex index:(id<PGIndexSource>)index;
 - (instancetype)initWithVertex:(id<PGVertexBuffer>)vertex index:(id<PGIndexSource>)index;
 - (CNClassType*)type;
-+ (PGMesh*)vec2VertexData:(CNPArray*)vertexData indexData:(CNPArray*)indexData;
-+ (PGMesh*)applyVertexData:(CNPArray*)vertexData indexData:(CNPArray*)indexData;
++ (PGMesh*)vec2VertexData:(PGVec2Buffer*)vertexData indexData:(CNPArray*)indexData;
++ (PGMesh*)applyVertexData:(PGMeshDataBuffer*)vertexData indexData:(CNPArray*)indexData;
 + (PGMesh*)applyDesc:(PGVertexBufferDesc*)desc vertexData:(CNPArray*)vertexData indexData:(CNPArray*)indexData;
 - (PGVertexArray*)vaoShader:(PGShader*)shader;
 - (PGVertexArray*)vaoShadow;

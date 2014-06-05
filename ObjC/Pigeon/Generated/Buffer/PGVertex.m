@@ -102,24 +102,20 @@ static CNClassType* _PGVBO_type;
     return vb;
 }
 
-+ (id<PGVertexBuffer>)vec4Data:(CNPArray*)data {
-    return [PGVBO applyDesc:[PGVertexBufferDesc Vec4] data:data];
++ (id<PGVertexBuffer>)vec4Data:(PGVec4Buffer*)data {
+    return [PGVBO applyDesc:[PGVertexBufferDesc Vec4] buffer:data];
 }
 
-+ (id<PGVertexBuffer>)vec3Data:(CNPArray*)data {
-    return [PGVBO applyDesc:[PGVertexBufferDesc Vec3] data:data];
++ (id<PGVertexBuffer>)vec3Data:(PGVec3Buffer*)data {
+    return [PGVBO applyDesc:[PGVertexBufferDesc Vec3] buffer:data];
 }
 
-+ (id<PGVertexBuffer>)vec2Data:(CNPArray*)data {
-    return [PGVBO applyDesc:[PGVertexBufferDesc Vec2] data:data];
++ (id<PGVertexBuffer>)vec2Data:(PGVec2Buffer*)data {
+    return [PGVBO applyDesc:[PGVertexBufferDesc Vec2] buffer:data];
 }
 
-+ (id<PGVertexBuffer>)vec2Buffer:(PGVec2Buffer*)buffer {
-    return [PGVBO applyDesc:[PGVertexBufferDesc Vec2] buffer:buffer];
-}
-
-+ (id<PGVertexBuffer>)meshData:(CNPArray*)data {
-    return [PGVBO applyDesc:[PGVertexBufferDesc mesh] data:data];
++ (id<PGVertexBuffer>)meshData:(PGMeshDataBuffer*)data {
+    return [PGVBO applyDesc:[PGVertexBufferDesc mesh] buffer:data];
 }
 
 + (PGMutableVertexBuffer*)mutDesc:(PGVertexBufferDesc*)desc usage:(unsigned int)usage {

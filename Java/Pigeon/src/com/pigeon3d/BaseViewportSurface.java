@@ -98,7 +98,7 @@ public abstract class BaseViewportSurface {
                 b.bytes.put(((float)(1)));
                 b.bytes.put(((float)(1)));
                 b.bytes.put(((float)(1)));
-                return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Buffer(b))))), EmptyIndexSource.triangleStrip);
+                return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(b))))), EmptyIndexSource.triangleStrip);
             }
         });
         _lazy_fullScreenVao = new Lazy<VertexArray<ViewportSurfaceShaderParam>>(new F0<VertexArray<ViewportSurfaceShaderParam>>() {

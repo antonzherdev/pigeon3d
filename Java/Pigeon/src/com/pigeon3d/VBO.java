@@ -7,7 +7,9 @@ import objd.collection.PArray;
 import java.nio.Buffer;
 import objd.collection.Buffer;
 import com.pigeon3d.geometry.vec4;
+import com.pigeon3d.geometry.Vec4Buffer;
 import com.pigeon3d.geometry.vec3;
+import com.pigeon3d.geometry.Vec3Buffer;
 import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.Vec2Buffer;
 
@@ -31,20 +33,17 @@ public class VBO {
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, ((long)(buffer.length)), ((Buffer<Object>)(((Buffer)(buffer.bytes())))), GLES20.GL_STATIC_DRAW);
         return vb;
     }
-    public static VertexBuffer<vec4> vec4Data(final PArray<vec4> data) {
-        return VBO.<vec4>applyDescData(VertexBufferDesc.Vec4(), data);
+    public static VertexBuffer<vec4> vec4Data(final Vec4Buffer data) {
+        return VBO.<vec4>applyDescBuffer(VertexBufferDesc.Vec4(), ((Buffer<vec4>)(((Buffer)(data)))));
     }
-    public static VertexBuffer<vec3> vec3Data(final PArray<vec3> data) {
-        return VBO.<vec3>applyDescData(VertexBufferDesc.Vec3(), data);
+    public static VertexBuffer<vec3> vec3Data(final Vec3Buffer data) {
+        return VBO.<vec3>applyDescBuffer(VertexBufferDesc.Vec3(), ((Buffer<vec3>)(((Buffer)(data)))));
     }
-    public static VertexBuffer<vec2> vec2Data(final PArray<vec2> data) {
-        return VBO.<vec2>applyDescData(VertexBufferDesc.Vec2(), data);
+    public static VertexBuffer<vec2> vec2Data(final Vec2Buffer data) {
+        return VBO.<vec2>applyDescBuffer(VertexBufferDesc.Vec2(), ((Buffer<vec2>)(((Buffer)(data)))));
     }
-    public static VertexBuffer<vec2> vec2Buffer(final Vec2Buffer buffer) {
-        return VBO.<vec2>applyDescBuffer(VertexBufferDesc.Vec2(), ((Buffer<vec2>)(((Buffer)(buffer)))));
-    }
-    public static VertexBuffer<MeshData> meshData(final PArray<MeshData> data) {
-        return VBO.<MeshData>applyDescData(VertexBufferDesc.mesh(), data);
+    public static VertexBuffer<MeshData> meshData(final MeshDataBuffer data) {
+        return VBO.<MeshData>applyDescBuffer(VertexBufferDesc.mesh(), ((Buffer<MeshData>)(((Buffer)(data)))));
     }
     public static <T> MutableVertexBuffer<T> mutDescUsage(final VertexBufferDesc<T> desc, final int usage) {
         return new MutableVertexBuffer<T>(desc, eg.egGenBuffer(), usage);

@@ -45,10 +45,72 @@ static CNClassType* _PGD2D_type;
         });
         _PGD2D_lineVao = [[PGMesh meshWithVertex:_PGD2D_lineVb index:[PGEmptyIndexSource lines]] vaoShader:[PGSimpleShaderSystem colorShader]];
         _PGD2D__lazy_circleVaoWithSegment = [CNLazy lazyWithF:^PGVertexArray*() {
-            return [[PGMesh meshWithVertex:[PGVBO vec2Data:[ arrs(PGVec2, 4) {PGVec2Make(-1.0, -1.0), PGVec2Make(-1.0, 1.0), PGVec2Make(1.0, -1.0), PGVec2Make(1.0, 1.0)}]] index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGCircleShader withSegment]];
+            return [[PGMesh meshWithVertex:[PGVBO vec2Data:({
+                PGVec2Buffer* b = [PGVec2Buffer vec2BufferWithCount:4];
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = -1.0;
+                *(((float*)(b->__pointer)) + 1) = -1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = -1.0;
+                *(((float*)(b->__pointer)) + 1) = 1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = 1.0;
+                *(((float*)(b->__pointer)) + 1) = -1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = 1.0;
+                *(((float*)(b->__pointer)) + 1) = 1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                b;
+            })] index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGCircleShader withSegment]];
         }];
         _PGD2D__lazy_circleVaoWithoutSegment = [CNLazy lazyWithF:^PGVertexArray*() {
-            return [[PGMesh meshWithVertex:[PGVBO vec2Data:[ arrs(PGVec2, 4) {PGVec2Make(-1.0, -1.0), PGVec2Make(-1.0, 1.0), PGVec2Make(1.0, -1.0), PGVec2Make(1.0, 1.0)}]] index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGCircleShader withoutSegment]];
+            return [[PGMesh meshWithVertex:[PGVBO vec2Data:({
+                PGVec2Buffer* b = [PGVec2Buffer vec2BufferWithCount:4];
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = -1.0;
+                *(((float*)(b->__pointer)) + 1) = -1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = -1.0;
+                *(((float*)(b->__pointer)) + 1) = 1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = 1.0;
+                *(((float*)(b->__pointer)) + 1) = -1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = 1.0;
+                *(((float*)(b->__pointer)) + 1) = 1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                b;
+            })] index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGCircleShader withoutSegment]];
         }];
     }
 }

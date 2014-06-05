@@ -33,11 +33,10 @@ object VBO {
         glBufferData(GL_ARRAY_BUFFER, buffer.length, buffer.bytes, GL_STATIC_DRAW)
         vb
     }
-    static def vec4(data : PArray<vec4>) = VBO<vec4>(VertexBufferDesc.Vec4, data)
-    static def vec3(data : PArray<vec3>) = VBO<vec3>(VertexBufferDesc.Vec3, data)
-    static def vec2(data : PArray<vec2>) = VBO<vec2>(VertexBufferDesc.Vec2, data)
-    static def vec2(buffer : Vec2Buffer) = VBO<vec2>(VertexBufferDesc.Vec2, buffer = buffer)
-    static def mesh(data : PArray<MeshData>) = VBO<MeshData>(VertexBufferDesc.mesh, data)
+    static def vec4(data : Vec4Buffer) = VBO<vec4>(VertexBufferDesc.Vec4, buffer = data)
+    static def vec3(data : Vec3Buffer) = VBO<vec3>(VertexBufferDesc.Vec3, buffer = data)
+    static def vec2(data : Vec2Buffer) = VBO<vec2>(VertexBufferDesc.Vec2, buffer = data)
+    static def mesh(data : MeshDataBuffer) = VBO<MeshData>(VertexBufferDesc.mesh, buffer = data)
 
     static def mut<T>(desc : VertexBufferDesc<T>, usage : uint4) : MutableVertexBuffer<T> = MutableVertexBuffer<T>(desc, egGenBuffer, usage)
     static def ring<T>(size : uint4, desc : VertexBufferDesc<T>, usage : uint4) : VertexBufferRing<T> = VertexBufferRing<T>(size, desc, usage)

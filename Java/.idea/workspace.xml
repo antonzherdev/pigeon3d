@@ -7,14 +7,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8518442a-5e74-464f-9fb2-5a52281fb34b" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ObjC/.idea/find.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/2D/PGD2D.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/2D/PGD2D.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Isometric/PGMapIsoView.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Isometric/PGMapIsoView.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGMesh.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGMesh.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/View/PGViewportSurface.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/View/PGViewportSurface.m" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BaseViewportSurface.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BaseViewportSurface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CameraEvent.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/CameraEvent.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/D2D.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/D2D.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Light.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Light.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/2D/D2D.od" afterPath="$PROJECT_DIR$/../Sources/2D/D2D.od" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Isometric/MapIsoView.od" afterPath="$PROJECT_DIR$/../Sources/Isometric/MapIsoView.od" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MapSsoView.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MapSsoView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowMap.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/ShadowMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Text.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Text.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VertexArray.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VertexArray.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Mesh.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Mesh.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Buffer/Mesh.od" afterPath="$PROJECT_DIR$/../Sources/Buffer/Mesh.od" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGMesh.h" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGMesh.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Geometry/PGVec.h" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Geometry/PGVec.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Geometry/PGVec.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Geometry/PGVec.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGVertex.h" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGVertex.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGVertex.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGVertex.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VBO.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VBO.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Geometry/Vec.od" afterPath="$PROJECT_DIR$/../Sources/Geometry/Vec.od" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Buffer/Vertex.od" afterPath="$PROJECT_DIR$/../Sources/Buffer/Vertex.od" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../ObjC/.idea/workspace.xml" />
     </list>
@@ -69,18 +81,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaseViewportSurface.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="BaseViewportSurface.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BaseViewportSurface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.2284569" vertical-offset="767" max-vertical-offset="1530">
+            <state vertical-scroll-proportion="0.0" vertical-offset="767" max-vertical-offset="1530">
               <caret line="106" column="60" selection-start-line="106" selection-start-column="60" selection-end-line="106" selection-end-column="60" />
               <folding>
-                <element signature="e#2922#3555#0" expanded="true" />
-                <element signature="e#3544#3545#0" expanded="true" />
-                <element signature="e#3638#3987#0" expanded="true" />
-                <element signature="e#3841#3869#0" expanded="true" />
-                <element signature="e#3976#3977#0" expanded="true" />
+                <element signature="e#2922#3553#0" expanded="true" />
+                <element signature="e#3542#3543#0" expanded="true" />
+                <element signature="e#3636#3985#0" expanded="true" />
+                <element signature="e#3839#3867#0" expanded="true" />
+                <element signature="e#3974#3975#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MeshDataBuffer.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MeshDataBuffer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="499">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -480,15 +502,19 @@
       <created>1401952175029</created>
       <updated>1401952175029</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix lazy">
+      <created>1401958793499</created>
+      <updated>1401958793499</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3283582" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3283582" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -536,7 +562,8 @@
     <MESSAGE value="Android" />
     <MESSAGE value="GLES20" />
     <MESSAGE value="buffer" />
-    <option name="LAST_COMMIT_MESSAGE" value="buffer" />
+    <MESSAGE value="fix lazy" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix lazy" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -754,15 +781,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BaseViewportSurface.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.2284569" vertical-offset="767" max-vertical-offset="1530">
+        <state vertical-scroll-proportion="0.0" vertical-offset="767" max-vertical-offset="1530">
           <caret line="106" column="60" selection-start-line="106" selection-start-column="60" selection-end-line="106" selection-end-column="60" />
           <folding>
-            <element signature="e#2922#3555#0" expanded="true" />
-            <element signature="e#3544#3545#0" expanded="true" />
-            <element signature="e#3638#3987#0" expanded="true" />
-            <element signature="e#3841#3869#0" expanded="true" />
-            <element signature="e#3976#3977#0" expanded="true" />
+            <element signature="e#2922#3553#0" expanded="true" />
+            <element signature="e#3542#3543#0" expanded="true" />
+            <element signature="e#3636#3985#0" expanded="true" />
+            <element signature="e#3839#3867#0" expanded="true" />
+            <element signature="e#3974#3975#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MeshDataBuffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="499">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

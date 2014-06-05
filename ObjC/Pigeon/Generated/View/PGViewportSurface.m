@@ -214,7 +214,7 @@ static CNClassType* _PGBaseViewportSurface_type;
     if(self == [PGBaseViewportSurface class]) {
         _PGBaseViewportSurface_type = [CNClassType classTypeWithCls:[PGBaseViewportSurface class]];
         _PGBaseViewportSurface__lazy_fullScreenMesh = [CNLazy lazyWithF:^PGMesh*() {
-            return [PGMesh meshWithVertex:[PGVBO vec2Buffer:({
+            return [PGMesh meshWithVertex:[PGVBO vec2Data:({
                 PGVec2Buffer* b = [PGVec2Buffer vec2BufferWithCount:4];
                 if(b->__position >= b->_count) @throw @"Out of bound";
                 *(((float*)(b->__pointer))) = 0.0;

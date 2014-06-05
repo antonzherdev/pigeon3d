@@ -1,17 +1,17 @@
 package com.pigeon3d;
 
 import objd.lang.*;
+import com.pigeon3d.geometry.Vec2Buffer;
 import objd.collection.PArray;
-import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.vec4;
 
 public class Mesh {
     public final VertexBuffer<Object> vertex;
     public final IndexSource index;
-    public static Mesh vec2VertexDataIndexData(final PArray<vec2> vertexData, final PArray<Integer> indexData) {
+    public static Mesh vec2VertexDataIndexData(final Vec2Buffer vertexData, final PArray<Integer> indexData) {
         return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(vertexData))))), IBO.applyData(indexData));
     }
-    public static Mesh applyVertexDataIndexData(final PArray<MeshData> vertexData, final PArray<Integer> indexData) {
+    public static Mesh applyVertexDataIndexData(final MeshDataBuffer vertexData, final PArray<Integer> indexData) {
         return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.meshData(vertexData))))), IBO.applyData(indexData));
     }
     public static <T> Mesh applyDescVertexDataIndexData(final VertexBufferDesc<T> desc, final PArray<T> vertexData, final PArray<Integer> indexData) {

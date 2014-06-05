@@ -87,7 +87,14 @@ object D2D {
     }
 
     private lazy val circleVaoWithSegment = Mesh(
-        VBO.vec2([vec2(-1, -1), vec2(-1, 1), vec2(1, -1), vec2(1, 1)]),
+        VBO.vec2({
+            val b = Vec2Buffer(4)
+            b.set(-1, -1)
+            b.set(-1, 1)
+            b.set(1, -1)
+            b.set(1, 1)
+            b
+        }),
         EmptyIndexSource.triangleStrip).vao(CircleShader.withSegment)
     def drawCircle(backColor : vec4, strokeColor : vec4, at : vec3, radius : float4, relative : vec2, segmentColor : vec4,
         start : float, end : float)
@@ -97,7 +104,14 @@ object D2D {
         }
     }
     private lazy val circleVaoWithoutSegment = Mesh(
-    VBO.vec2([vec2(-1, -1), vec2(-1, 1), vec2(1, -1), vec2(1, 1)]),
+    VBO.vec2({
+        val b = Vec2Buffer(4)
+        b.set(-1, -1)
+        b.set(-1, 1)
+        b.set(1, -1)
+        b.set(1, 1)
+        b
+    }),
     EmptyIndexSource.triangleStrip).vao(CircleShader.withoutSegment)
 
     def drawCircle(backColor : vec4, strokeColor : vec4, at : vec3, radius : float4, relative : vec2) {

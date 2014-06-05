@@ -27,7 +27,26 @@ static CNClassType* _PGMapSsoView_type;
         __lazy_axisVertexBuffer = [CNLazy lazyWithF:^id<PGVertexBuffer>() {
             return ({
                 PGMat4* mi = [[PGCameraIso m] inverse];
-                [PGVBO vec4Data:[ arrs(PGVec4, 4) {[mi mulVec4:PGVec4Make(0.0, 0.0, 0.0, 1.0)], [mi mulVec4:PGVec4Make(1.0, 0.0, 0.0, 1.0)], [mi mulVec4:PGVec4Make(0.0, 1.0, 0.0, 1.0)], [mi mulVec4:PGVec4Make(0.0, 0.0, 1.0, 1.0)]}]];
+                [PGVBO vec4Data:({
+                    PGVec4Buffer* b = [PGVec4Buffer vec4BufferWithCount:4];
+                    if(b->__position >= b->_count) @throw @"Out of bound";
+                    *(((PGVec4*)(b->__pointer))) = [mi mulVec4:PGVec4Make(0.0, 0.0, 0.0, 1.0)];
+                    b->__pointer = ((PGVec4*)(b->__pointer)) + 1;
+                    b->__position++;
+                    if(b->__position >= b->_count) @throw @"Out of bound";
+                    *(((PGVec4*)(b->__pointer))) = [mi mulVec4:PGVec4Make(1.0, 0.0, 0.0, 1.0)];
+                    b->__pointer = ((PGVec4*)(b->__pointer)) + 1;
+                    b->__position++;
+                    if(b->__position >= b->_count) @throw @"Out of bound";
+                    *(((PGVec4*)(b->__pointer))) = [mi mulVec4:PGVec4Make(0.0, 1.0, 0.0, 1.0)];
+                    b->__pointer = ((PGVec4*)(b->__pointer)) + 1;
+                    b->__position++;
+                    if(b->__position >= b->_count) @throw @"Out of bound";
+                    *(((PGVec4*)(b->__pointer))) = [mi mulVec4:PGVec4Make(0.0, 0.0, 1.0, 1.0)];
+                    b->__pointer = ((PGVec4*)(b->__pointer)) + 1;
+                    b->__position++;
+                    b;
+                })];
             });
         }];
         _plane = ({
@@ -38,7 +57,26 @@ static CNClassType* _PGMapSsoView_type;
             CGFloat b = pgRectIY2(limits) + 1.5;
             NSInteger w = pgRectIWidth(limits) + 7;
             NSInteger h = pgRectIHeight(limits) + 7;
-            [PGMesh meshWithVertex:[PGVBO meshData:[ arrs(PGMeshData, 4) {PGMeshDataMake((PGVec2Make(0.0, 0.0)), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(l)), 0.0, ((float)(b))))), PGMeshDataMake((PGVec2Make(((float)(w)), 0.0)), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(r)), 0.0, ((float)(b))))), PGMeshDataMake((PGVec2Make(0.0, ((float)(h)))), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(l)), 0.0, ((float)(t))))), PGMeshDataMake((PGVec2Make(((float)(w)), ((float)(h)))), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(r)), 0.0, ((float)(t)))))}]] index:[PGEmptyIndexSource triangleStrip]];
+            [PGMesh meshWithVertex:[PGVBO meshData:({
+                PGMeshDataBuffer* buf = [PGMeshDataBuffer meshDataBufferWithCount:4];
+                if(buf->__position >= buf->_count) @throw @"Out of bound";
+                *(((PGMeshData*)(buf->__pointer))) = PGMeshDataMake((PGVec2Make(0.0, 0.0)), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(l)), 0.0, ((float)(b)))));
+                buf->__pointer = ((PGMeshData*)(buf->__pointer)) + 1;
+                buf->__position++;
+                if(buf->__position >= buf->_count) @throw @"Out of bound";
+                *(((PGMeshData*)(buf->__pointer))) = PGMeshDataMake((PGVec2Make(((float)(w)), 0.0)), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(r)), 0.0, ((float)(b)))));
+                buf->__pointer = ((PGMeshData*)(buf->__pointer)) + 1;
+                buf->__position++;
+                if(buf->__position >= buf->_count) @throw @"Out of bound";
+                *(((PGMeshData*)(buf->__pointer))) = PGMeshDataMake((PGVec2Make(0.0, ((float)(h)))), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(l)), 0.0, ((float)(t)))));
+                buf->__pointer = ((PGMeshData*)(buf->__pointer)) + 1;
+                buf->__position++;
+                if(buf->__position >= buf->_count) @throw @"Out of bound";
+                *(((PGMeshData*)(buf->__pointer))) = PGMeshDataMake((PGVec2Make(((float)(w)), ((float)(h)))), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(r)), 0.0, ((float)(t)))));
+                buf->__pointer = ((PGMeshData*)(buf->__pointer)) + 1;
+                buf->__position++;
+                buf;
+            })] index:[PGEmptyIndexSource triangleStrip]];
         });
         _planeVao = [_plane vaoMaterial:material shadow:NO];
     }

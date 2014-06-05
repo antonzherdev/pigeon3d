@@ -1,5 +1,7 @@
 package com.pigeon3d
 
+import java.nio._
+
 struct MeshData(var uv : vec2, var normal : vec3, var position : vec3) {
     def mul(mat4 : mat4) : MeshData =
         MeshData(uv, (mat4 * vec4(normal, 0)).xyz, (mat4 * vec4(position, 1)).xyz)
@@ -7,14 +9,39 @@ struct MeshData(var uv : vec2, var normal : vec3, var position : vec3) {
     def uvAdd(vec2 : vec2) = MeshData(uv + vec2, normal, position)
 }
 
+@ObjC
+class MeshDataBuffer(count : uint) extends Buffer<MeshData>(MeshData.type, count) {
+    inline def get : MeshData = _get
+    inline def set(v : MeshData) {
+        _set(v)
+    }
+}
+
+@Java
+class MeshDataBuffer(count : uint) extends Buffer<MeshData>(count, 8) {
+    override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
+    inline def get : MeshData = MeshData(vec2(bytes.get, bytes.get), vec3(bytes.get, bytes.get, bytes.get), vec3(bytes.get, bytes.get, bytes.get))
+    inline def set(v: MeshData) {
+        bytes.put(v.uv.x)
+        bytes.put(v.uv.y)
+        bytes.put(v.normal.x)
+        bytes.put(v.normal.y)
+        bytes.put(v.normal.z)
+        bytes.put(v.position.x)
+        bytes.put(v.position.y)
+        bytes.put(v.position.z)
+    }
+}
+
+
 class MeshDataModel(val vertex : PArray<MeshData>, val index : PArray<uint4>)
 
 class Mesh(val vertex : VertexBuffer<_>, val index : IndexSource) {
-    static def vec2(vertexData : PArray<vec2>, indexData : PArray<uint4>) : Mesh = Mesh(
+    static def vec2(vertexData : Vec2Buffer, indexData : PArray<uint4>) : Mesh = Mesh(
             vertex = VBO.vec2(vertexData),
             index = IBO(indexData))
 
-    static def apply(vertexData : PArray<MeshData>, indexData : PArray<uint4>) : Mesh = Mesh(
+    static def apply(vertexData : MeshDataBuffer, indexData : PArray<uint4>) : Mesh = Mesh(
             vertex = VBO.mesh(vertexData),
             index = IBO(indexData))
 

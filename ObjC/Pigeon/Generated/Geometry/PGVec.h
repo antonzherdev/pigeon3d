@@ -5,6 +5,8 @@
 @class CNSortBuilder;
 
 @class PGVec2Buffer;
+@class PGVec3Buffer;
+@class PGVec4Buffer;
 typedef struct PGVec2 PGVec2;
 typedef struct PGVec2i PGVec2i;
 typedef struct PGVec3 PGVec3;
@@ -80,17 +82,6 @@ CNPType* pgVec2Type();
 - (id)initWithValue:(PGVec2)value;
 @end
 
-
-
-@interface PGVec2Buffer : CNBuffer
-+ (instancetype)vec2BufferWithCount:(NSUInteger)count;
-- (instancetype)initWithCount:(NSUInteger)count;
-- (CNClassType*)type;
-- (PGVec2)get;
-- (void)setV:(PGVec2)v;
-- (NSString*)description;
-+ (CNClassType*)type;
-@end
 
 
 struct PGVec2i {
@@ -502,5 +493,32 @@ CNPType* pgQuad3Type();
 - (id)initWithValue:(PGQuad3)value;
 @end
 
+
+
+@interface PGVec2Buffer : CNBuffer
++ (instancetype)vec2BufferWithCount:(NSUInteger)count;
+- (instancetype)initWithCount:(NSUInteger)count;
+- (CNClassType*)type;
+- (NSString*)description;
++ (CNClassType*)type;
+@end
+
+
+@interface PGVec3Buffer : CNBuffer
++ (instancetype)vec3BufferWithCount:(NSUInteger)count;
+- (instancetype)initWithCount:(NSUInteger)count;
+- (CNClassType*)type;
+- (NSString*)description;
++ (CNClassType*)type;
+@end
+
+
+@interface PGVec4Buffer : CNBuffer
++ (instancetype)vec4BufferWithCount:(NSUInteger)count;
+- (instancetype)initWithCount:(NSUInteger)count;
+- (CNClassType*)type;
+- (NSString*)description;
++ (CNClassType*)type;
+@end
 
 

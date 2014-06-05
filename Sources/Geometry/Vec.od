@@ -59,35 +59,6 @@ struct vec2(val x : float4, val y : float4) {
     def ratio : float4 = x/y
 }
 
-@ObjC
-class Vec2Buffer(count : uint) extends Buffer<vec2>(vec2.type, count) {
-    def get : vec2 = _get
-    inline def set(x : float4, y : float4) {
-        check
-        _pointer.cast<Pointer<float4>>.set(x)
-        (_pointer.cast<Pointer<float4>> + 1).set(y)
-        inc
-    }
-    def set(v : vec2) {
-        _set(v)
-    }
-}
-
-@Java
-class Vec2Buffer(count : uint) extends Buffer<vec2>(count, 8) {
-    override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
-    inline def get : vec2 = vec2(bytes.get, bytes.get)
-    inline def set(x : float4, y : float4) {
-        bytes.put(x)
-        bytes.put(y)
-    }
-    inline def set(v: vec2) {
-        bytes.put(v.x)
-        bytes.put(v.y)
-    }
-}
-
-
 struct vec2i(val x : int, val y : int) {
     static def apply(vec2 : vec2) = vec2i(vec2.x.round, vec2.y.round)
 
@@ -370,3 +341,98 @@ struct Quad3(val planeCoord : PlaneCoord, val quad : Quad) {
 
     def mul(mat4 : mat4) = Quad3(planeCoord * mat4, quad)
 }
+
+@ObjC
+class Vec2Buffer(count : uint) extends Buffer<vec2>(vec2.type, count) {
+    inline def get : vec2 = _get
+    inline def set(x : float4, y : float4) {
+        check
+        _pointer.cast<Pointer<float4>>.set(x)
+        (_pointer.cast<Pointer<float4>> + 1).set(y)
+        inc
+    }
+    inline def set(v : vec2) {
+        _set(v)
+    }
+}
+
+@Java
+class Vec2Buffer(count : uint) extends Buffer<vec2>(count, 8) {
+    override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
+    inline def get : vec2 = vec2(bytes.get, bytes.get)
+    inline def set(x : float4, y : float4) {
+        bytes.put(x)
+        bytes.put(y)
+    }
+    inline def set(v: vec2) {
+        bytes.put(v.x)
+        bytes.put(v.y)
+    }
+}
+
+
+@ObjC
+class Vec3Buffer(count : uint) extends Buffer<vec3>(vec3.type, count) {
+    inline def get : vec3 = _get
+    inline def set(x : float4, y : float4, z : float4) {
+        check
+        _pointer.cast<Pointer<float4>>.set(x)
+        (_pointer.cast<Pointer<float4>> + 1).set(y)
+        (_pointer.cast<Pointer<float4>> + 2).set(z)
+        inc
+    }
+    inline def set(v : vec3) {
+        _set(v)
+    }
+}
+
+@Java
+class Vec3Buffer(count : uint) extends Buffer<vec3>(count, 12) {
+    override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
+    inline def get : vec3 = vec3(bytes.get, bytes.get, bytes.get)
+    inline def set(x : float4, y : float4, z : float4) {
+        bytes.put(x)
+        bytes.put(y)
+        bytes.put(z)
+    }
+    inline def set(v: vec3) {
+        bytes.put(v.x)
+        bytes.put(v.y)
+        bytes.put(v.z)
+    }
+}
+
+@ObjC
+class Vec4Buffer(count : uint) extends Buffer<vec4>(vec4.type, count) {
+    inline def get : vec4 = _get
+    inline def set(x : float4, y : float4, z : float4, w : float4) {
+        check
+        _pointer.cast<Pointer<float4>>.set(x)
+        (_pointer.cast<Pointer<float4>> + 1).set(y)
+        (_pointer.cast<Pointer<float4>> + 2).set(z)
+        (_pointer.cast<Pointer<float4>> + 3).set(w)
+        inc
+    }
+    inline def set(v : vec4) {
+        _set(v)
+    }
+}
+
+@Java
+class Vec4Buffer(count : uint) extends Buffer<vec4>(count, 16) {
+    override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
+    inline def get : vec4 = vec4(bytes.get, bytes.get, bytes.get, bytes.get)
+    inline def set(x : float4, y : float4, z : float4, w : float4) {
+        bytes.put(x)
+        bytes.put(y)
+        bytes.put(z)
+        bytes.put(w)
+    }
+    inline def set(v: vec4) {
+        bytes.put(v.x)
+        bytes.put(v.y)
+        bytes.put(v.z)
+        bytes.put(v.w)
+    }
+}
+

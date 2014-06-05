@@ -76,6 +76,57 @@ CNPType* pgMeshDataType() {
 @end
 
 
+@implementation PGMeshDataBuffer
+static CNClassType* _PGMeshDataBuffer_type;
+
++ (instancetype)meshDataBufferWithCount:(NSUInteger)count {
+    return [[PGMeshDataBuffer alloc] initWithCount:count];
+}
+
+- (instancetype)initWithCount:(NSUInteger)count {
+    self = [super initWithTp:pgMeshDataType() count:((unsigned int)(count))];
+    
+    return self;
+}
+
++ (void)initialize {
+    [super initialize];
+    if(self == [PGMeshDataBuffer class]) _PGMeshDataBuffer_type = [CNClassType classTypeWithCls:[PGMeshDataBuffer class]];
+}
+
+- (PGMeshData)get {
+    if(__position >= _count) @throw @"Out of bound";
+    PGMeshData __il_r = *(((PGMeshData*)(__pointer)));
+    __pointer = ((PGMeshData*)(__pointer)) + 1;
+    __position++;
+    return __il_r;
+}
+
+- (void)setV:(PGMeshData)v {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((PGMeshData*)(__pointer))) = v;
+    __pointer = ((PGMeshData*)(__pointer)) + 1;
+    __position++;
+}
+
+- (NSString*)description {
+    return @"MeshDataBuffer";
+}
+
+- (CNClassType*)type {
+    return [PGMeshDataBuffer type];
+}
+
++ (CNClassType*)type {
+    return _PGMeshDataBuffer_type;
+}
+
+- (id)copyWithZone:(NSZone*)zone {
+    return self;
+}
+
+@end
+
 @implementation PGMeshDataModel
 static CNClassType* _PGMeshDataModel_type;
 @synthesize vertex = _vertex;
@@ -142,11 +193,11 @@ static CNClassType* _PGMesh_type;
     if(self == [PGMesh class]) _PGMesh_type = [CNClassType classTypeWithCls:[PGMesh class]];
 }
 
-+ (PGMesh*)vec2VertexData:(CNPArray*)vertexData indexData:(CNPArray*)indexData {
++ (PGMesh*)vec2VertexData:(PGVec2Buffer*)vertexData indexData:(CNPArray*)indexData {
     return [PGMesh meshWithVertex:[PGVBO vec2Data:vertexData] index:[PGIBO applyData:indexData]];
 }
 
-+ (PGMesh*)applyVertexData:(CNPArray*)vertexData indexData:(CNPArray*)indexData {
++ (PGMesh*)applyVertexData:(PGMeshDataBuffer*)vertexData indexData:(CNPArray*)indexData {
     return [PGMesh meshWithVertex:[PGVBO meshData:vertexData] index:[PGIBO applyData:indexData]];
 }
 
