@@ -10,10 +10,15 @@ struct MeshData(var uv : vec2, var normal : vec3, var position : vec3) {
 }
 
 @ObjC
-class MeshDataBuffer(count : uint) extends Buffer<MeshData>(MeshData.type, count) {
+class MeshDataBuffer(count : uint, bytes : Pointer<MeshData> =  Pointer<MeshData>(MeshData.type, count), needFree : bool = true)
+    extends Buffer<MeshData>(MeshData.type, count, bytes, needFree)
+{
     inline def get : MeshData = _get
     inline def set(v : MeshData) {
         _set(v)
+    }
+    inline def for(f : MeshData -> void) {
+        _for(f)
     }
 }
 
@@ -31,23 +36,31 @@ class MeshDataBuffer(count : uint) extends Buffer<MeshData>(count, 8) {
         bytes.put(v.position.y)
         bytes.put(v.position.z)
     }
+    inline def for(f : MeshData -> void) {
+        var i = 0
+        bytes.clear
+        while(i < count) {
+            f(get)
+            i++
+        }
+    }
 }
 
 
-class MeshDataModel(val vertex : PArray<MeshData>, val index : PArray<uint4>)
+class MeshDataModel(val vertex : MeshDataBuffer, val index : PArray<uint4>)
 
 class Mesh(val vertex : VertexBuffer<_>, val index : IndexSource) {
     static def vec2(vertexData : Vec2Buffer, indexData : PArray<uint4>) : Mesh = Mesh(
-            vertex = VBO.vec2(vertexData),
-            index = IBO(indexData))
+        vertex = VBO.vec2(vertexData),
+        index = IBO(indexData))
 
     static def apply(vertexData : MeshDataBuffer, indexData : PArray<uint4>) : Mesh = Mesh(
-            vertex = VBO.mesh(vertexData),
-            index = IBO(indexData))
+        vertex = VBO.mesh(vertexData),
+        index = IBO(indexData))
 
     static def apply<T>(desc : VertexBufferDesc<T>, vertexData : PArray<T>, indexData : PArray<uint4>) : Mesh = Mesh(
-            vertex = VBO<T>(desc, vertexData),
-            index = IBO(indexData))
+        vertex = VBO<T>(desc, vertexData),
+        index = IBO(indexData))
 
     def vao<N>(shader : Shader<N>) : VertexArray<N> = shader.vao(vertex, index.cast<IndexBuffer>)
     def vaoShadow : VertexArray<ColorSource> = vao(ShadowShaderSystem.instance, ColorSource(vec4(1, 1, 1, 1)), false)
@@ -56,14 +69,14 @@ class Mesh(val vertex : VertexBuffer<_>, val index : IndexSource) {
         val std = MaterialVertexArray(material.shader.vao(vertex, index.cast<IndexBuffer>), material)
         if(shadow && egPlatform.shadows) RouteVertexArray(std,
             MaterialVertexArray(material.shaderSystem.shaderFor(material,
-                ShadowRenderTarget.default).vao(vertex, index.cast<IndexBuffer>), material))
+            ShadowRenderTarget.default).vao(vertex, index.cast<IndexBuffer>), material))
         else std
     }
     def vao<N>(shaderSystem : ShaderSystem<N>, material : N, shadow : bool) : VertexArray<N> = {
         val std = MaterialVertexArray(shaderSystem.shaderFor(material).vao(vertex, index.cast<IndexBuffer>), material)
         if(shadow && egPlatform.shadows) RouteVertexArray(std,
             MaterialVertexArray(shaderSystem.shaderFor(material,
-                ShadowRenderTarget.default).vao(vertex, index.cast<IndexBuffer>), material))
+            ShadowRenderTarget.default).vao(vertex, index.cast<IndexBuffer>), material))
         else std
     }
 
@@ -94,7 +107,7 @@ class MeshModel(val arrays : [VertexArray<Material>]) {
 
 
 
-class MeshUnite(val vertexSample : PArray<MeshData>, val indexSample : PArray<uint4>, val createVao : Mesh -> VertexArray<_>) {
+class MeshUnite(val vertexSample : MeshDataBuffer, val indexSample : PArray<uint4>, val createVao : Mesh -> VertexArray<_>) {
     static def apply(meshModel : MeshDataModel, createVao : Mesh -> VertexArray<_>) : MeshUnite =
         MeshUnite(meshModel.vertex, meshModel.index, createVao)
 
@@ -131,7 +144,7 @@ class MeshUnite(val vertexSample : PArray<MeshData>, val indexSample : PArray<ui
 }
 
 class MeshWriter(val vbo : MutableVertexBuffer<MeshData>, val ibo : MutableIndexBuffer,
-    val count : uint4, val vertexSample : PArray<MeshData>, val indexSample : PArray<uint4>)
+    val count : uint4, val vertexSample : MeshDataBuffer, val indexSample : PArray<uint4>)
 {
     private val vertex = Pointer(MeshData.type, vertexSample.count * count)
     private val index = Pointer<uint4>(UInt4.type, indexSample.count * count)
@@ -142,13 +155,13 @@ class MeshWriter(val vbo : MutableVertexBuffer<MeshData>, val ibo : MutableIndex
         write(vertexSample, indexSample, mat4)
     }
 
-    def write(vertex : PArray<MeshData>, mat4 : mat4) {
+    def write(vertex : MeshDataBuffer, mat4 : mat4) {
         write(vertex, indexSample, mat4)
     }
 
-    def write(vertex : PArray<MeshData>, index : PArray<uint4>, mat4 : mat4) {
-        vertex.forRef{ r ->
-            _vp.set(r.get<MeshData> * mat4)
+    def write(vertex : MeshDataBuffer, index : PArray<uint4>, mat4 : mat4) {
+        vertex.for{ r ->
+            _vp.set(r * mat4)
             _vp++
         }
         index.forRef {r ->
@@ -162,13 +175,13 @@ class MeshWriter(val vbo : MutableVertexBuffer<MeshData>, val ibo : MutableIndex
         write(vertexSample, indexSample, map)
     }
 
-    def write(vertex : PArray<MeshData>, map : MeshData -> MeshData) {
+    def write(vertex : MeshDataBuffer, map : MeshData -> MeshData) {
         write(vertex, indexSample, map)
     }
 
-    def write(vertex : PArray<MeshData>, index : PArray<uint4>, map : MeshData -> MeshData) {
-        vertex.forRef{ r ->
-            _vp.set(map(r.get<MeshData>))
+    def write(vertex : MeshDataBuffer, index : PArray<uint4>, map : MeshData -> MeshData) {
+        vertex.for{ r ->
+            _vp.set(map(r))
             _vp++
         }
         index.forRef {r ->

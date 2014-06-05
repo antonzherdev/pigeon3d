@@ -151,7 +151,7 @@ static inline void egVertexAttribPointer (GLuint index, NSUInteger size, GLenum 
 }
 
 
-#define egJasVbo(NAME) [arrsv(PGMeshData, NAME ## _vertexcount) NAME ## _vertex]
+#define egJasVbo(NAME) [PGMeshDataBuffer meshDataBufferWithCount:NAME ## _vertexcount bytes: (PGMeshData*)NAME ## _vertex needFree:NO]
 #define egJasIbo(NAME) [arrp(unsigned int, numui4, NAME ## _polygoncount*3) NAME ## _index]
 
 #define egJasModel(NAME) [PGMesh \

@@ -495,7 +495,7 @@ CNPType* pgQuad3Type();
 
 
 
-@interface PGVec2Buffer : CNBuffer
+@interface PGVec2Buffer : CNUBuffer
 + (instancetype)vec2BufferWithCount:(NSUInteger)count;
 - (instancetype)initWithCount:(NSUInteger)count;
 - (CNClassType*)type;
@@ -504,7 +504,7 @@ CNPType* pgQuad3Type();
 @end
 
 
-@interface PGVec3Buffer : CNBuffer
+@interface PGVec3Buffer : CNUBuffer
 + (instancetype)vec3BufferWithCount:(NSUInteger)count;
 - (instancetype)initWithCount:(NSUInteger)count;
 - (CNClassType*)type;
@@ -513,7 +513,7 @@ CNPType* pgQuad3Type();
 @end
 
 
-@interface PGVec4Buffer : CNBuffer
+@interface PGVec4Buffer : CNUBuffer
 + (instancetype)vec4BufferWithCount:(NSUInteger)count;
 - (instancetype)initWithCount:(NSUInteger)count;
 - (CNClassType*)type;

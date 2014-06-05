@@ -7,27 +7,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8518442a-5e74-464f-9fb2-5a52281fb34b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ObjC/.idea/find.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/2D/PGD2D.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/2D/PGD2D.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Isometric/PGMapIsoView.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Isometric/PGMapIsoView.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGMesh.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGMesh.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/View/PGViewportSurface.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/View/PGViewportSurface.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BaseViewportSurface.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/BaseViewportSurface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/D2D.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/D2D.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/2D/D2D.od" afterPath="$PROJECT_DIR$/../Sources/2D/D2D.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Isometric/MapIsoView.od" afterPath="$PROJECT_DIR$/../Sources/Isometric/MapIsoView.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MapSsoView.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/MapSsoView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Mesh.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/Mesh.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Buffer/Mesh.od" afterPath="$PROJECT_DIR$/../Sources/Buffer/Mesh.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGMesh.h" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGMesh.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Geometry/PGVec.h" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Geometry/PGVec.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Geometry/PGVec.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Geometry/PGVec.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGVertex.h" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGVertex.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGVertex.m" afterPath="$PROJECT_DIR$/../ObjC/Pigeon/Generated/Buffer/PGVertex.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VBO.java" afterPath="$PROJECT_DIR$/Pigeon/src/com/pigeon3d/VBO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Geometry/Vec.od" afterPath="$PROJECT_DIR$/../Sources/Geometry/Vec.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Buffer/Vertex.od" afterPath="$PROJECT_DIR$/../Sources/Buffer/Vertex.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ObjC/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../ObjC/.idea/workspace.xml" />
     </list>
     <ignored path="ObjDLib.iws" />

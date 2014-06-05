@@ -343,7 +343,7 @@ struct Quad3(val planeCoord : PlaneCoord, val quad : Quad) {
 }
 
 @ObjC
-class Vec2Buffer(count : uint) extends Buffer<vec2>(vec2.type, count) {
+class Vec2Buffer(count : uint) extends UBuffer<vec2>(vec2.type, count) {
     inline def get : vec2 = _get
     inline def set(x : float4, y : float4) {
         check
@@ -372,7 +372,7 @@ class Vec2Buffer(count : uint) extends Buffer<vec2>(count, 8) {
 
 
 @ObjC
-class Vec3Buffer(count : uint) extends Buffer<vec3>(vec3.type, count) {
+class Vec3Buffer(count : uint) extends UBuffer<vec3>(vec3.type, count) {
     inline def get : vec3 = _get
     inline def set(x : float4, y : float4, z : float4) {
         check
@@ -403,7 +403,7 @@ class Vec3Buffer(count : uint) extends Buffer<vec3>(count, 12) {
 }
 
 @ObjC
-class Vec4Buffer(count : uint) extends Buffer<vec4>(vec4.type, count) {
+class Vec4Buffer(count : uint) extends UBuffer<vec4>(vec4.type, count) {
     inline def get : vec4 = _get
     inline def set(x : float4, y : float4, z : float4, w : float4) {
         check
