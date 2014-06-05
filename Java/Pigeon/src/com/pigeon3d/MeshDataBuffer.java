@@ -25,6 +25,14 @@ public class MeshDataBuffer extends Buffer<MeshData> {
         this.bytes.put(v.position.y);
         this.bytes.put(v.position.z);
     }
+    public void forF(final P<MeshData> f) {
+        int i = 0;
+        this.bytes.clear();
+        while(i < this.count) {
+            f.apply(new MeshData(new vec2(this.bytes.get(), this.bytes.get()), new vec3(this.bytes.get(), this.bytes.get(), this.bytes.get()), new vec3(this.bytes.get(), this.bytes.get(), this.bytes.get())));
+            i++;
+        }
+    }
     public MeshDataBuffer(final int count) {
         super(((int)(count)), ((int)(8)));
         this.bytes = FloatBuffer.allocate(((int)(count)));

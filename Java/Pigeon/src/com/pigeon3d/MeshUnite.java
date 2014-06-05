@@ -8,7 +8,7 @@ import objd.collection.Iterable;
 import android.opengl.GLES20;
 
 public class MeshUnite {
-    public final PArray<MeshData> vertexSample;
+    public final MeshDataBuffer vertexSample;
     public final PArray<Integer> indexSample;
     public final F<Mesh, VertexArray<Object>> createVao;
     private final MutableVertexBuffer<MeshData> vbo;
@@ -52,7 +52,7 @@ public class MeshUnite {
             }
         }
     }
-    public MeshUnite(final PArray<MeshData> vertexSample, final PArray<Integer> indexSample, final F<Mesh, VertexArray<Object>> createVao) {
+    public MeshUnite(final MeshDataBuffer vertexSample, final PArray<Integer> indexSample, final F<Mesh, VertexArray<Object>> createVao) {
         this.vertexSample = vertexSample;
         this.indexSample = indexSample;
         this.createVao = createVao;

@@ -4,9 +4,9 @@ import objd.lang.*;
 import objd.collection.PArray;
 
 public class MeshDataModel {
-    public final PArray<MeshData> vertex;
+    public final MeshDataBuffer vertex;
     public final PArray<Integer> index;
-    public MeshDataModel(final PArray<MeshData> vertex, final PArray<Integer> index) {
+    public MeshDataModel(final MeshDataBuffer vertex, final PArray<Integer> index) {
         this.vertex = vertex;
         this.index = index;
     }
