@@ -5,7 +5,7 @@
 #if TARGET_OS_IPHONE
 #import <MessageUI/MFMailComposeViewController.h>
 
-@interface EGEMail : NSObject <MFMailComposeViewControllerDelegate>
+@interface PGEMail : NSObject <MFMailComposeViewControllerDelegate>
 #else
 @interface PGEMail : NSObject
 #endif
