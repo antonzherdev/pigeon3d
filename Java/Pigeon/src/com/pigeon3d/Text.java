@@ -86,7 +86,7 @@ public class Text {
                 return new StringEx(_).isEmpty();
             }
         });
-        this._lazy_sizeInPoints = new Lazy(new F0<React<vec2>>() {
+        this._lazy_sizeInPoints = new Lazy<React<vec2>>(new F0<React<vec2>>() {
             @Override
             public React<vec2> apply() {
                 return React.<Font, String, vec2>asyncQueueABF(DispatchQueue.mainThread, font, text, new F2<Font, String, vec2>() {
@@ -97,7 +97,7 @@ public class Text {
                 });
             }
         });
-        this._lazy_sizeInP = new Lazy(new F0<React<vec2>>() {
+        this._lazy_sizeInP = new Lazy<React<vec2>>(new F0<React<vec2>>() {
             @Override
             public React<vec2> apply() {
                 return React.<vec2, vec2, vec2>asyncQueueABF(DispatchQueue.mainThread, Text.this.sizeInPoints(), Global.context.scaledViewSize, new F2<vec2, vec2, vec2>() {

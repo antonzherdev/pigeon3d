@@ -165,13 +165,13 @@ public class D2D {
         lineVb = VBO.mutMeshUsage(GLES20.GL_STREAM_DRAW);
         lineVertexes = pp;
         lineVao = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.lineVb)))), EmptyIndexSource.lines).<ColorSource>vaoShader(SimpleShaderSystem.colorShader());
-        _lazy_circleVaoWithSegment = new Lazy(new F0<VertexArray<CircleParam>>() {
+        _lazy_circleVaoWithSegment = new Lazy<VertexArray<CircleParam>>(new F0<VertexArray<CircleParam>>() {
             @Override
             public VertexArray<CircleParam> apply() {
                 return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(((vec2[0])(ImArray.fromObjects(new vec2(((float)(-1)), ((float)(-1))), new vec2(((float)(-1)), ((float)(1))), new vec2(((float)(1)), ((float)(-1))), new vec2(((float)(1)), ((float)(1))))))))))), EmptyIndexSource.triangleStrip).<CircleParam>vaoShader(((Shader<CircleParam>)(((Shader)(CircleShader.withSegment)))));
             }
         });
-        _lazy_circleVaoWithoutSegment = new Lazy(new F0<VertexArray<CircleParam>>() {
+        _lazy_circleVaoWithoutSegment = new Lazy<VertexArray<CircleParam>>(new F0<VertexArray<CircleParam>>() {
             @Override
             public VertexArray<CircleParam> apply() {
                 return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(((vec2[0])(ImArray.fromObjects(new vec2(((float)(-1)), ((float)(-1))), new vec2(((float)(-1)), ((float)(1))), new vec2(((float)(1)), ((float)(-1))), new vec2(((float)(1)), ((float)(1))))))))))), EmptyIndexSource.triangleStrip).<CircleParam>vaoShader(((Shader<CircleParam>)(((Shader)(CircleShader.withoutSegment)))));

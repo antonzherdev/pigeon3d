@@ -62,13 +62,13 @@ public class ShadowMap extends Surface {
         this.frameBuffer = eg.egGenFrameBuffer();
         this.biasDepthCp = mat4.identity();
         this.texture = t;
-        this._lazy_shader = new Lazy(new F0<ShadowSurfaceShader>() {
+        this._lazy_shader = new Lazy<ShadowSurfaceShader>(new F0<ShadowSurfaceShader>() {
             @Override
             public ShadowSurfaceShader apply() {
                 return new ShadowSurfaceShader();
             }
         });
-        this._lazy_vao = new Lazy(new F0<VertexArray<ColorSource>>() {
+        this._lazy_vao = new Lazy<VertexArray<ColorSource>>(new F0<VertexArray<ColorSource>>() {
             @Override
             public VertexArray<ColorSource> apply() {
                 return BaseViewportSurface.fullScreenMesh().<ColorSource>vaoShader(((Shader<ColorSource>)(((Shader)(new ShadowSurfaceShader())))));

@@ -38,7 +38,7 @@ public class MapSsoView {
     public MapSsoView(final MapSso map, final Material material) {
         this.map = map;
         this.material = material;
-        this._lazy_axisVertexBuffer = new Lazy(new F0<VertexBuffer<vec4>>() {
+        this._lazy_axisVertexBuffer = new Lazy<VertexBuffer<vec4>>(new F0<VertexBuffer<vec4>>() {
             @Override
             public VertexBuffer<vec4> apply() {
                 final mat4 mi = CameraIso.m.inverse();

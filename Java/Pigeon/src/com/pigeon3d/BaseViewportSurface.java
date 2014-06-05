@@ -86,7 +86,7 @@ public abstract class BaseViewportSurface {
         return String.format(")");
     }
     static {
-        _lazy_fullScreenMesh = new Lazy(new F0<Mesh>() {
+        _lazy_fullScreenMesh = new Lazy<Mesh>(new F0<Mesh>() {
             @Override
             public Mesh apply() {
                 final Vec2Buffer b = new Vec2Buffer(((int)(4)));
@@ -101,7 +101,7 @@ public abstract class BaseViewportSurface {
                 return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Buffer(b))))), EmptyIndexSource.triangleStrip);
             }
         });
-        _lazy_fullScreenVao = new Lazy(new F0<VertexArray<ViewportSurfaceShaderParam>>() {
+        _lazy_fullScreenVao = new Lazy<VertexArray<ViewportSurfaceShaderParam>>(new F0<VertexArray<ViewportSurfaceShaderParam>>() {
             @Override
             public VertexArray<ViewportSurfaceShaderParam> apply() {
                 return BaseViewportSurface.fullScreenMesh().<ViewportSurfaceShaderParam>vaoShader(((Shader<ViewportSurfaceShaderParam>)(((Shader)(ViewportSurfaceShader.instance)))));

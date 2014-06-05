@@ -69,7 +69,7 @@ public class CameraEvent<P> extends Event_impl<P> {
         this.viewport = viewport;
         this.recognizerType = ((RecognizerType<Object, P>)(((RecognizerType)(event.recognizerType()))));
         this.locationInView = event.locationInView();
-        this._lazy_segment = new Lazy(new F0<Line3>() {
+        this._lazy_segment = new Lazy<Line3>(new F0<Line3>() {
             @Override
             public Line3 apply() {
                 final vec2 loc = CameraEvent.this.locationInViewport();

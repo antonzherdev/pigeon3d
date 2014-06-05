@@ -19,7 +19,7 @@ public class Light {
     public Light(final vec4 color, final boolean hasShadows) {
         this.color = color;
         this.hasShadows = hasShadows;
-        this._lazy_shadowMap = new Lazy(new F0<ShadowMap>() {
+        this._lazy_shadowMap = new Lazy<ShadowMap>(new F0<ShadowMap>() {
             @Override
             public ShadowMap apply() {
                 return new ShadowMap(vec2i.applyVec2(new vec2(((float)(2048)), ((float)(2048)))));

@@ -26,7 +26,7 @@ public abstract class VertexArray<P> {
         }
     }
     public VertexArray() {
-        this._lazy_mutableVertexBuffer = new Lazy(new F0<MutableVertexBuffer<Object>>() {
+        this._lazy_mutableVertexBuffer = new Lazy<MutableVertexBuffer<Object>>(new F0<MutableVertexBuffer<Object>>() {
             @Override
             public MutableVertexBuffer<Object> apply() {
                 return ((MutableVertexBuffer<Object>)(((MutableVertexBuffer)(((MutableVertexBuffer<Object>)(((MutableVertexBuffer)(VertexArray.this.vertexBuffers().findWhere(((F<VertexBuffer<Object>, Boolean>)(((F)(new F<VertexBuffer<Object>, Boolean>() {
