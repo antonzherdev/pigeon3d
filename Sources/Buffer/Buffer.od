@@ -1,6 +1,6 @@
 package com.pigeon3d
 
-abstract class Buffer<T>(val dataType : PType<T>, val bufferType : uint4, val handle : uint4) {
+abstract class GlBuffer<T>(val dataType : PType<T>, val bufferType : uint4, val handle : uint4) {
     def length : uint
     def count : uint
 
@@ -16,8 +16,8 @@ abstract class Buffer<T>(val dataType : PType<T>, val bufferType : uint4, val ha
 }
 
 
-abstract class MutableBuffer<T>(dataType : PType<T>, bufferType : uint4, handle : uint4, val usage : uint4)
-    extends Buffer<T>(dataType, bufferType, handle)
+abstract class MutableGlBuffer<T>(dataType : PType<T>, bufferType : uint4, handle : uint4, val usage : uint4)
+    extends GlBuffer<T>(dataType, bufferType, handle)
 {
     private var _length : uint = 0
     private var _count : uint = 0
@@ -85,7 +85,7 @@ abstract class MutableBuffer<T>(dataType : PType<T>, bufferType : uint4, handle 
     }
 }
 
-class MappedBufferData<T>(val buffer : MutableBuffer<T>, val pointer : Pointer<T>) {
+class MappedBufferData<T>(val buffer : MutableGlBuffer<T>, val pointer : Pointer<T>) {
     private val lock : ConditionLock = ConditionLock(0)
     private var finished = false
     private var updated = false
@@ -121,7 +121,7 @@ class MappedBufferData<T>(val buffer : MutableBuffer<T>, val pointer : Pointer<T
     }
 }
 
-class BufferRing<T, B extends MutableBuffer<T>>(val ringSize : uint4, val creator : () -> B) {
+class BufferRing<T, B extends MutableGlBuffer<T>>(val ringSize : uint4, val creator : () -> B) {
     private val _ring = MQueue<B>()
 
     def next : B = {

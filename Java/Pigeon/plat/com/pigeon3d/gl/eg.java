@@ -50,4 +50,10 @@ public class eg {
             throw new RuntimeException("OpenGL error: " + err);
         }
     }
+
+    public static int egGenBuffer() {
+        IntBuffer r = IntBuffer.allocate(1);
+        GLES20.glGenBuffers(1, r);
+        return r.get();
+    }
 }
