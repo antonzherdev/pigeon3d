@@ -14,7 +14,7 @@
 @protocol PGVertexBuffer;
 
 @interface PGVertexBufferDesc : NSObject {
-@protected
+@public
     CNPType* _dataType;
     int _position;
     int _uv;
@@ -50,6 +50,7 @@
 + (id<PGVertexBuffer>)vec4Data:(CNPArray*)data;
 + (id<PGVertexBuffer>)vec3Data:(CNPArray*)data;
 + (id<PGVertexBuffer>)vec2Data:(CNPArray*)data;
++ (id<PGVertexBuffer>)vec2Buffer:(PGVec2Buffer*)buffer;
 + (id<PGVertexBuffer>)meshData:(CNPArray*)data;
 + (PGMutableVertexBuffer*)mutDesc:(PGVertexBufferDesc*)desc usage:(unsigned int)usage;
 + (PGVertexBufferRing*)ringSize:(unsigned int)size desc:(PGVertexBufferDesc*)desc usage:(unsigned int)usage;
@@ -78,7 +79,7 @@
 
 
 @interface PGImmutableVertexBuffer : PGGlBuffer<PGVertexBuffer> {
-@protected
+@public
     PGVertexBufferDesc* _desc;
     NSUInteger _length;
     NSUInteger _count;
@@ -97,7 +98,7 @@
 
 
 @interface PGMutableVertexBuffer : PGMutableGlBuffer<PGVertexBuffer> {
-@protected
+@public
     PGVertexBufferDesc* _desc;
 }
 @property (nonatomic, readonly) PGVertexBufferDesc* desc;
@@ -114,7 +115,7 @@
 
 
 @interface PGVertexBufferRing : PGBufferRing {
-@protected
+@public
     PGVertexBufferDesc* _desc;
     unsigned int _usage;
 }

@@ -54,7 +54,7 @@ CNPType* pgMeshDataType();
 
 
 @interface PGMeshDataModel : NSObject {
-@protected
+@public
     CNPArray* _vertex;
     CNPArray* _index;
 }
@@ -70,7 +70,7 @@ CNPType* pgMeshDataType();
 
 
 @interface PGMesh : NSObject {
-@protected
+@public
     id<PGVertexBuffer> _vertex;
     id<PGIndexSource> _index;
 }
@@ -95,7 +95,7 @@ CNPType* pgMeshDataType();
 
 
 @interface PGMeshModel : NSObject {
-@protected
+@public
     NSArray* _arrays;
 }
 @property (nonatomic, readonly) NSArray* arrays;
@@ -113,7 +113,7 @@ CNPType* pgMeshDataType();
 
 
 @interface PGMeshUnite : NSObject {
-@protected
+@public
     CNPArray* _vertexSample;
     CNPArray* _indexSample;
     PGVertexArray*(^_createVao)(PGMesh*);
@@ -143,7 +143,7 @@ CNPType* pgMeshDataType();
 
 
 @interface PGMeshWriter : NSObject {
-@protected
+@public
     PGMutableVertexBuffer* _vbo;
     PGMutableIndexBuffer* _ibo;
     unsigned int _count;

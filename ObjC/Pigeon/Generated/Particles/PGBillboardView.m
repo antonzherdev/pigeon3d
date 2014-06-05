@@ -38,7 +38,7 @@ static CNClassType* _PGBillboardShaderSystem_type;
 }
 
 - (PGBillboardShader*)shaderForParam:(PGColorSource*)param renderTarget:(PGRenderTarget*)renderTarget {
-    PGBillboardShaderKey* key = [PGBillboardShaderKey billboardShaderKeyWithTexture:([renderTarget isKindOfClass:[PGShadowRenderTarget class]] && !([PGShadowShaderSystem isColorShaderForParam:param])) || ((PGColorSource*)(param)).texture != nil alpha:((PGColorSource*)(param)).alphaTestLevel > -0.1 shadow:[renderTarget isKindOfClass:[PGShadowRenderTarget class]] modelSpace:_space];
+    PGBillboardShaderKey* key = [PGBillboardShaderKey billboardShaderKeyWithTexture:([renderTarget isKindOfClass:[PGShadowRenderTarget class]] && !([PGShadowShaderSystem isColorShaderForParam:param])) || ((PGColorSource*)(param))->_texture != nil alpha:((PGColorSource*)(param))->_alphaTestLevel > -0.1 shadow:[renderTarget isKindOfClass:[PGShadowRenderTarget class]] modelSpace:_space];
     return [_PGBillboardShaderSystem_map applyKey:key orUpdateWith:^PGBillboardShader*() {
         return [key shader];
     }];
@@ -150,7 +150,7 @@ static CNClassType* _PGBillboardShaderKey_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGBillboardShaderKey class]])) return NO;
     PGBillboardShaderKey* o = ((PGBillboardShaderKey*)(to));
-    return _texture == o.texture && _alpha == o.alpha && _shadow == o.shadow && _modelSpace == o.modelSpace;
+    return _texture == o->_texture && _alpha == o->_alpha && _shadow == o->_shadow && _modelSpace == o->_modelSpace;
 }
 
 - (NSUInteger)hash {
@@ -208,15 +208,15 @@ static CNClassType* _PGBillboardShaderBuilder_type;
         "void main(void) {\n"
         "   %@%@\n"
         "    fColor = vertexColor;\n"
-        "}", [self vertexHeader], [self ain], [self ain], ((_key.texture) ? [NSString stringWithFormat:@"%@ mediump vec2 vertexUV;\n"
-        "%@ mediump vec2 UV;", [self ain], [self out]] : @""), [self ain], ((_key.modelSpace == PGBillboardShaderSpace_camera) ? @"uniform mat4 wc;\n"
-        "uniform mat4 p;" : @"uniform mat4 wcp;"), [self out], ((_key.modelSpace == PGBillboardShaderSpace_camera) ? @"    highp vec4 pos = wc*vec4(position, 1);\n"
+        "}", [self vertexHeader], [self ain], [self ain], ((_key->_texture) ? [NSString stringWithFormat:@"%@ mediump vec2 vertexUV;\n"
+        "%@ mediump vec2 UV;", [self ain], [self out]] : @""), [self ain], ((_key->_modelSpace == PGBillboardShaderSpace_camera) ? @"uniform mat4 wc;\n"
+        "uniform mat4 p;" : @"uniform mat4 wcp;"), [self out], ((_key->_modelSpace == PGBillboardShaderSpace_camera) ? @"    highp vec4 pos = wc*vec4(position, 1);\n"
         "    pos.x += model.x;\n"
         "    pos.y += model.y;\n"
         "    gl_Position = p*pos;\n"
         "   " : @"    gl_Position = wcp*vec4(position.xy, position.z, 1);\n"
         "    gl_Position.xy += model;\n"
-        "   "), ((_key.texture) ? @"\n"
+        "   "), ((_key->_texture) ? @"\n"
         "    UV = vertexUV;" : @"")];
 }
 
@@ -232,14 +232,14 @@ static CNClassType* _PGBillboardShaderBuilder_type;
         "void main(void) {%@\n"
         "   %@\n"
         "   %@%@\n"
-        "}", [self versionString], ((_key.texture) ? [NSString stringWithFormat:@"%@ mediump vec2 UV;\n"
-        "uniform lowp sampler2D txt;", [self in]] : @""), [self in], ((_key.shadow && [self version] > 100) ? @"out float depth;" : [NSString stringWithFormat:@"%@", [self fragColorDeclaration]]), ((_key.shadow && !([self isFragColorDeclared])) ? @"\n"
-        "    lowp vec4 fragColor;" : @""), ((_key.texture) ? [NSString stringWithFormat:@"    %@ = fColor * color * %@(txt, UV);\n"
+        "}", [self versionString], ((_key->_texture) ? [NSString stringWithFormat:@"%@ mediump vec2 UV;\n"
+        "uniform lowp sampler2D txt;", [self in]] : @""), [self in], ((_key->_shadow && [self version] > 100) ? @"out float depth;" : [NSString stringWithFormat:@"%@", [self fragColorDeclaration]]), ((_key->_shadow && !([self isFragColorDeclared])) ? @"\n"
+        "    lowp vec4 fragColor;" : @""), ((_key->_texture) ? [NSString stringWithFormat:@"    %@ = fColor * color * %@(txt, UV);\n"
         "   ", [self fragColor], [self texture2D]] : [NSString stringWithFormat:@"    %@ = fColor * color;\n"
-        "   ", [self fragColor]]), ((_key.alpha) ? [NSString stringWithFormat:@"    if(%@.a < alphaTestLevel) {\n"
+        "   ", [self fragColor]]), ((_key->_alpha) ? [NSString stringWithFormat:@"    if(%@.a < alphaTestLevel) {\n"
         "        discard;\n"
         "    }\n"
-        "   ", [self fragColor]] : @""), ((_key.shadow && [self version] > 100) ? @"\n"
+        "   ", [self fragColor]] : @""), ((_key->_shadow && [self version] > 100) ? @"\n"
         "    depth = gl_FragCoord.z;" : @"")];
 }
 
@@ -288,13 +288,13 @@ static CNClassType* _PGBillboardShader_type;
         _key = key;
         _positionSlot = [self attributeForName:@"position"];
         _modelSlot = [self attributeForName:@"model"];
-        _uvSlot = ((key.texture) ? [self attributeForName:@"vertexUV"] : nil);
+        _uvSlot = ((key->_texture) ? [self attributeForName:@"vertexUV"] : nil);
         _colorSlot = [self attributeForName:@"vertexColor"];
         _colorUniform = [self uniformVec4Name:@"color"];
-        _alphaTestLevelUniform = ((key.alpha) ? [self uniformF4Name:@"alphaTestLevel"] : nil);
-        _wcUniform = ((key.modelSpace == PGBillboardShaderSpace_camera) ? [self uniformMat4Name:@"wc"] : nil);
-        _pUniform = ((key.modelSpace == PGBillboardShaderSpace_camera) ? [self uniformMat4Name:@"p"] : nil);
-        _wcpUniform = ((key.modelSpace == PGBillboardShaderSpace_projection) ? [self uniformMat4Name:@"wcp"] : nil);
+        _alphaTestLevelUniform = ((key->_alpha) ? [self uniformF4Name:@"alphaTestLevel"] : nil);
+        _wcUniform = ((key->_modelSpace == PGBillboardShaderSpace_camera) ? [self uniformMat4Name:@"wc"] : nil);
+        _pUniform = ((key->_modelSpace == PGBillboardShaderSpace_camera) ? [self uniformMat4Name:@"p"] : nil);
+        _wcpUniform = ((key->_modelSpace == PGBillboardShaderSpace_projection) ? [self uniformMat4Name:@"wcp"] : nil);
     }
     
     return self;
@@ -306,25 +306,25 @@ static CNClassType* _PGBillboardShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.position))];
-    [_modelSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.model))];
-    [_colorSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:4 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.color))];
-    if(_key.texture) [((PGShaderAttribute*)(_uvSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.uv))];
+    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_position))];
+    [_modelSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_model))];
+    [_colorSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:4 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_color))];
+    if(_key->_texture) [((PGShaderAttribute*)(_uvSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_uv))];
 }
 
 - (void)loadUniformsParam:(PGColorSource*)param {
-    if(_key.modelSpace == PGBillboardShaderSpace_camera) {
-        [((PGShaderUniformMat4*)(_wcUniform)) applyMatrix:[[PGGlobal.matrix value] wc]];
-        [((PGShaderUniformMat4*)(_pUniform)) applyMatrix:[[PGGlobal.matrix value] p]];
+    if(_key->_modelSpace == PGBillboardShaderSpace_camera) {
+        [((PGShaderUniformMat4*)(_wcUniform)) applyMatrix:[[[PGGlobal matrix] value] wc]];
+        [((PGShaderUniformMat4*)(_pUniform)) applyMatrix:[[[PGGlobal matrix] value] p]];
     } else {
-        [((PGShaderUniformMat4*)(_wcpUniform)) applyMatrix:[[PGGlobal.matrix value] wcp]];
+        [((PGShaderUniformMat4*)(_wcpUniform)) applyMatrix:[[[PGGlobal matrix] value] wcp]];
     }
-    if(_key.alpha) [((PGShaderUniformF4*)(_alphaTestLevelUniform)) applyF4:((PGColorSource*)(param)).alphaTestLevel];
-    if(_key.texture) {
-        PGTexture* _ = ((PGColorSource*)(param)).texture;
-        if(_ != nil) [PGGlobal.context bindTextureTexture:_];
+    if(_key->_alpha) [((PGShaderUniformF4*)(_alphaTestLevelUniform)) applyF4:((PGColorSource*)(param))->_alphaTestLevel];
+    if(_key->_texture) {
+        PGTexture* _ = ((PGColorSource*)(param))->_texture;
+        if(_ != nil) [[PGGlobal context] bindTextureTexture:_];
     }
-    [_colorUniform applyVec4:((PGColorSource*)(param)).color];
+    [_colorUniform applyVec4:((PGColorSource*)(param))->_color];
 }
 
 - (NSString*)description {
@@ -353,7 +353,7 @@ static CNClassType* _PGBillboardParticleSystemView_type;
 }
 
 - (instancetype)initWithSystem:(PGParticleSystem*)system material:(PGColorSource*)material blendFunc:(PGBlendFunction*)blendFunc {
-    self = [super initWithSystem:system vbDesc:PGSprite.vbDesc shader:[PGBillboardShaderSystem.cameraSpace shaderForParam:material] material:material blendFunc:blendFunc];
+    self = [super initWithSystem:system vbDesc:[PGSprite vbDesc] shader:[[PGBillboardShaderSystem cameraSpace] shaderForParam:material] material:material blendFunc:blendFunc];
     
     return self;
 }
@@ -364,7 +364,7 @@ static CNClassType* _PGBillboardParticleSystemView_type;
 }
 
 + (PGBillboardParticleSystemView*)applySystem:(PGParticleSystem*)system material:(PGColorSource*)material {
-    return [PGBillboardParticleSystemView billboardParticleSystemViewWithSystem:system material:material blendFunc:PGBlendFunction.standard];
+    return [PGBillboardParticleSystemView billboardParticleSystemViewWithSystem:system material:material blendFunc:[PGBlendFunction standard]];
 }
 
 - (NSString*)description {

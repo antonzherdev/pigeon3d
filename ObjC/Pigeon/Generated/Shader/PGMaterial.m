@@ -32,7 +32,7 @@ static CNClassType* _PGMaterial_type;
 }
 
 - (void)drawMesh:(PGMesh*)mesh {
-    [[self shaderSystem] drawParam:self vertex:mesh.vertex index:mesh.index];
+    [[self shaderSystem] drawParam:self vertex:mesh->_vertex index:mesh->_index];
 }
 
 - (void)drawVertex:(id<PGVertexBuffer>)vertex index:(id<PGIndexSource>)index {
@@ -170,7 +170,7 @@ static CNClassType* _PGColorSource_type;
 }
 
 - (PGShaderSystem*)shaderSystem {
-    return PGSimpleShaderSystem.instance;
+    return [PGSimpleShaderSystem instance];
 }
 
 - (PGColorSource*)setColor:(PGVec4)color {
@@ -233,7 +233,7 @@ static CNClassType* _PGStandardMaterial_type;
 }
 
 - (PGShaderSystem*)shaderSystem {
-    return PGStandardShaderSystem.instance;
+    return [PGStandardShaderSystem instance];
 }
 
 - (NSString*)description {
@@ -327,11 +327,11 @@ static CNClassType* _PGBlendFunction_type;
 }
 
 - (void)applyDraw:(void(^)())draw {
-    PGEnablingState* __tmp__il__0self = PGGlobal.context.blend;
+    PGEnablingState* __tmp__il__0self = [PGGlobal context]->_blend;
     {
         BOOL __il__0changed = [__tmp__il__0self enable];
         {
-            [PGGlobal.context setBlendFunction:self];
+            [[PGGlobal context] setBlendFunction:self];
             draw();
         }
         if(__il__0changed) [__tmp__il__0self disable];

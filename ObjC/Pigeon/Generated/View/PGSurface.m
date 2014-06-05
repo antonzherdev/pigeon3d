@@ -124,7 +124,7 @@ static CNClassType* _PGSurfaceRenderTargetTexture_type;
 
 + (PGSurfaceRenderTargetTexture*)applySize:(PGVec2i)size {
     PGEmptyTexture* t = [PGEmptyTexture emptyTextureWithSize:pgVec2ApplyVec2i(size)];
-    [PGGlobal.context bindTextureTexture:t];
+    [[PGGlobal context] bindTextureTexture:t];
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ((int)(GL_CLAMP_TO_EDGE)));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ((int)(GL_CLAMP_TO_EDGE)));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, ((int)(GL_NEAREST)));
@@ -177,7 +177,7 @@ static CNClassType* _PGSurfaceRenderTargetRenderBuffer_type;
 
 + (PGSurfaceRenderTargetRenderBuffer*)applySize:(PGVec2i)size {
     unsigned int buf = egGenRenderBuffer();
-    [PGGlobal.context bindRenderBufferId:buf];
+    [[PGGlobal context] bindRenderBufferId:buf];
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, ((int)(size.x)), ((int)(size.y)));
     return [PGSurfaceRenderTargetRenderBuffer surfaceRenderTargetRenderBufferWithRenderBuffer:buf size:size];
 }
@@ -187,7 +187,7 @@ static CNClassType* _PGSurfaceRenderTargetRenderBuffer_type;
 }
 
 - (void)dealloc {
-    [PGGlobal.context deleteRenderBufferId:_renderBuffer];
+    [[PGGlobal context] deleteRenderBufferId:_renderBuffer];
 }
 
 - (NSString*)description {
@@ -217,7 +217,7 @@ static CNClassType* _PGRenderTargetSurface_type;
 }
 
 - (instancetype)initWithRenderTarget:(PGSurfaceRenderTarget*)renderTarget {
-    self = [super initWithSize:renderTarget.size];
+    self = [super initWithSize:renderTarget->_size];
     if(self) _renderTarget = renderTarget;
     
     return self;
@@ -229,11 +229,11 @@ static CNClassType* _PGRenderTargetSurface_type;
 }
 
 - (PGTexture*)texture {
-    return ((PGSurfaceRenderTargetTexture*)(_renderTarget)).texture;
+    return ((PGSurfaceRenderTargetTexture*)(_renderTarget))->_texture;
 }
 
 - (unsigned int)renderBuffer {
-    return ((PGSurfaceRenderTargetRenderBuffer*)(_renderTarget)).renderBuffer;
+    return ((PGSurfaceRenderTargetRenderBuffer*)(_renderTarget))->_renderBuffer;
 }
 
 - (NSString*)description {
@@ -299,7 +299,7 @@ static CNClassType* _PGSimpleSurface_type;
     int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(status != GL_FRAMEBUFFER_COMPLETE) @throw [NSString stringWithFormat:@"Error in frame buffer color attachment: %d", status];
     if(_depth) {
-        [PGGlobal.context bindRenderBufferId:_depthRenderBuffer];
+        [[PGGlobal context] bindRenderBufferId:_depthRenderBuffer];
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, ((int)(self.size.x)), ((int)(self.size.y)));
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
         int status2 = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -312,12 +312,12 @@ static CNClassType* _PGSimpleSurface_type;
     [[PGDirector current] onGLThreadF:^void() {
         egDeleteFrameBuffer(fb);
     }];
-    if(_depth) [PGGlobal.context deleteRenderBufferId:_depthRenderBuffer];
+    if(_depth) [[PGGlobal context] deleteRenderBufferId:_depthRenderBuffer];
 }
 
 - (void)bind {
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    [PGGlobal.context setViewport:pgRectIApplyXYWidthHeight(0.0, 0.0, ((float)(self.size.x)), ((float)(self.size.y)))];
+    [[PGGlobal context] setViewport:pgRectIApplyXYWidthHeight(0.0, 0.0, ((float)(self.size.x)), ((float)(self.size.y)))];
 }
 
 - (void)unbind {

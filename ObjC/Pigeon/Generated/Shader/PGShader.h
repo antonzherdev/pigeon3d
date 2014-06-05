@@ -24,7 +24,7 @@
 @protocol PGShaderTextBuilder;
 
 @interface PGShaderProgram : NSObject {
-@protected
+@public
     NSString* _name;
     unsigned int _handle;
 }
@@ -47,7 +47,7 @@
 
 
 @interface PGShader : NSObject {
-@protected
+@public
     PGShaderProgram* _program;
 }
 @property (nonatomic, readonly) PGShaderProgram* program;
@@ -81,7 +81,7 @@
 
 
 @interface PGShaderAttribute : NSObject {
-@protected
+@public
     unsigned int _handle;
 }
 @property (nonatomic, readonly) unsigned int handle;
@@ -96,7 +96,7 @@
 
 
 @interface PGShaderUniformMat4 : NSObject {
-@protected
+@public
     unsigned int _handle;
     PGMat4* __last;
 }
@@ -112,7 +112,7 @@
 
 
 @interface PGShaderUniformVec4 : NSObject {
-@protected
+@public
     unsigned int _handle;
     PGVec4 __last;
 }
@@ -128,7 +128,7 @@
 
 
 @interface PGShaderUniformVec3 : NSObject {
-@protected
+@public
     unsigned int _handle;
     PGVec3 __last;
 }
@@ -144,7 +144,7 @@
 
 
 @interface PGShaderUniformVec2 : NSObject {
-@protected
+@public
     unsigned int _handle;
     PGVec2 __last;
 }
@@ -160,7 +160,7 @@
 
 
 @interface PGShaderUniformF4 : NSObject {
-@protected
+@public
     unsigned int _handle;
     float __last;
 }
@@ -176,7 +176,7 @@
 
 
 @interface PGShaderUniformI4 : NSObject {
-@protected
+@public
     unsigned int _handle;
     int __last;
 }

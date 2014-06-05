@@ -33,7 +33,7 @@ static CNClassType* _PGStandardShaderSystem_type;
         _PGStandardShaderSystem_type = [CNClassType classTypeWithCls:[PGStandardShaderSystem class]];
         _PGStandardShaderSystem_instance = [PGStandardShaderSystem standardShaderSystem];
         _PGStandardShaderSystem_shaders = [CNMHashMap hashMap];
-        _PGStandardShaderSystem_settingsChangeObs = [PGGlobal.settings.shadowTypeChanged observeF:^void(PGShadowType* _) {
+        _PGStandardShaderSystem_settingsChangeObs = [[PGGlobal settings]->_shadowTypeChanged observeF:^void(PGShadowType* _) {
             [_PGStandardShaderSystem_shaders clear];
         }];
     }
@@ -41,22 +41,22 @@ static CNClassType* _PGStandardShaderSystem_type;
 
 - (PGShader*)shaderForParam:(PGStandardMaterial*)param renderTarget:(PGRenderTarget*)renderTarget {
     if([renderTarget isKindOfClass:[PGShadowRenderTarget class]]) {
-        if([PGShadowShaderSystem isColorShaderForParam:((PGStandardMaterial*)(param)).diffuse]) return ((PGShader*)(PGStandardShadowShader.instanceForColor));
-        else return ((PGShader*)(PGStandardShadowShader.instanceForTexture));
+        if([PGShadowShaderSystem isColorShaderForParam:((PGStandardMaterial*)(param))->_diffuse]) return ((PGShader*)([PGStandardShadowShader instanceForColor]));
+        else return ((PGShader*)([PGStandardShadowShader instanceForTexture]));
     } else {
-        NSArray* lights = PGGlobal.context.environment.lights;
+        NSArray* lights = [PGGlobal context]->_environment->_lights;
         NSUInteger directLightsWithShadowsCount = [[[lights chain] filterWhen:^BOOL(PGLight* _) {
-            return [((PGLight*)(_)) isKindOfClass:[PGDirectLight class]] && ((PGLight*)(_)).hasShadows;
+            return [((PGLight*)(_)) isKindOfClass:[PGDirectLight class]] && ((PGLight*)(_))->_hasShadows;
         }] count];
         NSUInteger directLightsWithoutShadowsCount = [[[lights chain] filterWhen:^BOOL(PGLight* _) {
-            return [((PGLight*)(_)) isKindOfClass:[PGDirectLight class]] && !(((PGLight*)(_)).hasShadows);
+            return [((PGLight*)(_)) isKindOfClass:[PGDirectLight class]] && !(((PGLight*)(_))->_hasShadows);
         }] count];
-        PGTexture* texture = ((PGStandardMaterial*)(param)).diffuse.texture;
+        PGTexture* texture = ((PGStandardMaterial*)(param))->_diffuse->_texture;
         BOOL t = texture != nil;
         BOOL region = t && ((texture != nil) ? [((PGTexture*)(nonnil(texture))) isKindOfClass:[PGTextureRegion class]] : NO);
-        BOOL spec = ((PGStandardMaterial*)(param)).specularSize > 0;
-        BOOL normalMap = ((PGStandardMaterial*)(param)).normalMap != nil;
-        PGStandardShaderKey* key = ((egPlatform().shadows && PGGlobal.context.considerShadows) ? [PGStandardShaderKey standardShaderKeyWithDirectLightWithShadowsCount:directLightsWithShadowsCount directLightWithoutShadowsCount:directLightsWithoutShadowsCount texture:t blendMode:((PGStandardMaterial*)(param)).diffuse.blendMode region:region specular:spec normalMap:normalMap] : [PGStandardShaderKey standardShaderKeyWithDirectLightWithShadowsCount:0 directLightWithoutShadowsCount:directLightsWithShadowsCount + directLightsWithoutShadowsCount texture:t blendMode:((PGStandardMaterial*)(param)).diffuse.blendMode region:region specular:spec normalMap:normalMap]);
+        BOOL spec = ((PGStandardMaterial*)(param))->_specularSize > 0;
+        BOOL normalMap = ((PGStandardMaterial*)(param))->_normalMap != nil;
+        PGStandardShaderKey* key = ((egPlatform()->_shadows && [PGGlobal context]->_considerShadows) ? [PGStandardShaderKey standardShaderKeyWithDirectLightWithShadowsCount:directLightsWithShadowsCount directLightWithoutShadowsCount:directLightsWithoutShadowsCount texture:t blendMode:((PGStandardMaterial*)(param))->_diffuse->_blendMode region:region specular:spec normalMap:normalMap] : [PGStandardShaderKey standardShaderKeyWithDirectLightWithShadowsCount:0 directLightWithoutShadowsCount:directLightsWithShadowsCount + directLightsWithoutShadowsCount texture:t blendMode:((PGStandardMaterial*)(param))->_diffuse->_blendMode region:region specular:spec normalMap:normalMap]);
         return ((PGShader*)([_PGStandardShaderSystem_shaders applyKey:key orUpdateWith:^PGStandardShader*() {
             return [key shader];
         }]));
@@ -100,7 +100,7 @@ static CNClassType* _PGStandardShadowShader_type;
 }
 
 - (instancetype)initWithShadowShader:(PGShadowShader*)shadowShader {
-    self = [super initWithProgram:shadowShader.program];
+    self = [super initWithProgram:shadowShader->_program];
     if(self) _shadowShader = shadowShader;
     
     return self;
@@ -110,8 +110,8 @@ static CNClassType* _PGStandardShadowShader_type;
     [super initialize];
     if(self == [PGStandardShadowShader class]) {
         _PGStandardShadowShader_type = [CNClassType classTypeWithCls:[PGStandardShadowShader class]];
-        _PGStandardShadowShader_instanceForColor = [PGStandardShadowShader standardShadowShaderWithShadowShader:PGShadowShader.instanceForColor];
-        _PGStandardShadowShader_instanceForTexture = [PGStandardShadowShader standardShadowShaderWithShadowShader:PGShadowShader.instanceForTexture];
+        _PGStandardShadowShader_instanceForColor = [PGStandardShadowShader standardShadowShaderWithShadowShader:[PGShadowShader instanceForColor]];
+        _PGStandardShadowShader_instanceForTexture = [PGStandardShadowShader standardShadowShaderWithShadowShader:[PGShadowShader instanceForTexture]];
     }
 }
 
@@ -120,7 +120,7 @@ static CNClassType* _PGStandardShadowShader_type;
 }
 
 - (void)loadUniformsParam:(PGStandardMaterial*)param {
-    [_shadowShader loadUniformsParam:((PGStandardMaterial*)(param)).diffuse];
+    [_shadowShader loadUniformsParam:((PGStandardMaterial*)(param))->_diffuse];
 }
 
 - (NSString*)description {
@@ -301,7 +301,7 @@ static CNClassType* _PGStandardShaderKey_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGStandardShaderKey class]])) return NO;
     PGStandardShaderKey* o = ((PGStandardShaderKey*)(to));
-    return _directLightWithShadowsCount == o.directLightWithShadowsCount && _directLightWithoutShadowsCount == o.directLightWithoutShadowsCount && _texture == o.texture && _blendMode == o.blendMode && _region == o.region && _specular == o.specular && _normalMap == o.normalMap;
+    return _directLightWithShadowsCount == o->_directLightWithShadowsCount && _directLightWithoutShadowsCount == o->_directLightWithoutShadowsCount && _texture == o->_texture && _blendMode == o->_blendMode && _region == o->_region && _specular == o->_specular && _normalMap == o->_normalMap;
 }
 
 - (NSUInteger)hash {
@@ -360,28 +360,28 @@ static CNClassType* _PGStandardShader_type;
     if(self) {
         _key = key;
         _positionSlot = [self attributeForName:@"position"];
-        _normalSlot = ((key.directLightCount > 0 && !(key.normalMap)) ? [self attributeForName:@"normal"] : nil);
-        _uvSlot = ((key.needUV) ? [self attributeForName:@"vertexUV"] : nil);
-        _diffuseTexture = ((key.texture) ? [self uniformI4Name:@"diffuseTexture"] : nil);
-        _normalMap = ((key.normalMap) ? [self uniformI4Name:@"normalMap"] : nil);
-        _uvScale = ((key.region) ? [self uniformVec2Name:@"uvScale"] : nil);
-        _uvShift = ((key.region) ? [self uniformVec2Name:@"uvShift"] : nil);
+        _normalSlot = ((key->_directLightCount > 0 && !(key->_normalMap)) ? [self attributeForName:@"normal"] : nil);
+        _uvSlot = ((key->_needUV) ? [self attributeForName:@"vertexUV"] : nil);
+        _diffuseTexture = ((key->_texture) ? [self uniformI4Name:@"diffuseTexture"] : nil);
+        _normalMap = ((key->_normalMap) ? [self uniformI4Name:@"normalMap"] : nil);
+        _uvScale = ((key->_region) ? [self uniformVec2Name:@"uvScale"] : nil);
+        _uvShift = ((key->_region) ? [self uniformVec2Name:@"uvShift"] : nil);
         _ambientColor = [self uniformVec4Name:@"ambientColor"];
-        _specularColor = ((key.directLightCount > 0 && key.specular) ? [self uniformVec4Name:@"specularColor"] : nil);
-        _specularSize = ((key.directLightCount > 0 && key.specular) ? [self uniformF4Name:@"specularSize"] : nil);
+        _specularColor = ((key->_directLightCount > 0 && key->_specular) ? [self uniformVec4Name:@"specularColor"] : nil);
+        _specularSize = ((key->_directLightCount > 0 && key->_specular) ? [self uniformF4Name:@"specularSize"] : nil);
         _diffuseColorUniform = [self uniformVec4OptName:@"diffuseColor"];
         _mwcpUniform = [self uniformMat4Name:@"mwcp"];
-        _mwcUniform = ((key.directLightCount > 0) ? [self uniformMat4Name:@"mwc"] : nil);
-        _directLightDirections = [[[uintRange(key.directLightCount) chain] mapF:^PGShaderUniformVec3*(id i) {
+        _mwcUniform = ((key->_directLightCount > 0) ? [self uniformMat4Name:@"mwc"] : nil);
+        _directLightDirections = [[[uintRange(key->_directLightCount) chain] mapF:^PGShaderUniformVec3*(id i) {
             return [self uniformVec3Name:[NSString stringWithFormat:@"dirLightDirection%@", i]];
         }] toArray];
-        _directLightColors = [[[uintRange(key.directLightCount) chain] mapF:^PGShaderUniformVec4*(id i) {
+        _directLightColors = [[[uintRange(key->_directLightCount) chain] mapF:^PGShaderUniformVec4*(id i) {
             return [self uniformVec4Name:[NSString stringWithFormat:@"dirLightColor%@", i]];
         }] toArray];
-        _directLightShadows = [[[uintRange(key.directLightWithShadowsCount) chain] mapF:^PGShaderUniformI4*(id i) {
+        _directLightShadows = [[[uintRange(key->_directLightWithShadowsCount) chain] mapF:^PGShaderUniformI4*(id i) {
             return [self uniformI4Name:[NSString stringWithFormat:@"dirLightShadow%@", i]];
         }] toArray];
-        _directLightDepthMwcp = [[[uintRange(key.directLightWithShadowsCount) chain] mapF:^PGShaderUniformMat4*(id i) {
+        _directLightDepthMwcp = [[[uintRange(key->_directLightWithShadowsCount) chain] mapF:^PGShaderUniformMat4*(id i) {
             return [self uniformMat4Name:[NSString stringWithFormat:@"dirLightDepthMwcp%@", i]];
         }] toArray];
     }
@@ -395,55 +395,55 @@ static CNClassType* _PGStandardShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.position))];
-    if(_key.needUV) [((PGShaderAttribute*)(_uvSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.uv))];
-    if(_key.directLightCount > 0) [((PGShaderAttribute*)(_normalSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.normal))];
+    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_position))];
+    if(_key->_needUV) [((PGShaderAttribute*)(_uvSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_uv))];
+    if(_key->_directLightCount > 0) [((PGShaderAttribute*)(_normalSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_normal))];
 }
 
 - (void)loadUniformsParam:(PGStandardMaterial*)param {
-    [_mwcpUniform applyMatrix:[[PGGlobal.matrix value] mwcp]];
-    if(_key.texture) {
-        PGTexture* tex = ((PGStandardMaterial*)(param)).diffuse.texture;
+    [_mwcpUniform applyMatrix:[[[PGGlobal matrix] value] mwcp]];
+    if(_key->_texture) {
+        PGTexture* tex = ((PGStandardMaterial*)(param))->_diffuse->_texture;
         if(tex != nil) {
-            [PGGlobal.context bindTextureTexture:tex];
+            [[PGGlobal context] bindTextureTexture:tex];
             [((PGShaderUniformI4*)(_diffuseTexture)) applyI4:0];
-            if(_key.region) {
-                PGRect r = ((PGTextureRegion*)(tex)).uv;
+            if(_key->_region) {
+                PGRect r = ((PGTextureRegion*)(tex))->_uv;
                 [((PGShaderUniformVec2*)(_uvShift)) applyVec2:r.p];
                 [((PGShaderUniformVec2*)(_uvScale)) applyVec2:r.size];
             }
         }
     }
-    if(_key.normalMap) {
+    if(_key->_normalMap) {
         [((PGShaderUniformI4*)(_normalMap)) applyI4:1];
         {
-            PGTexture* _ = ((PGNormalMap*)(((PGStandardMaterial*)(param)).normalMap)).texture;
-            if(_ != nil) [PGGlobal.context bindTextureSlot:GL_TEXTURE1 target:GL_TEXTURE_2D texture:_];
+            PGTexture* _ = ((PGNormalMap*)(((PGStandardMaterial*)(param))->_normalMap)).texture;
+            if(_ != nil) [[PGGlobal context] bindTextureSlot:GL_TEXTURE1 target:GL_TEXTURE_2D texture:_];
         }
     }
-    [((PGShaderUniformVec4*)(_diffuseColorUniform)) applyVec4:((PGStandardMaterial*)(param)).diffuse.color];
-    PGEnvironment* env = PGGlobal.context.environment;
-    [_ambientColor applyVec4:env.ambientColor];
-    if(_key.directLightCount > 0) {
-        if(_key.specular) {
-            [((PGShaderUniformVec4*)(_specularColor)) applyVec4:((PGStandardMaterial*)(param)).specularColor];
-            [((PGShaderUniformF4*)(_specularSize)) applyF4:((float)(((PGStandardMaterial*)(param)).specularSize))];
+    [((PGShaderUniformVec4*)(_diffuseColorUniform)) applyVec4:((PGStandardMaterial*)(param))->_diffuse->_color];
+    PGEnvironment* env = [PGGlobal context]->_environment;
+    [_ambientColor applyVec4:env->_ambientColor];
+    if(_key->_directLightCount > 0) {
+        if(_key->_specular) {
+            [((PGShaderUniformVec4*)(_specularColor)) applyVec4:((PGStandardMaterial*)(param))->_specularColor];
+            [((PGShaderUniformF4*)(_specularSize)) applyF4:((float)(((PGStandardMaterial*)(param))->_specularSize))];
         }
-        [((PGShaderUniformMat4*)(_mwcUniform)) applyMatrix:[[PGGlobal.context.matrixStack value] mwc]];
+        [((PGShaderUniformMat4*)(_mwcUniform)) applyMatrix:[[[PGGlobal context]->_matrixStack value] mwc]];
         __block unsigned int i = 0;
-        if(_key.directLightWithShadowsCount > 0) for(PGDirectLight* light in env.directLightsWithShadows) {
-            PGVec3 dir = pgVec4Xyz([[[PGGlobal.matrix value] wc] mulVec3:((PGDirectLight*)(light)).direction w:0.0]);
+        if(_key->_directLightWithShadowsCount > 0) for(PGDirectLight* light in env->_directLightsWithShadows) {
+            PGVec3 dir = pgVec4Xyz([[[[PGGlobal matrix] value] wc] mulVec3:((PGDirectLight*)(light))->_direction w:0.0]);
             [((PGShaderUniformVec3*)([_directLightDirections applyIndex:i])) applyVec3:pgVec3Normalize(dir)];
-            [((PGShaderUniformVec4*)([_directLightColors applyIndex:i])) applyVec4:((PGDirectLight*)(light)).color];
-            [((PGShaderUniformMat4*)([_directLightDepthMwcp applyIndex:i])) applyMatrix:[[((PGDirectLight*)(light)) shadowMap].biasDepthCp mulMatrix:[PGGlobal.matrix mw]]];
+            [((PGShaderUniformVec4*)([_directLightColors applyIndex:i])) applyVec4:((PGDirectLight*)(light))->_color];
+            [((PGShaderUniformMat4*)([_directLightDepthMwcp applyIndex:i])) applyMatrix:[[((PGDirectLight*)(light)) shadowMap]->_biasDepthCp mulMatrix:[[PGGlobal matrix] mw]]];
             [((PGShaderUniformI4*)([_directLightShadows applyIndex:i])) applyI4:((int)(i + 2))];
-            [PGGlobal.context bindTextureSlot:GL_TEXTURE0 + i + 2 target:GL_TEXTURE_2D texture:[((PGDirectLight*)(light)) shadowMap].texture];
+            [[PGGlobal context] bindTextureSlot:GL_TEXTURE0 + i + 2 target:GL_TEXTURE_2D texture:[((PGDirectLight*)(light)) shadowMap]->_texture];
             i++;
         }
-        if(_key.directLightWithoutShadowsCount > 0) for(PGDirectLight* light in ((PGGlobal.context.considerShadows) ? env.directLightsWithoutShadows : env.directLights)) {
-            PGVec3 dir = pgVec4Xyz([[[PGGlobal.matrix value] wc] mulVec3:((PGDirectLight*)(light)).direction w:0.0]);
+        if(_key->_directLightWithoutShadowsCount > 0) for(PGDirectLight* light in (([PGGlobal context]->_considerShadows) ? env->_directLightsWithoutShadows : env->_directLights)) {
+            PGVec3 dir = pgVec4Xyz([[[[PGGlobal matrix] value] wc] mulVec3:((PGDirectLight*)(light))->_direction w:0.0]);
             [((PGShaderUniformVec3*)([_directLightDirections applyIndex:i])) applyVec3:pgVec3Normalize(dir)];
-            [((PGShaderUniformVec4*)([_directLightColors applyIndex:i])) applyVec4:((PGDirectLight*)(light)).color];
+            [((PGShaderUniformVec4*)([_directLightColors applyIndex:i])) applyVec4:((PGDirectLight*)(light))->_color];
         }
     }
 }

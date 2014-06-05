@@ -56,7 +56,7 @@ static CNClassType* _PGParticleSystem_type;
         unsigned int ret = 0;
         if([array beginWrite]) {
             {
-                void* p = array.pointer;
+                void* p = array->_pointer;
                 ret = [self doWriteToArray:p];
             }
             [array endWrite];

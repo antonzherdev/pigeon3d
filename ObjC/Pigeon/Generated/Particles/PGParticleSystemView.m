@@ -35,7 +35,7 @@ static CNClassType* _PGParticleSystemView_type;
         _shader = shader;
         _material = material;
         _blendFunc = blendFunc;
-        _maxCount = system.maxCount;
+        _maxCount = system->_maxCount;
         _vertexCount = [system vertexCount];
         __indexCount = [self indexCount];
         _index = [self createIndexSource];
@@ -83,18 +83,18 @@ static CNClassType* _PGParticleSystemView_type;
             if(r != nil && [((CNTry*)(r)) isSuccess]) {
                 unsigned int n = unumui4([((CNTry*)(r)) get]);
                 if(n > 0) {
-                    PGEnablingState* __tmp__il__0t_1t_1t_1t_0self = PGGlobal.context.depthTest;
+                    PGEnablingState* __tmp__il__0t_1t_1t_1t_0self = [PGGlobal context]->_depthTest;
                     {
                         BOOL __il__0t_1t_1t_1t_0changed = [__tmp__il__0t_1t_1t_1t_0self disable];
                         {
-                            PGCullFace* __tmp__il__0t_1t_1t_1t_0rp0self = PGGlobal.context.cullFace;
+                            PGCullFace* __tmp__il__0t_1t_1t_1t_0rp0self = [PGGlobal context]->_cullFace;
                             {
                                 unsigned int __il__0t_1t_1t_1t_0rp0oldValue = [__tmp__il__0t_1t_1t_1t_0rp0self disable];
-                                PGEnablingState* __il__0t_1t_1t_1t_0rp0rp0__tmp__il__0self = PGGlobal.context.blend;
+                                PGEnablingState* __il__0t_1t_1t_1t_0rp0rp0__tmp__il__0self = [PGGlobal context]->_blend;
                                 {
                                     BOOL __il__0t_1t_1t_1t_0rp0rp0__il__0changed = [__il__0t_1t_1t_1t_0rp0rp0__tmp__il__0self enable];
                                     {
-                                        [PGGlobal.context setBlendFunction:_blendFunc];
+                                        [[PGGlobal context] setBlendFunction:_blendFunc];
                                         [((PGVertexArray*)(__vao)) drawParam:_material start:0 end:((NSUInteger)(__indexCount * n))];
                                     }
                                     if(__il__0t_1t_1t_1t_0rp0rp0__il__0changed) [__il__0t_1t_1t_1t_0rp0rp0__tmp__il__0self disable];

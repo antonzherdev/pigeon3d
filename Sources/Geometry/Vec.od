@@ -62,6 +62,12 @@ struct vec2(val x : float4, val y : float4) {
 @ObjC
 class Vec2Buffer(count : uint) extends Buffer<vec2>(vec2.type, count) {
     def get : vec2 = _get
+    inline def set(x : float4, y : float4) {
+        check
+        _pointer.cast<Pointer<float4>>.set(x)
+        (_pointer.cast<Pointer<float4>> + 1).set(y)
+        inc
+    }
     def set(v : vec2) {
         _set(v)
     }
@@ -71,6 +77,10 @@ class Vec2Buffer(count : uint) extends Buffer<vec2>(vec2.type, count) {
 class Vec2Buffer(count : uint) extends Buffer<vec2>(count, 8) {
     override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
     inline def get : vec2 = vec2(bytes.get, bytes.get)
+    inline def set(x : float4, y : float4) {
+        bytes.put(x)
+        bytes.put(y)
+    }
     inline def set(v: vec2) {
         bytes.put(v.x)
         bytes.put(v.y)

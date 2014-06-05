@@ -10,7 +10,7 @@
 @protocol PGParticleSystemIndexArray;
 
 @interface PGParticleSystem : CNActor {
-@protected
+@public
     CNPType* _particleType;
     unsigned int _maxCount;
     void* _particles;
@@ -58,7 +58,7 @@
 
 
 @interface PGEmissiveParticleSystem : PGParticleSystem {
-@protected
+@public
     NSInteger __lifeCount;
     unsigned int __particleSize;
     NSInteger __nextInvalidNumber;

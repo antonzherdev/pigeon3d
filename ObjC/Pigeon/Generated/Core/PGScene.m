@@ -61,7 +61,7 @@ static CNClassType* _PGScene_type;
         _controller = controller;
         _layers = layers;
         _soundPlayer = soundPlayer;
-        _pauseObserve = [[PGDirector current].isPaused observeF:^void(id p) {
+        _pauseObserve = [[PGDirector current]->_isPaused observeF:^void(id p) {
             if(unumb(p)) [((id<PGSoundPlayer>)(soundPlayer)) pause];
             else [((id<PGSoundPlayer>)(soundPlayer)) resume];
         }];
@@ -176,36 +176,36 @@ static CNClassType* _PGLayers_type;
 
 - (void)prepare {
     for(CNTuple* p in __viewports) {
-        [((PGLayer*)(((CNTuple*)(p)).a)) prepareWithViewport:uwrap(PGRect, ((CNTuple*)(p)).b)];
+        [((PGLayer*)(((CNTuple*)(p))->_a)) prepareWithViewport:uwrap(PGRect, ((CNTuple*)(p))->_b)];
     }
 }
 
 - (void)draw {
     for(CNTuple* p in __viewports) {
-        [((PGLayer*)(((CNTuple*)(p)).a)) drawWithViewport:uwrap(PGRect, ((CNTuple*)(p)).b)];
+        [((PGLayer*)(((CNTuple*)(p))->_a)) drawWithViewport:uwrap(PGRect, ((CNTuple*)(p))->_b)];
     }
 }
 
 - (void)complete {
     for(CNTuple* p in __viewports) {
-        [((PGLayer*)(((CNTuple*)(p)).a)) completeWithViewport:uwrap(PGRect, ((CNTuple*)(p)).b)];
+        [((PGLayer*)(((CNTuple*)(p))->_a)) completeWithViewport:uwrap(PGRect, ((CNTuple*)(p))->_b)];
     }
 }
 
 - (id<CNSet>)recognizersTypes {
     return [[[[[[self layers] chain] mapOptF:^id<PGInputProcessor>(PGLayer* _) {
-        return ((PGLayer*)(_)).inputProcessor;
+        return ((PGLayer*)(_))->_inputProcessor;
     }] flatMapF:^NSArray*(id<PGInputProcessor> _) {
-        return [((id<PGInputProcessor>)(_)) recognizers].items;
+        return [((id<PGInputProcessor>)(_)) recognizers]->_items;
     }] mapF:^PGRecognizerType*(PGRecognizer* _) {
-        return ((PGRecognizer*)(_)).tp;
+        return ((PGRecognizer*)(_))->_tp;
     }] toSet];
 }
 
 - (BOOL)processEvent:(id<PGEvent>)event {
     __block BOOL r = NO;
     for(CNTuple* p in __viewportsRevers) {
-        r = r || [((PGLayer*)(((CNTuple*)(p)).a)) processEvent:event viewport:uwrap(PGRect, ((CNTuple*)(p)).b)];
+        r = r || [((PGLayer*)(((CNTuple*)(p))->_a)) processEvent:event viewport:uwrap(PGRect, ((CNTuple*)(p))->_b)];
     }
     return r;
 }
@@ -220,7 +220,7 @@ static CNClassType* _PGLayers_type;
     __viewports = [self viewportsWithViewSize:viewSize];
     __viewportsRevers = [[[__viewports chain] reverse] toArray];
     for(CNTuple* p in __viewports) {
-        [((PGLayer*)(((CNTuple*)(p)).a)) reshapeWithViewport:uwrap(PGRect, ((CNTuple*)(p)).b)];
+        [((PGLayer*)(((CNTuple*)(p))->_a)) reshapeWithViewport:uwrap(PGRect, ((CNTuple*)(p))->_b)];
     }
 }
 
@@ -267,7 +267,7 @@ static CNClassType* _PGSingleLayer_type;
 }
 
 - (NSArray*)viewportsWithViewSize:(PGVec2)viewSize {
-    return (@[tuple(_layer, (wrap(PGRect, [_layer.view viewportWithViewSize:viewSize])))]);
+    return (@[tuple(_layer, (wrap(PGRect, [_layer->_view viewportWithViewSize:viewSize])))]);
 }
 
 - (NSString*)description {
@@ -302,7 +302,7 @@ static CNClassType* _PGLayer_type;
     if(self) {
         _view = view;
         _inputProcessor = inputProcessor;
-        _iOS6 = [egPlatform().os isIOSLessVersion:@"7"];
+        _iOS6 = [egPlatform()->_os isIOSLessVersion:@"7"];
         _recognizerState = [PGRecognizersState recognizersStateWithRecognizers:((inputProcessor != nil) ? [((id<PGInputProcessor>)(nonnil(inputProcessor))) recognizers] : [PGRecognizers recognizersWithItems:((NSArray*)((@[])))])];
     }
     
@@ -321,21 +321,21 @@ static CNClassType* _PGLayer_type;
 - (void)prepareWithViewport:(PGRect)viewport {
     egPushGroupMarker(([NSString stringWithFormat:@"Prepare %@", [_view name]]));
     PGEnvironment* env = [_view environment];
-    PGGlobal.context.environment = env;
+    [PGGlobal context]->_environment = env;
     id<PGCamera> camera = [_view camera];
     NSUInteger cullFace = [camera cullFace];
-    [PGGlobal.context.cullFace setValue:((unsigned int)(cullFace))];
-    PGGlobal.context.renderTarget = [PGSceneRenderTarget sceneRenderTarget];
-    [PGGlobal.context setViewport:pgRectIApplyRect(viewport)];
-    [PGGlobal.matrix setValue:[camera matrixModel]];
+    [[PGGlobal context]->_cullFace setValue:((unsigned int)(cullFace))];
+    [PGGlobal context]->_renderTarget = [PGSceneRenderTarget sceneRenderTarget];
+    [[PGGlobal context] setViewport:pgRectIApplyRect(viewport)];
+    [[PGGlobal matrix] setValue:[camera matrixModel]];
     [_view prepare];
     egPopGroupMarker();
-    if(egPlatform().shadows) {
-        for(PGLight* light in env.lights) {
-            if(((PGLight*)(light)).hasShadows) {
+    if(egPlatform()->_shadows) {
+        for(PGLight* light in env->_lights) {
+            if(((PGLight*)(light))->_hasShadows) {
                 egPushGroupMarker(([NSString stringWithFormat:@"Shadow %@", [_view name]]));
                 {
-                    PGCullFace* __tmp__il__11t_0rt_1self = PGGlobal.context.cullFace;
+                    PGCullFace* __tmp__il__11t_0rt_1self = [PGGlobal context]->_cullFace;
                     {
                         unsigned int __il__11t_0rt_1oldValue = [__tmp__il__11t_0rt_1self invert];
                         [self drawShadowForCamera:camera light:light];
@@ -351,19 +351,19 @@ static CNClassType* _PGLayer_type;
 }
 
 - (void)reshapeWithViewport:(PGRect)viewport {
-    [PGGlobal.context setViewport:pgRectIApplyRect(viewport)];
+    [[PGGlobal context] setViewport:pgRectIApplyRect(viewport)];
     [_view reshapeWithViewport:viewport];
 }
 
 - (void)drawWithViewport:(PGRect)viewport {
     egPushGroupMarker([_view name]);
     PGEnvironment* env = [_view environment];
-    PGGlobal.context.environment = env;
+    [PGGlobal context]->_environment = env;
     id<PGCamera> camera = [_view camera];
-    [PGGlobal.context.cullFace setValue:((unsigned int)([camera cullFace]))];
-    PGGlobal.context.renderTarget = [PGSceneRenderTarget sceneRenderTarget];
-    [PGGlobal.context setViewport:pgRectIApplyRect(viewport)];
-    [PGGlobal.matrix setValue:[camera matrixModel]];
+    [[PGGlobal context]->_cullFace setValue:((unsigned int)([camera cullFace]))];
+    [PGGlobal context]->_renderTarget = [PGSceneRenderTarget sceneRenderTarget];
+    [[PGGlobal context] setViewport:pgRectIApplyRect(viewport)];
+    [[PGGlobal matrix] setValue:[camera matrixModel]];
     [_view draw];
     egCheckError();
     egPopGroupMarker();
@@ -374,10 +374,10 @@ static CNClassType* _PGLayer_type;
 }
 
 - (void)drawShadowForCamera:(id<PGCamera>)camera light:(PGLight*)light {
-    PGGlobal.context.renderTarget = [PGShadowRenderTarget shadowRenderTargetWithShadowLight:light];
-    [PGGlobal.matrix setValue:[light shadowMatrixModel:[camera matrixModel]]];
-    [light shadowMap].biasDepthCp = [PGShadowMap.biasMatrix mulMatrix:[[PGGlobal.matrix value] cp]];
-    if(PGGlobal.context.redrawShadows) {
+    [PGGlobal context]->_renderTarget = [PGShadowRenderTarget shadowRenderTargetWithShadowLight:light];
+    [[PGGlobal matrix] setValue:[light shadowMatrixModel:[camera matrixModel]]];
+    [light shadowMap]->_biasDepthCp = [[PGShadowMap biasMatrix] mulMatrix:[[[PGGlobal matrix] value] cp]];
+    if([PGGlobal context]->_redrawShadows) {
         PGShadowMap* __tmp__il__3t_0self = [light shadowMap];
         {
             [__tmp__il__3t_0self bind];
@@ -394,7 +394,7 @@ static CNClassType* _PGLayer_type;
 - (BOOL)processEvent:(id<PGEvent>)event viewport:(PGRect)viewport {
     if(((_inputProcessor != nil) ? [((id<PGInputProcessor>)(nonnil(_inputProcessor))) isProcessorActive] : NO)) {
         id<PGCamera> camera = [_view camera];
-        [PGGlobal.matrix setValue:[camera matrixModel]];
+        [[PGGlobal matrix] setValue:[camera matrixModel]];
         return [_recognizerState processEvent:[PGCameraEvent cameraEventWithEvent:event matrixModel:[camera matrixModel] viewport:viewport]];
     } else {
         return NO;
@@ -464,7 +464,7 @@ static CNClassType* _PGLayer_type;
 }
 
 - (PGEnvironment*)environment {
-    return PGEnvironment.aDefault;
+    return [PGEnvironment aDefault];
 }
 
 - (void)reshapeWithViewport:(PGRect)viewport {
@@ -511,7 +511,7 @@ static CNClassType* _PGLayer_type;
 }
 
 - (BOOL)isProcessorActive {
-    return !(unumb([[PGDirector current].isPaused value]));
+    return !(unumb([[PGDirector current]->_isPaused value]));
 }
 
 - (PGRecognizers*)recognizers {

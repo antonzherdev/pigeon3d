@@ -18,7 +18,7 @@
 @class PGMapSsoView;
 
 @interface PGMapSsoView : NSObject {
-@protected
+@public
     PGMapSso* _map;
     PGMaterial* _material;
     CNLazy* __lazy_axisVertexBuffer;

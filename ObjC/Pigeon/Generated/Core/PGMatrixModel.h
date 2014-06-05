@@ -7,7 +7,7 @@
 @class PGMMatrixModel;
 
 @interface PGMatrixStack : NSObject {
-@protected
+@public
     CNImList* _stack;
     PGMMatrixModel* __value;
 }
@@ -56,7 +56,7 @@
 
 
 @interface PGImMatrixModel : PGMatrixModel {
-@protected
+@public
     PGMat4* _m;
     PGMat4* _w;
     PGMat4* _c;
@@ -83,7 +83,7 @@
 
 
 @interface PGMMatrixModel : PGMatrixModel {
-@protected
+@public
     PGMat4* __m;
     PGMat4* __w;
     PGMat4* __c;

@@ -144,7 +144,7 @@ static CNClassType* _PGMapSso_type;
 
 - (CNChain*)allPosibleTiles {
     return [[[[CNRange rangeWithStart:pgRectIX(_limits) end:pgRectIX2(_limits) step:1] chain] mulBy:[CNRange rangeWithStart:pgRectIY(_limits) end:pgRectIY2(_limits) step:1]] mapF:^id(CNTuple* _) {
-        return wrap(PGVec2i, (PGVec2iMake(unumi(((CNTuple*)(_)).a), unumi(((CNTuple*)(_)).b))));
+        return wrap(PGVec2i, (PGVec2iMake(unumi(((CNTuple*)(_))->_a), unumi(((CNTuple*)(_))->_b))));
     }];
 }
 

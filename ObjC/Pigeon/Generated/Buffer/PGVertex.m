@@ -81,7 +81,7 @@ static CNClassType* _PGVBO_type;
 }
 
 + (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc array:(void*)array count:(unsigned int)count {
-    unsigned int len = count * desc.dataType.size;
+    unsigned int len = count * desc->_dataType.size;
     PGImmutableVertexBuffer* vb = [PGImmutableVertexBuffer immutableVertexBufferWithDesc:desc handle:egGenBuffer() length:((NSUInteger)(len)) count:((NSUInteger)(count))];
     [vb bind];
     glBufferData(GL_ARRAY_BUFFER, ((int)(len)), array, GL_STATIC_DRAW);
@@ -89,16 +89,16 @@ static CNClassType* _PGVBO_type;
 }
 
 + (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc data:(CNPArray*)data {
-    PGImmutableVertexBuffer* vb = [PGImmutableVertexBuffer immutableVertexBufferWithDesc:desc handle:egGenBuffer() length:data.length count:data.count];
+    PGImmutableVertexBuffer* vb = [PGImmutableVertexBuffer immutableVertexBufferWithDesc:desc handle:egGenBuffer() length:data->_length count:data->_count];
     [vb bind];
-    glBufferData(GL_ARRAY_BUFFER, ((int)(data.length)), data.bytes, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, ((int)(data->_length)), data->_bytes, GL_STATIC_DRAW);
     return vb;
 }
 
 + (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc buffer:(CNBuffer*)buffer {
-    PGImmutableVertexBuffer* vb = [PGImmutableVertexBuffer immutableVertexBufferWithDesc:desc handle:egGenBuffer() length:[buffer length] count:((NSUInteger)(buffer.count))];
+    PGImmutableVertexBuffer* vb = [PGImmutableVertexBuffer immutableVertexBufferWithDesc:desc handle:egGenBuffer() length:[buffer length] count:((NSUInteger)(buffer->_count))];
     [vb bind];
-    glBufferData(GL_ARRAY_BUFFER, ((int)([buffer length])), buffer.bytes, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, ((int)([buffer length])), buffer->_bytes, GL_STATIC_DRAW);
     return vb;
 }
 
@@ -112,6 +112,10 @@ static CNClassType* _PGVBO_type;
 
 + (id<PGVertexBuffer>)vec2Data:(CNPArray*)data {
     return [PGVBO applyDesc:[PGVertexBufferDesc Vec2] data:data];
+}
+
++ (id<PGVertexBuffer>)vec2Buffer:(PGVec2Buffer*)buffer {
+    return [PGVBO applyDesc:[PGVertexBufferDesc Vec2] buffer:buffer];
 }
 
 + (id<PGVertexBuffer>)meshData:(CNPArray*)data {
@@ -205,7 +209,7 @@ static CNClassType* _PGImmutableVertexBuffer_type;
 }
 
 - (instancetype)initWithDesc:(PGVertexBufferDesc*)desc handle:(unsigned int)handle length:(NSUInteger)length count:(NSUInteger)count {
-    self = [super initWithDataType:desc.dataType bufferType:GL_ARRAY_BUFFER handle:handle];
+    self = [super initWithDataType:desc->_dataType bufferType:GL_ARRAY_BUFFER handle:handle];
     if(self) {
         _desc = desc;
         _length = length;
@@ -221,7 +225,7 @@ static CNClassType* _PGImmutableVertexBuffer_type;
 }
 
 - (void)bind {
-    [PGGlobal.context bindVertexBufferBuffer:self];
+    [[PGGlobal context] bindVertexBufferBuffer:self];
 }
 
 - (NSString*)description {
@@ -255,7 +259,7 @@ static CNClassType* _PGMutableVertexBuffer_type;
 }
 
 - (instancetype)initWithDesc:(PGVertexBufferDesc*)desc handle:(unsigned int)handle usage:(unsigned int)usage {
-    self = [super initWithDataType:desc.dataType bufferType:GL_ARRAY_BUFFER handle:handle usage:usage];
+    self = [super initWithDataType:desc->_dataType bufferType:GL_ARRAY_BUFFER handle:handle usage:usage];
     if(self) _desc = desc;
     
     return self;
@@ -271,7 +275,7 @@ static CNClassType* _PGMutableVertexBuffer_type;
 }
 
 - (void)bind {
-    [PGGlobal.context bindVertexBufferBuffer:self];
+    [[PGGlobal context] bindVertexBufferBuffer:self];
 }
 
 - (BOOL)isEmpty {

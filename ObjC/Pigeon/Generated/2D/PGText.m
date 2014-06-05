@@ -32,9 +32,9 @@ static CNClassType* _PGText_type;
         _alignment = alignment;
         _color = color;
         _shadow = shadow;
-        __changed = [CNReactFlag reactFlagWithInitial:YES reacts:(@[((CNReact*)(font)), ((CNReact*)(text)), ((CNReact*)(position)), ((CNReact*)(alignment)), ((CNReact*)(shadow)), ((CNReact*)(PGGlobal.context.viewSize))])];
+        __changed = [CNReactFlag reactFlagWithInitial:YES reacts:(@[((CNReact*)(font)), ((CNReact*)(text)), ((CNReact*)(position)), ((CNReact*)(alignment)), ((CNReact*)(shadow)), ((CNReact*)([PGGlobal context]->_viewSize))])];
         _fontObserver = [font mapF:^CNObserver*(PGFont* newFont) {
-            return [((PGFont*)(newFont)).symbolsChanged observeF:^void(id _) {
+            return [((PGFont*)(newFont))->_symbolsChanged observeF:^void(id _) {
                 PGText* _self = _weakSelf;
                 if(_self != nil) [_self->__changed set];
             }];
@@ -43,13 +43,13 @@ static CNClassType* _PGText_type;
             return numb([_ isEmpty]);
         }];
         __lazy_sizeInPoints = [CNLazy lazyWithF:^CNReact*() {
-            return [CNReact asyncQueue:CNDispatchQueue.mainThread a:font b:text f:^id(PGFont* f, NSString* t) {
+            return [CNReact asyncQueue:[CNDispatchQueue mainThread] a:font b:text f:^id(PGFont* f, NSString* t) {
                 return wrap(PGVec2, [((PGFont*)(f)) measureInPointsText:t]);
             }];
         }];
         __lazy_sizeInP = [CNLazy lazyWithF:^CNReact*() {
             PGText* _self = _weakSelf;
-            if(_self != nil) return [CNReact asyncQueue:CNDispatchQueue.mainThread a:[_self sizeInPoints] b:PGGlobal.context.scaledViewSize f:^id(id s, id vs) {
+            if(_self != nil) return [CNReact asyncQueue:[CNDispatchQueue mainThread] a:[_self sizeInPoints] b:[PGGlobal context]->_scaledViewSize f:^id(id s, id vs) {
                 return wrap(PGVec2, (pgVec2DivVec2((pgVec2MulI((uwrap(PGVec2, s)), 2)), (uwrap(PGVec2, vs)))));
             }];
             else return nil;
@@ -80,7 +80,7 @@ static CNClassType* _PGText_type;
     }
     {
         PGTextShadow* sh = [_shadow value];
-        if(sh != nil) [((PGSimpleVertexArray*)(__vao)) drawParam:[PGFontShaderParam fontShaderParamWithTexture:[((PGFont*)([_font value])) texture] color:pgVec4MulK(((PGTextShadow*)(sh)).color, (uwrap(PGVec4, [_color value]).w)) shift:((PGTextShadow*)(sh)).shift]];
+        if(sh != nil) [((PGSimpleVertexArray*)(__vao)) drawParam:[PGFontShaderParam fontShaderParamWithTexture:[((PGFont*)([_font value])) texture] color:pgVec4MulK(((PGTextShadow*)(sh))->_color, (uwrap(PGVec4, [_color value]).w)) shift:((PGTextShadow*)(sh))->_shift]];
     }
     [((PGSimpleVertexArray*)(__vao)) drawParam:[PGFontShaderParam fontShaderParamWithTexture:[((PGFont*)([_font value])) texture] color:uwrap(PGVec4, [_color value]) shift:PGVec2Make(0.0, 0.0)]];
 }
@@ -159,7 +159,7 @@ static CNClassType* _PGTextShadow_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGTextShadow class]])) return NO;
     PGTextShadow* o = ((PGTextShadow*)(to));
-    return pgVec4IsEqualTo(_color, o.color) && pgVec2IsEqualTo(_shift, o.shift);
+    return pgVec4IsEqualTo(_color, o->_color) && pgVec2IsEqualTo(_shift, o->_shift);
 }
 
 - (NSUInteger)hash {

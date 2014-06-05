@@ -50,7 +50,7 @@ typedef enum PGBlendModeR {
 
 
 @interface PGColorSource : PGMaterial {
-@protected
+@public
     PGVec4 _color;
     PGTexture* _texture;
     PGBlendModeR _blendMode;
@@ -78,7 +78,7 @@ typedef enum PGBlendModeR {
 
 
 @interface PGStandardMaterial : PGMaterial {
-@protected
+@public
     PGColorSource* _diffuse;
     PGVec4 _specularColor;
     CGFloat _specularSize;
@@ -100,7 +100,7 @@ typedef enum PGBlendModeR {
 
 
 @interface PGNormalMap : NSObject {
-@protected
+@public
     PGTexture* _texture;
     BOOL _tangent;
 }
@@ -116,7 +116,7 @@ typedef enum PGBlendModeR {
 
 
 @interface PGBlendFunction : NSObject {
-@protected
+@public
     unsigned int _source;
     unsigned int _destination;
 }

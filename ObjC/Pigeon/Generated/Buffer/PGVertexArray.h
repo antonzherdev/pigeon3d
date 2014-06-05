@@ -16,7 +16,7 @@
 @class PGVertexArrayRing;
 
 @interface PGVertexArray : NSObject {
-@protected
+@public
     CNLazy* __lazy_mutableVertexBuffer;
 }
 + (instancetype)vertexArray;
@@ -38,7 +38,7 @@
 
 
 @interface PGRouteVertexArray : PGVertexArray {
-@protected
+@public
     PGVertexArray* _standard;
     PGVertexArray* _shadow;
 }
@@ -63,7 +63,7 @@
 
 
 @interface PGSimpleVertexArray : PGVertexArray {
-@protected
+@public
     unsigned int _handle;
     PGShader* _shader;
     NSArray* _vertexBuffers;
@@ -97,7 +97,7 @@
 
 
 @interface PGMaterialVertexArray : PGVertexArray {
-@protected
+@public
     PGVertexArray* _vao;
     id _material;
 }
@@ -121,7 +121,7 @@
 
 
 @interface PGVertexArrayRing : NSObject {
-@protected
+@public
     unsigned int _ringSize;
     PGVertexArray*(^_creator)(unsigned int);
     CNMQueue* __ring;

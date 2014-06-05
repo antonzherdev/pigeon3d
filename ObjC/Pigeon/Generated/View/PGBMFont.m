@@ -40,8 +40,8 @@ static CNClassType* _PGBMFont_type;
             {
                 CNTuple* t = [line tupleBy:@" "];
                 if(t != nil) {
-                    NSString* name = ((CNTuple*)(t)).a;
-                    NSDictionary* map = [[[[((CNTuple*)(t)).b splitBy:@" "] chain] mapOptF:^CNTuple*(NSString* _) {
+                    NSString* name = ((CNTuple*)(t))->_a;
+                    NSDictionary* map = [[[[((CNTuple*)(t))->_b splitBy:@" "] chain] mapOptF:^CNTuple*(NSString* _) {
                         return [_ tupleBy:@"="];
                     }] toMap];
                     if([name isEqual:@"info"]) {
@@ -85,7 +85,7 @@ static CNClassType* _PGBMFont_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGBMFont class]])) return NO;
     PGBMFont* o = ((PGBMFont*)(to));
-    return [_name isEqual:o.name];
+    return [_name isEqual:o->_name];
 }
 
 - (NSUInteger)hash {

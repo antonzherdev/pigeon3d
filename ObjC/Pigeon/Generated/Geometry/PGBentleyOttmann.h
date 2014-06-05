@@ -24,7 +24,7 @@
 
 
 @interface PGIntersection : NSObject {
-@protected
+@public
     CNPair* _items;
     PGVec2 _point;
 }
@@ -55,7 +55,7 @@
 
 
 @interface PGBentleyOttmannPointEvent : PGBentleyOttmannEvent {
-@protected
+@public
     BOOL _isStart;
     id _data;
     PGLineSegment* _segment;
@@ -79,7 +79,7 @@
 
 
 @interface PGBentleyOttmannIntersectionEvent : PGBentleyOttmannEvent {
-@protected
+@public
     PGVec2 _point;
 }
 @property (nonatomic, readonly) PGVec2 point;
@@ -94,7 +94,7 @@
 
 
 @interface PGBentleyOttmannEventQueue : NSObject {
-@protected
+@public
     CNMTreeMap* _events;
 }
 @property (nonatomic, readonly) CNMTreeMap* events;
@@ -112,7 +112,7 @@
 
 
 @interface PGSweepLine : NSObject {
-@protected
+@public
     CNMTreeSet* _events;
     CNMHashMap* _intersections;
     PGVec2 _currentEventPoint;

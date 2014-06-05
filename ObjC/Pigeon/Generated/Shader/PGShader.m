@@ -72,7 +72,7 @@ static CNClassType* _PGShaderProgram_type;
 }
 
 - (void)dealloc {
-    [PGGlobal.context deleteShaderProgramId:_handle];
+    [[PGGlobal context] deleteShaderProgramId:_handle];
 }
 
 - (PGShaderAttribute*)attributeForName:(NSString*)name {
@@ -125,7 +125,7 @@ static CNClassType* _PGShader_type;
 }
 
 - (void)drawParam:(id)param vertex:(id<PGVertexBuffer>)vertex index:(id<PGIndexSource>)index {
-    [PGGlobal.context bindShaderProgramProgram:_program];
+    [[PGGlobal context] bindShaderProgramProgram:_program];
     [vertex bind];
     [self loadAttributesVbDesc:[vertex desc]];
     [self loadUniformsParam:param];
@@ -134,22 +134,22 @@ static CNClassType* _PGShader_type;
 }
 
 - (void)drawParam:(id)param mesh:(PGMesh*)mesh {
-    [self drawParam:param vertex:mesh.vertex index:mesh.index];
+    [self drawParam:param vertex:mesh->_vertex index:mesh->_index];
 }
 
 - (void)drawParam:(id)param vao:(PGSimpleVertexArray*)vao {
     [vao bind];
-    [PGGlobal.context bindShaderProgramProgram:_program];
+    [[PGGlobal context] bindShaderProgramProgram:_program];
     [self loadUniformsParam:param];
-    [vao.index draw];
+    [vao->_index draw];
     [vao unbind];
 }
 
 - (void)drawParam:(id)param vao:(PGSimpleVertexArray*)vao start:(NSUInteger)start end:(NSUInteger)end {
     [vao bind];
-    [PGGlobal.context bindShaderProgramProgram:_program];
+    [[PGGlobal context] bindShaderProgramProgram:_program];
     [self loadUniformsParam:param];
-    [vao.index drawWithStart:start count:end];
+    [vao->_index drawWithStart:start count:end];
     [vao unbind];
 }
 
@@ -162,13 +162,13 @@ static CNClassType* _PGShader_type;
 }
 
 - (int)uniformName:(NSString*)name {
-    int h = egGetUniformLocation(_program.handle, name);
+    int h = egGetUniformLocation(_program->_handle, name);
     if(h < 0) @throw [@"Could not found attribute for name " stringByAppendingString:name];
     return h;
 }
 
 - (id)uniformOptName:(NSString*)name {
-    int h = egGetUniformLocation(_program.handle, name);
+    int h = egGetUniformLocation(_program->_handle, name);
     if(h < 0) nil;
     return numi4(h);
 }
@@ -630,7 +630,7 @@ static CNClassType* _PGShaderSystem_type;
 }
 
 - (PGShader*)shaderForParam:(id)param {
-    return [self shaderForParam:param renderTarget:PGGlobal.context.renderTarget];
+    return [self shaderForParam:param renderTarget:[PGGlobal context]->_renderTarget];
 }
 
 - (PGShader*)shaderForParam:(id)param renderTarget:(PGRenderTarget*)renderTarget {
@@ -690,11 +690,11 @@ static CNClassType* _PGShaderSystem_type;
 }
 
 - (BOOL)isFragColorDeclared {
-    return PGShaderProgram.version < 110;
+    return [PGShaderProgram version] < 110;
 }
 
 - (NSInteger)version {
-    return PGShaderProgram.version;
+    return [PGShaderProgram version];
 }
 
 - (NSString*)ain {
@@ -723,17 +723,17 @@ static CNClassType* _PGShaderSystem_type;
 }
 
 - (NSString*)shadowExt {
-    if([self version] == 100 && [PGGlobal.settings shadowType] == PGShadowType_shadow2d) return @"#extension GL_EXT_shadow_samplers : require";
+    if([self version] == 100 && [[PGGlobal settings] shadowType] == PGShadowType_shadow2d) return @"#extension GL_EXT_shadow_samplers : require";
     else return @"";
 }
 
 - (NSString*)sampler2DShadow {
-    if([PGGlobal.settings shadowType] == PGShadowType_shadow2d) return @"sampler2DShadow";
+    if([[PGGlobal settings] shadowType] == PGShadowType_shadow2d) return @"sampler2DShadow";
     else return @"sampler2D";
 }
 
 - (NSString*)shadow2DTexture:(NSString*)texture vec3:(NSString*)vec3 {
-    if([PGGlobal.settings shadowType] == PGShadowType_shadow2d) return [NSString stringWithFormat:@"%@(%@, %@)", [self shadow2DEXT], texture, vec3];
+    if([[PGGlobal settings] shadowType] == PGShadowType_shadow2d) return [NSString stringWithFormat:@"%@(%@, %@)", [self shadow2DEXT], texture, vec3];
     else return [NSString stringWithFormat:@"(%@(%@, %@.xy).x < %@.z ? 0.0 : 1.0)", [self texture2D], texture, vec3, vec3];
 }
 

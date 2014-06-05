@@ -50,7 +50,7 @@ static CNClassType* _PGCameraIso_type;
     [super initialize];
     if(self == [PGCameraIso class]) {
         _PGCameraIso_type = [CNClassType classTypeWithCls:[PGCameraIso class]];
-        _PGCameraIso_ISO = PGMapSso.ISO;
+        _PGCameraIso_ISO = [PGMapSso ISO];
         _PGCameraIso_m = [[PGMat4 identity] rotateAngle:90.0 x:1.0 y:0.0 z:0.0];
         _PGCameraIso_w = [[PGMat4 identity] rotateAngle:-90.0 x:1.0 y:0.0 z:0.0];
     }
@@ -130,22 +130,22 @@ static CNClassType* _PGCameraIsoMove_type;
         _scaleObs = [_scale observeF:^void(id s) {
             PGCameraIsoMove* _self = _weakSelf;
             if(_self != nil) {
-                _self->__camera = [PGCameraIso cameraIsoWithTilesOnScreen:pgVec2DivF4(_self->__currentBase.tilesOnScreen, ((float)(unumf(s)))) reserve:pgCameraReserveDivF4(_self->__currentBase.reserve, ((float)(unumf(s)))) viewportRatio:_self->__currentBase.viewportRatio center:_self->__camera.center];
+                _self->__camera = [PGCameraIso cameraIsoWithTilesOnScreen:pgVec2DivF4(_self->__currentBase->_tilesOnScreen, ((float)(unumf(s)))) reserve:pgCameraReserveDivF4(_self->__currentBase->_reserve, ((float)(unumf(s)))) viewportRatio:_self->__currentBase->_viewportRatio center:_self->__camera->_center];
                 [_self->_changed post];
             }
         }];
-        _center = [CNVar limitedInitial:wrap(PGVec2, __camera.center) limits:^id(id cen) {
+        _center = [CNVar limitedInitial:wrap(PGVec2, __camera->_center) limits:^id(id cen) {
             PGCameraIsoMove* _self = _weakSelf;
             if(_self != nil) {
                 if(unumf([_self->_scale value]) <= 1) {
                     return wrap(PGVec2, [_self->__currentBase naturalCenter]);
                 } else {
-                    PGVec2 centerP = pgVec4Xy(([[_self->__currentBase.matrixModel wcp] mulVec4:pgVec4ApplyVec2ZW((uwrap(PGVec2, cen)), 0.0, 1.0)]));
+                    PGVec2 centerP = pgVec4Xy(([[_self->__currentBase->_matrixModel wcp] mulVec4:pgVec4ApplyVec2ZW((uwrap(PGVec2, cen)), 0.0, 1.0)]));
                     PGVec2 cp = pgRectClosestPointForVec2([_self centerBounds], centerP);
                     if(pgVec2IsEqualTo(cp, centerP)) {
                         return cen;
                     } else {
-                        PGMat4* mat4 = [[_self->__currentBase.matrixModel wcp] inverse];
+                        PGMat4* mat4 = [[_self->__currentBase->_matrixModel wcp] inverse];
                         PGVec4 p0 = [mat4 mulVec4:PGVec4Make(cp.x, cp.y, -1.0, 1.0)];
                         PGVec4 p1 = [mat4 mulVec4:PGVec4Make(cp.x, cp.y, 1.0, 1.0)];
                         PGLine3 line = PGLine3Make(pgVec4Xyz(p0), (pgVec3SubVec3(pgVec4Xyz(p1), pgVec4Xyz(p0))));
@@ -159,7 +159,7 @@ static CNClassType* _PGCameraIsoMove_type;
         _centerObs = [_center observeF:^void(id cen) {
             PGCameraIsoMove* _self = _weakSelf;
             if(_self != nil) {
-                _self->__camera = [PGCameraIso cameraIsoWithTilesOnScreen:[_self camera].tilesOnScreen reserve:[_self camera].reserve viewportRatio:[_self camera].viewportRatio center:uwrap(PGVec2, cen)];
+                _self->__camera = [PGCameraIso cameraIsoWithTilesOnScreen:[_self camera]->_tilesOnScreen reserve:[_self camera]->_reserve viewportRatio:[_self camera]->_viewportRatio center:uwrap(PGVec2, cen)];
                 [_self->_changed post];
             }
         }];
@@ -185,21 +185,21 @@ static CNClassType* _PGCameraIsoMove_type;
 }
 
 - (CGFloat)viewportRatio {
-    return __currentBase.viewportRatio;
+    return __currentBase->_viewportRatio;
 }
 
 - (void)setViewportRatio:(CGFloat)viewportRatio {
-    __currentBase = [PGCameraIso cameraIsoWithTilesOnScreen:__currentBase.tilesOnScreen reserve:__currentBase.reserve viewportRatio:viewportRatio center:__currentBase.center];
-    __camera = [PGCameraIso cameraIsoWithTilesOnScreen:__camera.tilesOnScreen reserve:__camera.reserve viewportRatio:viewportRatio center:__camera.center];
+    __currentBase = [PGCameraIso cameraIsoWithTilesOnScreen:__currentBase->_tilesOnScreen reserve:__currentBase->_reserve viewportRatio:viewportRatio center:__currentBase->_center];
+    __camera = [PGCameraIso cameraIsoWithTilesOnScreen:__camera->_tilesOnScreen reserve:__camera->_reserve viewportRatio:viewportRatio center:__camera->_center];
 }
 
 - (PGCameraReserve)reserve {
-    return __currentBase.reserve;
+    return __currentBase->_reserve;
 }
 
 - (void)setReserve:(PGCameraReserve)reserve {
-    __currentBase = [PGCameraIso cameraIsoWithTilesOnScreen:__currentBase.tilesOnScreen reserve:reserve viewportRatio:__currentBase.viewportRatio center:__currentBase.center];
-    __camera = [PGCameraIso cameraIsoWithTilesOnScreen:__camera.tilesOnScreen reserve:reserve viewportRatio:__camera.viewportRatio center:__camera.center];
+    __currentBase = [PGCameraIso cameraIsoWithTilesOnScreen:__currentBase->_tilesOnScreen reserve:reserve viewportRatio:__currentBase->_viewportRatio center:__currentBase->_center];
+    __camera = [PGCameraIso cameraIsoWithTilesOnScreen:__camera->_tilesOnScreen reserve:reserve viewportRatio:__camera->_viewportRatio center:__camera->_center];
 }
 
 - (PGRecognizers*)recognizers {
@@ -207,13 +207,13 @@ static CNClassType* _PGCameraIsoMove_type;
     if(_pinchEnabled) {
         __startScale = unumf([_scale value]);
         __pinchLocation = [event location];
-        __startCenter = __camera.center;
+        __startCenter = __camera->_center;
         return YES;
     } else {
         return NO;
     }
 } changed:^void(id<PGEvent> event) {
-    CGFloat s = ((PGPinchParameter*)([event param])).scale;
+    CGFloat s = ((PGPinchParameter*)([event param]))->_scale;
     [_scale setValue:numf(__startScale * s)];
     [_center setValue:wrap(PGVec2, (((s <= 1.0) ? __startCenter : ((s < 2.0) ? pgVec2AddVec2(__startCenter, (pgVec2MulF((pgVec2SubVec2(__pinchLocation, __startCenter)), s - 1.0))) : __pinchLocation))))];
 } ended:^void(id<PGEvent> event) {
@@ -221,7 +221,7 @@ static CNClassType* _PGCameraIsoMove_type;
     __startPan = [event location];
     return _panEnabled && unumf([_scale value]) > 1.0;
 } changed:^void(id<PGEvent> event) {
-    [_center setValue:wrap(PGVec2, (pgVec2SubVec2((pgVec2AddVec2(__camera.center, __startPan)), [event location])))];
+    [_center setValue:wrap(PGVec2, (pgVec2SubVec2((pgVec2AddVec2(__camera->_center, __startPan)), [event location])))];
 } ended:^void(id<PGEvent> event) {
 }])), ((PGRecognizer*)([PGRecognizer applyTp:[PGTap tapWithFingers:_tapFingers taps:2] on:^BOOL(id<PGEvent> event) {
     if(_tapEnabled) {

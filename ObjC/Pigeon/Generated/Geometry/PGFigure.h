@@ -36,7 +36,7 @@
 
 
 @interface PGSlopeLine : PGLine {
-@protected
+@public
     CGFloat _slope;
     CGFloat _constant;
 }
@@ -64,7 +64,7 @@
 
 
 @interface PGVerticalLine : PGLine {
-@protected
+@public
     CGFloat _x;
 }
 @property (nonatomic, readonly) CGFloat x;
@@ -103,7 +103,7 @@
 
 
 @interface PGLineSegment : PGFigure_impl {
-@protected
+@public
     PGVec2 _p0;
     PGVec2 _p1;
     BOOL _dir;
@@ -143,7 +143,7 @@
 
 
 @interface PGPolygon : PGFigure_impl {
-@protected
+@public
     NSArray* _points;
     NSArray* _segments;
 }
@@ -162,7 +162,7 @@
 
 
 @interface PGThickLineSegment : PGFigure_impl {
-@protected
+@public
     PGLineSegment* _segment;
     CGFloat _thickness;
     CGFloat _thickness_2;

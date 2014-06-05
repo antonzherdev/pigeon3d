@@ -40,7 +40,7 @@ static CNClassType* _PGFontShaderParam_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGFontShaderParam class]])) return NO;
     PGFontShaderParam* o = ((PGFontShaderParam*)(to));
-    return [_texture isEqual:o.texture] && pgVec4IsEqualTo(_color, o.color) && pgVec2IsEqualTo(_shift, o.shift);
+    return [_texture isEqual:o->_texture] && pgVec4IsEqualTo(_color, o->_color) && pgVec2IsEqualTo(_shift, o->_shift);
 }
 
 - (NSUInteger)hash {
@@ -163,14 +163,14 @@ static CNClassType* _PGFontShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.position))];
-    [_uvSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.uv))];
+    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_position))];
+    [_uvSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_uv))];
 }
 
 - (void)loadUniformsParam:(PGFontShaderParam*)param {
-    [PGGlobal.context bindTextureTexture:((PGFontShaderParam*)(param)).texture];
-    [_colorUniform applyVec4:((PGFontShaderParam*)(param)).color];
-    [_shiftSlot applyVec2:pgVec4Xy(([[PGGlobal.matrix p] mulVec4:pgVec4ApplyVec2ZW(((PGFontShaderParam*)(param)).shift, 0.0, 0.0)]))];
+    [[PGGlobal context] bindTextureTexture:((PGFontShaderParam*)(param))->_texture];
+    [_colorUniform applyVec4:((PGFontShaderParam*)(param))->_color];
+    [_shiftSlot applyVec2:pgVec4Xy(([[[PGGlobal matrix] p] mulVec4:pgVec4ApplyVec2ZW(((PGFontShaderParam*)(param))->_shift, 0.0, 0.0)]))];
 }
 
 - (NSString*)description {

@@ -34,11 +34,11 @@ static CNClassType* _PGStat_type;
 }
 
 - (void)draw {
-    PGEnablingState* __il__0__tmp__il__0self = PGGlobal.context.blend;
+    PGEnablingState* __il__0__tmp__il__0self = [PGGlobal context]->_blend;
     {
         BOOL __il__0__il__0changed = [__il__0__tmp__il__0self enable];
         {
-            [PGGlobal.context setBlendFunction:PGBlendFunction.standard];
+            [[PGGlobal context] setBlendFunction:[PGBlendFunction standard]];
             [_text draw];
         }
         if(__il__0__il__0changed) [__il__0__tmp__il__0self disable];

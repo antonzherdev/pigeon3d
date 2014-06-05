@@ -27,7 +27,7 @@
 @class PGSprite;
 
 @interface PGSprite : NSObject {
-@protected
+@public
     CNReact* _visible;
     CNReact* _material;
     CNReact* _position;

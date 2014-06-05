@@ -12,7 +12,7 @@
 @class PGStat;
 
 @interface PGStat : NSObject {
-@protected
+@public
     CGFloat _accumDelta;
     NSUInteger _framesCount;
     CGFloat __frameRate;

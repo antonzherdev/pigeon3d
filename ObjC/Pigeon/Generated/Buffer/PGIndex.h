@@ -61,7 +61,7 @@
 
 
 @interface PGImmutableIndexBuffer : PGGlBuffer<PGIndexBuffer> {
-@protected
+@public
     unsigned int _mode;
     NSUInteger _length;
     NSUInteger _count;
@@ -80,7 +80,7 @@
 
 
 @interface PGMutableIndexBuffer : PGMutableGlBuffer<PGIndexBuffer> {
-@protected
+@public
     unsigned int _mode;
 }
 @property (nonatomic, readonly) unsigned int mode;
@@ -97,7 +97,7 @@
 
 
 @interface PGIndexBufferRing : PGBufferRing {
-@protected
+@public
     unsigned int _mode;
     unsigned int _usage;
 }
@@ -113,7 +113,7 @@
 
 
 @interface PGEmptyIndexSource : PGIndexSource_impl {
-@protected
+@public
     unsigned int _mode;
 }
 @property (nonatomic, readonly) unsigned int mode;
@@ -133,7 +133,7 @@
 
 
 @interface PGArrayIndexSource : PGIndexSource_impl {
-@protected
+@public
     CNPArray* _array;
     unsigned int _mode;
 }
@@ -151,7 +151,7 @@
 
 
 @interface PGIndexSourceGap : PGIndexSource_impl {
-@protected
+@public
     id<PGIndexSource> _source;
     unsigned int _start;
     unsigned int _count;
@@ -172,7 +172,7 @@
 
 
 @interface PGMutableIndexSourceGap : PGIndexSource_impl {
-@protected
+@public
     id<PGIndexSource> _source;
     unsigned int _start;
     unsigned int _count;

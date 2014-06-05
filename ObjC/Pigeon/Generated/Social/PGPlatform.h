@@ -55,7 +55,7 @@ typedef enum PGDeviceTypeR {
 
 
 @interface PGOS : NSObject {
-@protected
+@public
     PGOSTypeR _tp;
     PGVersion* _version;
     BOOL _jailbreak;
@@ -77,7 +77,7 @@ typedef enum PGDeviceTypeR {
 
 
 @interface PGDevice : NSObject {
-@protected
+@public
     PGDeviceTypeR _tp;
     PGInterfaceIdiomR _interfaceIdiom;
     PGVersion* _version;
@@ -101,7 +101,7 @@ typedef enum PGDeviceTypeR {
 
 
 @interface PGPlatform : NSObject {
-@protected
+@public
     PGOS* _os;
     PGDevice* _device;
     NSString* _text;
@@ -135,7 +135,7 @@ typedef enum PGDeviceTypeR {
 
 
 @interface PGVersion : NSObject<CNComparable> {
-@protected
+@public
     NSArray* _parts;
 }
 @property (nonatomic, readonly) NSArray* parts;

@@ -218,6 +218,16 @@ static CNClassType* _PGVec2Buffer_type;
     return __il_r;
 }
 
+- (void)setX:(float)x y:(float)y {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((float*)(self._pointer))) = x;
+    *(((float*)(self._pointer)) + 1) = y;
+    {
+        __pointer = ((PGVec2*)(__pointer)) + 1;
+        __position++;
+    }
+}
+
 - (void)setV:(PGVec2)v {
     if(__position >= _count) @throw @"Out of bound";
     *(((PGVec2*)(__pointer))) = v;

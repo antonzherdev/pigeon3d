@@ -178,7 +178,7 @@ static CNClassType* _PGOS_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGOS class]])) return NO;
     PGOS* o = ((PGOS*)(to));
-    return _tp == o.tp && [_version isEqual:o.version] && _jailbreak == o.jailbreak;
+    return _tp == o->_tp && [_version isEqual:o->_version] && _jailbreak == o->_jailbreak;
 }
 
 - (NSUInteger)hash {
@@ -247,7 +247,7 @@ static CNClassType* _PGDevice_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGDevice class]])) return NO;
     PGDevice* o = ((PGDevice*)(to));
-    return _tp == o.tp && _interfaceIdiom == o.interfaceIdiom && [_version isEqual:o.version] && pgVec2IsEqualTo(_screenSize, o.screenSize);
+    return _tp == o->_tp && _interfaceIdiom == o->_interfaceIdiom && [_version isEqual:o->_version] && pgVec2IsEqualTo(_screenSize, o->_screenSize);
 }
 
 - (NSUInteger)hash {
@@ -295,9 +295,9 @@ static CNClassType* _PGPlatform_type;
         _os = os;
         _device = device;
         _text = text;
-        _shadows = [PGOSType value:os.tp].shadows;
-        _touch = [PGOSType value:os.tp].touch;
-        _interfaceIdiom = device.interfaceIdiom;
+        _shadows = [PGOSType value:os->_tp].shadows;
+        _touch = [PGOSType value:os->_tp].touch;
+        _interfaceIdiom = device->_interfaceIdiom;
         _isPhone = [PGInterfaceIdiom value:_interfaceIdiom].isPhone;
         _isPad = [PGInterfaceIdiom value:_interfaceIdiom].isPad;
         _isComputer = [PGInterfaceIdiom value:_interfaceIdiom].isComputer;
@@ -312,7 +312,7 @@ static CNClassType* _PGPlatform_type;
 }
 
 - (PGVec2)screenSize {
-    return _device.screenSize;
+    return _device->_screenSize;
 }
 
 - (CGFloat)screenSizeRatio {
@@ -327,7 +327,7 @@ static CNClassType* _PGPlatform_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGPlatform class]])) return NO;
     PGPlatform* o = ((PGPlatform*)(to));
-    return [_os isEqual:o.os] && [_device isEqual:o.device] && [_text isEqual:o.text];
+    return [_os isEqual:o->_os] && [_device isEqual:o->_device] && [_text isEqual:o->_text];
 }
 
 - (NSUInteger)hash {
@@ -380,7 +380,7 @@ static CNClassType* _PGVersion_type;
 
 - (NSInteger)compareTo:(PGVersion*)to {
     id<CNIterator> i = [_parts iterator];
-    id<CNIterator> j = [((PGVersion*)(to)).parts iterator];
+    id<CNIterator> j = [((PGVersion*)(to))->_parts iterator];
     while([i hasNext] && [j hasNext]) {
         NSInteger vi = unumi([i next]);
         NSInteger vj = unumi([j next]);
@@ -405,7 +405,7 @@ static CNClassType* _PGVersion_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGVersion class]])) return NO;
     PGVersion* o = ((PGVersion*)(to));
-    return [_parts isEqual:o.parts];
+    return [_parts isEqual:o->_parts];
 }
 
 - (NSUInteger)hash {

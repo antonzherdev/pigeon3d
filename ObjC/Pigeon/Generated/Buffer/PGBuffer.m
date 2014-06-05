@@ -38,7 +38,7 @@ static CNClassType* _PGGlBuffer_type;
 }
 
 - (void)dealloc {
-    [PGGlobal.context deleteBufferId:_handle];
+    [[PGGlobal context] deleteBufferId:_handle];
 }
 
 - (void)bind {
@@ -105,10 +105,10 @@ static CNClassType* _PGMutableGlBuffer_type;
 
 - (id)setData:(CNPArray*)data {
     [self bind];
-    glBufferData(self.bufferType, ((int)(data.length)), data.bytes, _usage);
+    glBufferData(self.bufferType, ((int)(data->_length)), data->_bytes, _usage);
     egCheckError();
-    __length = data.length;
-    __count = data.count;
+    __length = data->_length;
+    __count = data->_count;
     return self;
 }
 

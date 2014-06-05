@@ -9,6 +9,7 @@ import objd.collection.Buffer;
 import com.pigeon3d.geometry.vec4;
 import com.pigeon3d.geometry.vec3;
 import com.pigeon3d.geometry.vec2;
+import com.pigeon3d.geometry.Vec2Buffer;
 
 public class VBO {
     public static <T> VertexBuffer<T> applyDescArrayCount(final VertexBufferDesc<T> desc, final Pointer array, final int count) {
@@ -38,6 +39,9 @@ public class VBO {
     }
     public static VertexBuffer<vec2> vec2Data(final PArray<vec2> data) {
         return VBO.<vec2>applyDescData(VertexBufferDesc.Vec2(), data);
+    }
+    public static VertexBuffer<vec2> vec2Buffer(final Vec2Buffer buffer) {
+        return VBO.<vec2>applyDescBuffer(VertexBufferDesc.Vec2(), ((Buffer<vec2>)(((Buffer)(buffer)))));
     }
     public static VertexBuffer<MeshData> meshData(final PArray<MeshData> data) {
         return VBO.<MeshData>applyDescData(VertexBufferDesc.mesh(), data);

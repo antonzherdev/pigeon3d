@@ -13,7 +13,7 @@
 @class PGFontShader;
 
 @interface PGFontShaderParam : NSObject {
-@protected
+@public
     PGTexture* _texture;
     PGVec4 _color;
     PGVec2 _shift;
@@ -45,7 +45,7 @@
 
 
 @interface PGFontShader : PGShader {
-@protected
+@public
     PGShaderAttribute* _uvSlot;
     PGShaderAttribute* _positionSlot;
     PGShaderUniformVec4* _colorUniform;

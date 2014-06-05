@@ -9,7 +9,7 @@
 @class PGBufferRing;
 
 @interface PGGlBuffer : NSObject {
-@protected
+@public
     CNPType* _dataType;
     unsigned int _bufferType;
     unsigned int _handle;
@@ -32,7 +32,7 @@
 
 
 @interface PGMutableGlBuffer : PGGlBuffer {
-@protected
+@public
     unsigned int _usage;
     NSUInteger __length;
     NSUInteger __count;
@@ -59,7 +59,7 @@
 
 
 @interface PGMappedBufferData : NSObject {
-@protected
+@public
     PGMutableGlBuffer* _buffer;
     void* _pointer;
     NSConditionLock* _lock;
@@ -82,7 +82,7 @@
 
 
 @interface PGBufferRing : NSObject {
-@protected
+@public
     unsigned int _ringSize;
     id(^_creator)();
     CNMQueue* __ring;

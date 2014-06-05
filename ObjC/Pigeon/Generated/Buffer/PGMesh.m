@@ -159,22 +159,22 @@ static CNClassType* _PGMesh_type;
 }
 
 - (PGVertexArray*)vaoShadow {
-    return [self vaoShaderSystem:PGShadowShaderSystem.instance material:[PGColorSource applyColor:PGVec4Make(1.0, 1.0, 1.0, 1.0)] shadow:NO];
+    return [self vaoShaderSystem:[PGShadowShaderSystem instance] material:[PGColorSource applyColor:PGVec4Make(1.0, 1.0, 1.0, 1.0)] shadow:NO];
 }
 
 - (PGVertexArray*)vaoShadowMaterial:(PGColorSource*)material {
-    return [self vaoShaderSystem:PGShadowShaderSystem.instance material:material shadow:NO];
+    return [self vaoShaderSystem:[PGShadowShaderSystem instance] material:material shadow:NO];
 }
 
 - (PGVertexArray*)vaoMaterial:(id)material shadow:(BOOL)shadow {
     PGMaterialVertexArray* std = [PGMaterialVertexArray materialVertexArrayWithVao:[[material shader] vaoVbo:_vertex ibo:((id<PGIndexBuffer>)(_index))] material:material];
-    if(shadow && egPlatform().shadows) return ((PGVertexArray*)([PGRouteVertexArray routeVertexArrayWithStandard:std shadow:[PGMaterialVertexArray materialVertexArrayWithVao:[[[material shaderSystem] shaderForParam:material renderTarget:PGShadowRenderTarget.aDefault] vaoVbo:_vertex ibo:((id<PGIndexBuffer>)(_index))] material:material]]));
+    if(shadow && egPlatform()->_shadows) return ((PGVertexArray*)([PGRouteVertexArray routeVertexArrayWithStandard:std shadow:[PGMaterialVertexArray materialVertexArrayWithVao:[[[material shaderSystem] shaderForParam:material renderTarget:[PGShadowRenderTarget aDefault]] vaoVbo:_vertex ibo:((id<PGIndexBuffer>)(_index))] material:material]]));
     else return ((PGVertexArray*)(std));
 }
 
 - (PGVertexArray*)vaoShaderSystem:(PGShaderSystem*)shaderSystem material:(id)material shadow:(BOOL)shadow {
     PGMaterialVertexArray* std = [PGMaterialVertexArray materialVertexArrayWithVao:[[shaderSystem shaderForParam:material] vaoVbo:_vertex ibo:((id<PGIndexBuffer>)(_index))] material:material];
-    if(shadow && egPlatform().shadows) return ((PGVertexArray*)([PGRouteVertexArray routeVertexArrayWithStandard:std shadow:[PGMaterialVertexArray materialVertexArrayWithVao:[[shaderSystem shaderForParam:material renderTarget:PGShadowRenderTarget.aDefault] vaoVbo:_vertex ibo:((id<PGIndexBuffer>)(_index))] material:material]]));
+    if(shadow && egPlatform()->_shadows) return ((PGVertexArray*)([PGRouteVertexArray routeVertexArrayWithStandard:std shadow:[PGMaterialVertexArray materialVertexArrayWithVao:[[shaderSystem shaderForParam:material renderTarget:[PGShadowRenderTarget aDefault]] vaoVbo:_vertex ibo:((id<PGIndexBuffer>)(_index))] material:material]]));
     else return ((PGVertexArray*)(std));
 }
 
@@ -226,7 +226,7 @@ static CNClassType* _PGMeshModel_type;
 
 + (PGMeshModel*)applyShadow:(BOOL)shadow meshes:(NSArray*)meshes {
     return [PGMeshModel meshModelWithArrays:[[[meshes chain] mapF:^PGVertexArray*(CNTuple* p) {
-        return [((PGMesh*)(((CNTuple*)(p)).a)) vaoMaterial:((CNTuple*)(p)).b shadow:shadow];
+        return [((PGMesh*)(((CNTuple*)(p))->_a)) vaoMaterial:((CNTuple*)(p))->_b shadow:shadow];
     }] toArray]];
 }
 
@@ -299,7 +299,7 @@ static CNClassType* _PGMeshUnite_type;
 }
 
 + (PGMeshUnite*)applyMeshModel:(PGMeshDataModel*)meshModel createVao:(PGVertexArray*(^)(PGMesh*))createVao {
-    return [PGMeshUnite meshUniteWithVertexSample:meshModel.vertex indexSample:meshModel.index createVao:createVao];
+    return [PGMeshUnite meshUniteWithVertexSample:meshModel->_vertex indexSample:meshModel->_index createVao:createVao];
 }
 
 - (void)writeCount:(unsigned int)count f:(void(^)(PGMeshWriter*))f {
@@ -327,7 +327,7 @@ static CNClassType* _PGMeshUnite_type;
 
 - (void)draw {
     if(__count > 0) {
-        PGMatrixStack* __tmp__il__0t_0self = PGGlobal.matrix;
+        PGMatrixStack* __tmp__il__0t_0self = [PGGlobal matrix];
         {
             [__tmp__il__0t_0self push];
             [[__tmp__il__0t_0self value] clear];
@@ -375,8 +375,8 @@ static CNClassType* _PGMeshWriter_type;
         _count = count;
         _vertexSample = vertexSample;
         _indexSample = indexSample;
-        _vertex = cnPointerApplyTpCount(pgMeshDataType(), vertexSample.count * count);
-        _index = cnPointerApplyTpCount(cnuInt4Type(), indexSample.count * count);
+        _vertex = cnPointerApplyTpCount(pgMeshDataType(), vertexSample->_count * count);
+        _index = cnPointerApplyTpCount(cnuInt4Type(), indexSample->_count * count);
         __vp = _vertex;
         __ip = _index;
         __indexShift = 0;
@@ -400,9 +400,9 @@ static CNClassType* _PGMeshWriter_type;
 
 - (void)writeVertex:(CNPArray*)vertex index:(CNPArray*)index mat4:(PGMat4*)mat4 {
     {
-        PGMeshData* __il__0__b = vertex.bytes;
+        PGMeshData* __il__0__b = vertex->_bytes;
         NSInteger __il__0__i = 0;
-        while(__il__0__i < vertex.count) {
+        while(__il__0__i < vertex->_count) {
             {
                 *(__vp) = pgMeshDataMulMat4(*(__il__0__b), mat4);
                 __vp++;
@@ -412,9 +412,9 @@ static CNClassType* _PGMeshWriter_type;
         }
     }
     {
-        unsigned int* __il__1__b = index.bytes;
+        unsigned int* __il__1__b = index->_bytes;
         NSInteger __il__1__i = 0;
-        while(__il__1__i < index.count) {
+        while(__il__1__i < index->_count) {
             {
                 *(__ip) = *(__il__1__b) + __indexShift;
                 __ip++;
@@ -423,7 +423,7 @@ static CNClassType* _PGMeshWriter_type;
             __il__1__b++;
         }
     }
-    __indexShift += ((unsigned int)(vertex.count));
+    __indexShift += ((unsigned int)(vertex->_count));
 }
 
 - (void)writeMap:(PGMeshData(^)(PGMeshData))map {
@@ -436,9 +436,9 @@ static CNClassType* _PGMeshWriter_type;
 
 - (void)writeVertex:(CNPArray*)vertex index:(CNPArray*)index map:(PGMeshData(^)(PGMeshData))map {
     {
-        PGMeshData* __il__0__b = vertex.bytes;
+        PGMeshData* __il__0__b = vertex->_bytes;
         NSInteger __il__0__i = 0;
-        while(__il__0__i < vertex.count) {
+        while(__il__0__i < vertex->_count) {
             {
                 *(__vp) = map(*(__il__0__b));
                 __vp++;
@@ -448,9 +448,9 @@ static CNClassType* _PGMeshWriter_type;
         }
     }
     {
-        unsigned int* __il__1__b = index.bytes;
+        unsigned int* __il__1__b = index->_bytes;
         NSInteger __il__1__i = 0;
-        while(__il__1__i < index.count) {
+        while(__il__1__i < index->_count) {
             {
                 *(__ip) = *(__il__1__b) + __indexShift;
                 __ip++;
@@ -459,12 +459,12 @@ static CNClassType* _PGMeshWriter_type;
             __il__1__b++;
         }
     }
-    __indexShift += ((unsigned int)(vertex.count));
+    __indexShift += ((unsigned int)(vertex->_count));
 }
 
 - (void)flush {
-    [_vbo setArray:_vertex count:((unsigned int)(_vertexSample.count * _count))];
-    [_ibo setArray:_index count:((unsigned int)(_indexSample.count * _count))];
+    [_vbo setArray:_vertex count:((unsigned int)(_vertexSample->_count * _count))];
+    [_ibo setArray:_index count:((unsigned int)(_indexSample->_count * _count))];
 }
 
 - (void)dealloc {

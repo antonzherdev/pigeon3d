@@ -29,7 +29,7 @@
 
 
 @interface PGSimpleShaderKey : PGShaderTextBuilder_impl {
-@protected
+@public
     BOOL _texture;
     BOOL _region;
     PGBlendModeR _blendMode;
@@ -53,7 +53,7 @@
 
 
 @interface PGSimpleShader : PGShader {
-@protected
+@public
     PGSimpleShaderKey* _key;
     PGShaderAttribute* _uvSlot;
     PGShaderAttribute* _positionSlot;

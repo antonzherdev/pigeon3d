@@ -45,7 +45,7 @@ abstract class BaseViewportSurface(val createRenderTarget : vec2i -> SurfaceRend
     def surface : RenderTargetSurface? = _surface
     private var _renderTarget : SurfaceRenderTarget? = nil
     def renderTarget : SurfaceRenderTarget = {
-        if(_renderTarget == nil || _renderTarget?.size != context.viewSize.value) {
+        if(_renderTarget == nil || _renderTarget.size != context.viewSize.value) {
             _renderTarget = createRenderTarget(context.viewSize.value)
         }
         _renderTarget.get
@@ -62,7 +62,7 @@ abstract class BaseViewportSurface(val createRenderTarget : vec2i -> SurfaceRend
     def texture : Texture = renderTarget.cast<SurfaceRenderTargetTexture>.texture
     def renderBuffer : uint4 = renderTarget.cast<SurfaceRenderTargetRenderBuffer>.renderBuffer
 
-    def needRedraw : bool = _surface == nil || _surface?.size != context.viewSize.value
+    def needRedraw : bool = _surface == nil || _surface.size != context.viewSize.value
 
     def bind {
         maybeRecreateSurface
@@ -92,7 +92,14 @@ abstract class BaseViewportSurface(val createRenderTarget : vec2i -> SurfaceRend
     }
 
     static lazy val fullScreenMesh = Mesh(
-        VBO.vec2([vec2(0, 0), vec2(1, 0), vec2(0, 1), vec2(1, 1)]),
+        VBO.vec2({
+            val b = Vec2Buffer(4)
+            b.set(0, 0)
+            b.set(1, 0)
+            b.set(0, 1)
+            b.set(1, 1)
+            b
+        }),
         EmptyIndexSource.triangleStrip)
     static lazy val fullScreenVao = fullScreenMesh.vao(ViewportSurfaceShader.instance)
 }

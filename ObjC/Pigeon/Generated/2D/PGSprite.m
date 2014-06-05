@@ -37,8 +37,8 @@ static CNClassType* _PGSprite_type;
         _rect = rect;
         _vb = [PGVBO mutDesc:_PGSprite_vbDesc usage:GL_DYNAMIC_DRAW];
         __changed = [CNReactFlag reactFlagWithInitial:YES reacts:(@[((CNReact*)([material mapF:^PGTexture*(PGColorSource* _) {
-    return ((PGColorSource*)(_)).texture;
-}])), ((CNReact*)(position)), ((CNReact*)(rect)), ((CNReact*)(PGGlobal.context.viewSize))])];
+    return ((PGColorSource*)(_))->_texture;
+}])), ((CNReact*)(position)), ((CNReact*)(rect)), ((CNReact*)([PGGlobal context]->_viewSize))])];
         __materialChanged = [CNReactFlag reactFlagWithInitial:YES reacts:(@[material])];
         _tap = [CNSignal signal];
     }
@@ -64,7 +64,7 @@ static CNClassType* _PGSprite_type;
 
 + (CNReact*)rectReactMaterial:(CNReact*)material anchor:(PGVec2)anchor {
     return [material mapF:^id(PGColorSource* m) {
-        PGVec2 s = pgVec2DivF([((PGTexture*)(nonnil(((PGColorSource*)(m)).texture))) size], [[PGDirector current] scale]);
+        PGVec2 s = pgVec2DivF([((PGTexture*)(nonnil(((PGColorSource*)(m))->_texture))) size], [[PGDirector current] scale]);
         return wrap(PGRect, (PGRectMake((pgVec2MulVec2(s, (pgVec2DivI((pgVec2AddI(anchor, 1)), -2)))), s)));
     }];
 }
@@ -72,7 +72,7 @@ static CNClassType* _PGSprite_type;
 - (void)draw {
     if(!(unumb([_visible value]))) return ;
     if(unumb([__materialChanged value])) {
-        _vao = [[PGMesh meshWithVertex:_vb index:PGEmptyIndexSource.triangleStrip] vaoShaderSystem:PGBillboardShaderSystem.projectionSpace material:[_material value] shadow:NO];
+        _vao = [[PGMesh meshWithVertex:_vb index:[PGEmptyIndexSource triangleStrip]] vaoShaderSystem:[PGBillboardShaderSystem projectionSpace] material:[_material value] shadow:NO];
         [__materialChanged clear];
     }
     if(unumb([__changed value])) {
@@ -80,31 +80,31 @@ static CNClassType* _PGSprite_type;
         PGColorSource* m = [_material value];
         {
             PGVec3 __tmp__il__2t_2at = uwrap(PGVec3, [_position value]);
-            PGQuad __tmp__il__2t_2quad = pgRectStripQuad((pgRectMulF((pgRectDivVec2((uwrap(PGRect, [_rect value])), (uwrap(PGVec2, [PGGlobal.context.scaledViewSize value])))), 2.0)));
+            PGQuad __tmp__il__2t_2quad = pgRectStripQuad((pgRectMulF((pgRectDivVec2((uwrap(PGRect, [_rect value])), (uwrap(PGVec2, [[PGGlobal context]->_scaledViewSize value])))), 2.0)));
             PGQuad __tmp__il__2t_2uv = pgRectUpsideDownStripQuad((({
-                PGTexture* __tmp_2t_2rp4l = m.texture;
-                ((__tmp_2t_2rp4l != nil) ? [((PGTexture*)(m.texture)) uv] : pgRectApplyXYWidthHeight(0.0, 0.0, 1.0, 1.0));
+                PGTexture* __tmp_2t_2rp4l = m->_texture;
+                ((__tmp_2t_2rp4l != nil) ? [((PGTexture*)(m->_texture)) uv] : pgRectApplyXYWidthHeight(0.0, 0.0, 1.0, 1.0));
             })));
             {
                 PGBillboardBufferData* __il__2t_2v = vertexes;
                 __il__2t_2v->position = __tmp__il__2t_2at;
                 __il__2t_2v->model = __tmp__il__2t_2quad.p0;
-                __il__2t_2v->color = m.color;
+                __il__2t_2v->color = m->_color;
                 __il__2t_2v->uv = __tmp__il__2t_2uv.p0;
                 __il__2t_2v++;
                 __il__2t_2v->position = __tmp__il__2t_2at;
                 __il__2t_2v->model = __tmp__il__2t_2quad.p1;
-                __il__2t_2v->color = m.color;
+                __il__2t_2v->color = m->_color;
                 __il__2t_2v->uv = __tmp__il__2t_2uv.p1;
                 __il__2t_2v++;
                 __il__2t_2v->position = __tmp__il__2t_2at;
                 __il__2t_2v->model = __tmp__il__2t_2quad.p2;
-                __il__2t_2v->color = m.color;
+                __il__2t_2v->color = m->_color;
                 __il__2t_2v->uv = __tmp__il__2t_2uv.p2;
                 __il__2t_2v++;
                 __il__2t_2v->position = __tmp__il__2t_2at;
                 __il__2t_2v->model = __tmp__il__2t_2quad.p3;
-                __il__2t_2v->color = m.color;
+                __il__2t_2v->color = m->_color;
                 __il__2t_2v->uv = __tmp__il__2t_2uv.p3;
                 __il__2t_2v + 1;
             }
@@ -114,7 +114,7 @@ static CNClassType* _PGSprite_type;
         [__changed clear];
     }
     {
-        PGCullFace* __tmp__il__3self = PGGlobal.context.cullFace;
+        PGCullFace* __tmp__il__3self = [PGGlobal context]->_cullFace;
         {
             unsigned int __il__3oldValue = [__tmp__il__3self disable];
             [((PGVertexArray*)(_vao)) draw];
@@ -124,8 +124,8 @@ static CNClassType* _PGSprite_type;
 }
 
 - (PGRect)rectInViewport {
-    PGVec4 pp = [[[PGGlobal.matrix value] wcp] mulVec4:pgVec4ApplyVec3W((uwrap(PGVec3, [_position value])), 1.0)];
-    return pgRectAddVec2((pgRectMulF((pgRectDivVec2((uwrap(PGRect, [_rect value])), (uwrap(PGVec2, [PGGlobal.context.scaledViewSize value])))), 2.0)), pgVec4Xy(pp));
+    PGVec4 pp = [[[[PGGlobal matrix] value] wcp] mulVec4:pgVec4ApplyVec3W((uwrap(PGVec3, [_position value])), 1.0)];
+    return pgRectAddVec2((pgRectMulF((pgRectDivVec2((uwrap(PGRect, [_rect value])), (uwrap(PGVec2, [[PGGlobal context]->_scaledViewSize value])))), 2.0)), pgVec4Xy(pp));
 }
 
 - (BOOL)containsViewportVec2:(PGVec2)vec2 {

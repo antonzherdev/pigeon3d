@@ -41,7 +41,7 @@ static CNClassType* _PGViewportSurfaceShaderParam_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGViewportSurfaceShaderParam class]])) return NO;
     PGViewportSurfaceShaderParam* o = ((PGViewportSurfaceShaderParam*)(to));
-    return [_texture isEqual:o.texture] && eqf4(_z, o.z);
+    return [_texture isEqual:o->_texture] && eqf4(_z, o->_z);
 }
 
 - (NSUInteger)hash {
@@ -158,12 +158,12 @@ static CNClassType* _PGViewportSurfaceShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.model))];
+    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_model))];
 }
 
 - (void)loadUniformsParam:(PGViewportSurfaceShaderParam*)param {
-    [PGGlobal.context bindTextureTexture:((PGViewportSurfaceShaderParam*)(param)).texture];
-    [_zUniform applyF4:((PGViewportSurfaceShaderParam*)(param)).z];
+    [[PGGlobal context] bindTextureTexture:((PGViewportSurfaceShaderParam*)(param))->_texture];
+    [_zUniform applyF4:((PGViewportSurfaceShaderParam*)(param))->_z];
 }
 
 - (NSString*)description {
@@ -214,10 +214,41 @@ static CNClassType* _PGBaseViewportSurface_type;
     if(self == [PGBaseViewportSurface class]) {
         _PGBaseViewportSurface_type = [CNClassType classTypeWithCls:[PGBaseViewportSurface class]];
         _PGBaseViewportSurface__lazy_fullScreenMesh = [CNLazy lazyWithF:^PGMesh*() {
-            return [PGMesh meshWithVertex:[PGVBO vec2Data:[ arrs(PGVec2, 4) {PGVec2Make(0.0, 0.0), PGVec2Make(1.0, 0.0), PGVec2Make(0.0, 1.0), PGVec2Make(1.0, 1.0)}]] index:PGEmptyIndexSource.triangleStrip];
+            return [PGMesh meshWithVertex:[PGVBO vec2Buffer:({
+                PGVec2Buffer* b = [PGVec2Buffer vec2BufferWithCount:4];
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = 0.0;
+                *(((float*)(b->__pointer)) + 1) = 0.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = 1.0;
+                *(((float*)(b->__pointer)) + 1) = 0.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = 0.0;
+                *(((float*)(b->__pointer)) + 1) = 1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                if(b->__position >= b->_count) @throw @"Out of bound";
+                *(((float*)(b->__pointer))) = 1.0;
+                *(((float*)(b->__pointer)) + 1) = 1.0;
+                {
+                    b->__pointer = ((PGVec2*)(b->__pointer)) + 1;
+                    b->__position++;
+                }
+                b;
+            })] index:[PGEmptyIndexSource triangleStrip]];
         }];
         _PGBaseViewportSurface__lazy_fullScreenVao = [CNLazy lazyWithF:^PGVertexArray*() {
-            return [[PGBaseViewportSurface fullScreenMesh] vaoShader:PGViewportSurfaceShader.instance];
+            return [[PGBaseViewportSurface fullScreenMesh] vaoShader:[PGViewportSurfaceShader instance]];
         }];
     }
 }
@@ -235,10 +266,7 @@ static CNClassType* _PGBaseViewportSurface_type;
 }
 
 - (PGSurfaceRenderTarget*)renderTarget {
-    if(__renderTarget == nil || ({
-        id __tmp_0cb = wrap(PGVec2i, ((PGSurfaceRenderTarget*)(__renderTarget)).size);
-        __tmp_0cb == nil || !([__tmp_0cb isEqual:[PGGlobal.context.viewSize value]]);
-    })) __renderTarget = _createRenderTarget((uwrap(PGVec2i, [PGGlobal.context.viewSize value])));
+    if(__renderTarget == nil || !(pgVec2iIsEqualTo(((PGSurfaceRenderTarget*)(__renderTarget))->_size, (uwrap(PGVec2i, [[PGGlobal context]->_viewSize value]))))) __renderTarget = _createRenderTarget((uwrap(PGVec2i, [[PGGlobal context]->_viewSize value])));
     return ((PGSurfaceRenderTarget*)(nonnil(__renderTarget)));
 }
 
@@ -251,18 +279,15 @@ static CNClassType* _PGBaseViewportSurface_type;
 }
 
 - (PGTexture*)texture {
-    return ((PGSurfaceRenderTargetTexture*)([self renderTarget])).texture;
+    return ((PGSurfaceRenderTargetTexture*)([self renderTarget]))->_texture;
 }
 
 - (unsigned int)renderBuffer {
-    return ((PGSurfaceRenderTargetRenderBuffer*)([self renderTarget])).renderBuffer;
+    return ((PGSurfaceRenderTargetRenderBuffer*)([self renderTarget]))->_renderBuffer;
 }
 
 - (BOOL)needRedraw {
-    return __surface == nil || ({
-        id __tmpb = wrap(PGVec2i, ((PGRenderTargetSurface*)(__surface)).size);
-        __tmpb == nil || !([__tmpb isEqual:[PGGlobal.context.viewSize value]]);
-    });
+    return __surface == nil || !(pgVec2iIsEqualTo(((PGRenderTargetSurface*)(__surface))->_size, (uwrap(PGVec2i, [[PGGlobal context]->_viewSize value]))));
 }
 
 - (void)bind {

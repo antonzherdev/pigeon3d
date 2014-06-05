@@ -21,7 +21,7 @@
 @class PGBaseViewportSurface;
 
 @interface PGViewportSurfaceShaderParam : NSObject {
-@protected
+@public
     PGTexture* _texture;
     float _z;
 }
@@ -51,7 +51,7 @@
 
 
 @interface PGViewportSurfaceShader : PGShader {
-@protected
+@public
     PGShaderAttribute* _positionSlot;
     PGShaderUniformF4* _zUniform;
 }
@@ -70,7 +70,7 @@
 
 
 @interface PGBaseViewportSurface : NSObject {
-@protected
+@public
     PGSurfaceRenderTarget*(^_createRenderTarget)(PGVec2i);
     PGRenderTargetSurface* __surface;
     PGSurfaceRenderTarget* __renderTarget;

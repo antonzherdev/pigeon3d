@@ -16,7 +16,7 @@
 @protocol PGPhysicsBody;
 
 @interface PGCollision : NSObject {
-@protected
+@public
     CNPair* _bodies;
     id<CNIterable> _contacts;
 }
@@ -34,7 +34,7 @@
 
 
 @interface PGDynamicCollision : NSObject {
-@protected
+@public
     CNPair* _bodies;
     id<CNIterable> _contacts;
 }
@@ -53,7 +53,7 @@
 
 
 @interface PGCrossPoint : NSObject {
-@protected
+@public
     PGCollisionBody* _body;
     PGVec3 _point;
 }
@@ -71,7 +71,7 @@
 
 
 @interface PGContact : NSObject {
-@protected
+@public
     PGVec3 _a;
     PGVec3 _b;
     float _distance;
@@ -95,7 +95,7 @@
 
 
 @interface PGIndexFunFilteredIterable : CNImIterable_impl {
-@protected
+@public
     NSUInteger _maxCount;
     id(^_f)(NSUInteger);
 }
@@ -112,7 +112,7 @@
 
 
 @interface PGIndexFunFilteredIterator : CNIterator_impl {
-@protected
+@public
     NSUInteger _maxCount;
     id(^_f)(NSUInteger);
     NSUInteger _i;
@@ -148,7 +148,7 @@
 
 
 @interface PGPhysicsWorld : NSObject {
-@protected
+@public
     CNMHashMap* __bodiesMap;
     NSArray* __bodies;
 }

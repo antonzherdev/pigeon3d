@@ -30,7 +30,7 @@ static CNClassType* _PGButton_type;
 }
 
 - (CNSignal*)tap {
-    return _sprite.tap;
+    return _sprite->_tap;
 }
 
 - (void)draw {

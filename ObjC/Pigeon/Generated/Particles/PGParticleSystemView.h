@@ -21,7 +21,7 @@
 @class PGParticleSystemViewIndexArray;
 
 @interface PGParticleSystemView : NSObject {
-@protected
+@public
     PGParticleSystem* _system;
     PGVertexBufferDesc* _vbDesc;
     PGShader* _shader;

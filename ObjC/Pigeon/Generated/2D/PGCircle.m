@@ -242,25 +242,25 @@ static CNClassType* _PGCircleShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_model setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.model))];
+    [_model setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_model))];
 }
 
 - (void)loadUniformsParam:(PGCircleParam*)param {
-    [_pos applyVec4:pgVec4AddVec2(([[[PGGlobal.matrix value] wc] mulVec4:pgVec4ApplyVec3W(((PGCircleParam*)(param)).position, 1.0)]), ((PGCircleParam*)(param)).relative)];
-    [_p applyMatrix:[[PGGlobal.matrix value] p]];
-    [_radius applyVec2:((PGCircleParam*)(param)).radius];
-    [_color applyVec4:((PGCircleParam*)(param)).color];
-    [_strokeColor applyVec4:((PGCircleParam*)(param)).strokeColor];
+    [_pos applyVec4:pgVec4AddVec2(([[[[PGGlobal matrix] value] wc] mulVec4:pgVec4ApplyVec3W(((PGCircleParam*)(param))->_position, 1.0)]), ((PGCircleParam*)(param))->_relative)];
+    [_p applyMatrix:[[[PGGlobal matrix] value] p]];
+    [_radius applyVec2:((PGCircleParam*)(param))->_radius];
+    [_color applyVec4:((PGCircleParam*)(param))->_color];
+    [_strokeColor applyVec4:((PGCircleParam*)(param))->_strokeColor];
     if(_segment) {
-        PGCircleSegment* sec = ((PGCircleParam*)(param)).segment;
+        PGCircleSegment* sec = ((PGCircleParam*)(param))->_segment;
         if(sec != nil) {
-            [((PGShaderUniformVec4*)(_sectorColor)) applyVec4:((PGCircleSegment*)(sec)).color];
-            if(((PGCircleSegment*)(sec)).start < ((PGCircleSegment*)(sec)).end) {
-                [((PGShaderUniformF4*)(_startTg)) applyF4:[self clampP:((PGCircleSegment*)(sec)).start]];
-                [((PGShaderUniformF4*)(_endTg)) applyF4:[self clampP:((PGCircleSegment*)(sec)).end]];
+            [((PGShaderUniformVec4*)(_sectorColor)) applyVec4:((PGCircleSegment*)(sec))->_color];
+            if(((PGCircleSegment*)(sec))->_start < ((PGCircleSegment*)(sec))->_end) {
+                [((PGShaderUniformF4*)(_startTg)) applyF4:[self clampP:((PGCircleSegment*)(sec))->_start]];
+                [((PGShaderUniformF4*)(_endTg)) applyF4:[self clampP:((PGCircleSegment*)(sec))->_end]];
             } else {
-                [((PGShaderUniformF4*)(_startTg)) applyF4:[self clampP:((PGCircleSegment*)(sec)).end]];
-                [((PGShaderUniformF4*)(_endTg)) applyF4:[self clampP:((PGCircleSegment*)(sec)).start]];
+                [((PGShaderUniformF4*)(_startTg)) applyF4:[self clampP:((PGCircleSegment*)(sec))->_end]];
+                [((PGShaderUniformF4*)(_endTg)) applyF4:[self clampP:((PGCircleSegment*)(sec))->_start]];
             }
         }
     }

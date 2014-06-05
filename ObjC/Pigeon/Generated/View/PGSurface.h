@@ -14,7 +14,7 @@
 @class PGSimpleSurface;
 
 @interface PGSurface : NSObject {
-@protected
+@public
     PGVec2i _size;
 }
 @property (nonatomic, readonly) PGVec2i size;
@@ -31,7 +31,7 @@
 
 
 @interface PGSurfaceRenderTarget : NSObject {
-@protected
+@public
     PGVec2i _size;
 }
 @property (nonatomic, readonly) PGVec2i size;
@@ -46,7 +46,7 @@
 
 
 @interface PGSurfaceRenderTargetTexture : PGSurfaceRenderTarget {
-@protected
+@public
     PGTexture* _texture;
 }
 @property (nonatomic, readonly) PGTexture* texture;
@@ -62,7 +62,7 @@
 
 
 @interface PGSurfaceRenderTargetRenderBuffer : PGSurfaceRenderTarget {
-@protected
+@public
     unsigned int _renderBuffer;
 }
 @property (nonatomic, readonly) unsigned int renderBuffer;
@@ -79,7 +79,7 @@
 
 
 @interface PGRenderTargetSurface : PGSurface {
-@protected
+@public
     PGSurfaceRenderTarget* _renderTarget;
 }
 @property (nonatomic, readonly) PGSurfaceRenderTarget* renderTarget;
@@ -95,7 +95,7 @@
 
 
 @interface PGSimpleSurface : PGRenderTargetSurface {
-@protected
+@public
     BOOL _depth;
     unsigned int _frameBuffer;
     unsigned int _depthRenderBuffer;

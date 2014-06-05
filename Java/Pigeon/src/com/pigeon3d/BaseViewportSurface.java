@@ -2,8 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import com.pigeon3d.geometry.vec2i;
-import com.pigeon3d.geometry.vec2;
-import objd.collection.ImArray;
+import com.pigeon3d.geometry.Vec2Buffer;
 
 public abstract class BaseViewportSurface {
     public abstract RenderTargetSurface createSurface();
@@ -22,8 +21,7 @@ public abstract class BaseViewportSurface {
         return this._surface;
     }
     public SurfaceRenderTarget renderTarget() {
-        final vec2i __tmp_0cb = ((this._renderTarget != null) ? (this._renderTarget.size) : (null));
-        if(this._renderTarget == null || __tmp_0cb == null || !(__tmp_0cb.equals(Global.context.viewSize.value()))) {
+        if(this._renderTarget == null || !(this._renderTarget.size.equals(Global.context.viewSize.value()))) {
             this._renderTarget = this.createRenderTarget.apply(Global.context.viewSize.value());
         }
         if(this._renderTarget == null) {
@@ -43,8 +41,7 @@ public abstract class BaseViewportSurface {
         return ((SurfaceRenderTargetRenderBuffer)(this.renderTarget())).renderBuffer;
     }
     public boolean needRedraw() {
-        final vec2i __tmpb = ((this._surface != null) ? (this._surface.size) : (null));
-        return this._surface == null || __tmpb == null || !(__tmpb.equals(Global.context.viewSize.value()));
+        return this._surface == null || !(this._surface.size.equals(Global.context.viewSize.value()));
     }
     public void bind() {
         this.maybeRecreateSurface();
@@ -92,7 +89,16 @@ public abstract class BaseViewportSurface {
         _lazy_fullScreenMesh = new Lazy(new F0<Mesh>() {
             @Override
             public Mesh apply() {
-                return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(((vec2[0])(ImArray.fromObjects(new vec2(((float)(0)), ((float)(0))), new vec2(((float)(1)), ((float)(0))), new vec2(((float)(0)), ((float)(1))), new vec2(((float)(1)), ((float)(1))))))))))), EmptyIndexSource.triangleStrip);
+                final Vec2Buffer b = new Vec2Buffer(((int)(4)));
+                b.bytes.put(((float)(0)));
+                b.bytes.put(((float)(0)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(0)));
+                b.bytes.put(((float)(0)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(1)));
+                b.bytes.put(((float)(1)));
+                return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Buffer(b))))), EmptyIndexSource.triangleStrip);
             }
         });
         _lazy_fullScreenVao = new Lazy(new F0<VertexArray<ViewportSurfaceShaderParam>>() {

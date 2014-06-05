@@ -77,7 +77,7 @@ typedef enum PGTextureFilterR {
 
 
 @interface PGEmptyTexture : PGTexture {
-@protected
+@public
     PGVec2 _size;
     unsigned int _id;
 }
@@ -95,7 +95,7 @@ typedef enum PGTextureFilterR {
 
 
 @interface PGFileTexture : PGTexture {
-@protected
+@public
     NSString* _name;
     PGTextureFileFormatR _fileFormat;
     PGTextureFormatR _format;
@@ -124,7 +124,7 @@ typedef enum PGTextureFilterR {
 
 
 @interface PGTextureRegion : PGTexture {
-@protected
+@public
     PGTexture* _texture;
     PGRect _uv;
     unsigned int _id;

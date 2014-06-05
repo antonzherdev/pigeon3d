@@ -13,7 +13,7 @@
 @class PGCircleShader;
 
 @interface PGCircleShaderBuilder : PGShaderTextBuilder_impl {
-@protected
+@public
     BOOL _segment;
 }
 @property (nonatomic, readonly) BOOL segment;
@@ -30,7 +30,7 @@
 
 
 @interface PGCircleParam : NSObject {
-@protected
+@public
     PGVec4 _color;
     PGVec4 _strokeColor;
     PGVec3 _position;
@@ -54,7 +54,7 @@
 
 
 @interface PGCircleSegment : NSObject {
-@protected
+@public
     PGVec4 _color;
     float _start;
     float _end;
@@ -72,7 +72,7 @@
 
 
 @interface PGCircleShader : PGShader {
-@protected
+@public
     BOOL _segment;
     PGShaderAttribute* _model;
     PGShaderUniformVec4* _pos;

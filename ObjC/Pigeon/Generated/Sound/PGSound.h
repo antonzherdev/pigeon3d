@@ -29,7 +29,7 @@
 
 
 @interface PGSimpleSound : PGSound {
-@protected
+@public
     NSString* _file;
 }
 @property (nonatomic, readonly) NSString* file;
@@ -50,7 +50,7 @@
 
 
 @interface PGParSound : PGSound {
-@protected
+@public
     NSInteger _limit;
     PGSimpleSound*(^_create)();
     CNMArray* _sounds;

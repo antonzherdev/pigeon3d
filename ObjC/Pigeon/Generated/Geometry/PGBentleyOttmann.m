@@ -30,11 +30,11 @@ static CNClassType* _PGBentleyOttmann_type;
             id<CNSeq> events = [queue poll];
             [sweepLine handleEvents:events];
         }
-        return [[[sweepLine.intersections chain] flatMapF:^CNChain*(CNTuple* p) {
-            return [[[[((id<CNMSet>)(((CNTuple*)(p)).b)) chain] combinations] filterWhen:^BOOL(CNTuple* comb) {
-                return !([((PGBentleyOttmannPointEvent*)(((CNTuple*)(comb)).a)) isVertical]) || !([((PGBentleyOttmannPointEvent*)(((CNTuple*)(comb)).b)) isVertical]);
+        return [[[sweepLine->_intersections chain] flatMapF:^CNChain*(CNTuple* p) {
+            return [[[[((id<CNMSet>)(((CNTuple*)(p))->_b)) chain] combinations] filterWhen:^BOOL(CNTuple* comb) {
+                return !([((PGBentleyOttmannPointEvent*)(((CNTuple*)(comb))->_a)) isVertical]) || !([((PGBentleyOttmannPointEvent*)(((CNTuple*)(comb))->_b)) isVertical]);
             }] mapF:^PGIntersection*(CNTuple* comb) {
-                return [PGIntersection intersectionWithItems:[CNPair pairWithA:((PGBentleyOttmannPointEvent*)(((CNTuple*)(comb)).a)).data b:((PGBentleyOttmannPointEvent*)(((CNTuple*)(comb)).b)).data] point:uwrap(PGVec2, ((CNTuple*)(p)).a)];
+                return [PGIntersection intersectionWithItems:[CNPair pairWithA:((PGBentleyOttmannPointEvent*)(((CNTuple*)(comb))->_a))->_data b:((PGBentleyOttmannPointEvent*)(((CNTuple*)(comb))->_b))->_data] point:uwrap(PGVec2, ((CNTuple*)(p))->_a)];
             }];
         }] toSet];
     }
@@ -90,7 +90,7 @@ static CNClassType* _PGIntersection_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGIntersection class]])) return NO;
     PGIntersection* o = ((PGIntersection*)(to));
-    return [_items isEqual:o.items] && pgVec2IsEqualTo(_point, o.point);
+    return [_items isEqual:o->_items] && pgVec2IsEqualTo(_point, o->_point);
 }
 
 - (NSUInteger)hash {
@@ -196,8 +196,8 @@ static CNClassType* _PGBentleyOttmannPointEvent_type;
 
 - (CGFloat)yForX:(CGFloat)x {
     if([[_segment line] isVertical]) {
-        if(_isStart) return ((CGFloat)(_segment.p0.y));
-        else return ((CGFloat)(_segment.p1.y));
+        if(_isStart) return ((CGFloat)(_segment->_p0.y));
+        else return ((CGFloat)(_segment->_p1.y));
     } else {
         return ((CGFloat)(((float)([((PGSlopeLine*)([_segment line])) yForX:x]))));
     }
@@ -305,11 +305,11 @@ static CNClassType* _PGBentleyOttmannEventQueue_type;
     PGBentleyOttmannEventQueue* ret = [PGBentleyOttmannEventQueue bentleyOttmannEventQueue];
     if(!([segments isEmpty])) {
         for(CNTuple* s in segments) {
-            PGLineSegment* segment = ((CNTuple*)(s)).b;
-            [ret offerPoint:segment.p0 event:[PGBentleyOttmannPointEvent bentleyOttmannPointEventWithIsStart:YES data:((CNTuple*)(s)).a segment:segment point:segment.p0]];
-            [ret offerPoint:segment.p1 event:[PGBentleyOttmannPointEvent bentleyOttmannPointEventWithIsStart:NO data:((CNTuple*)(s)).a segment:segment point:segment.p1]];
+            PGLineSegment* segment = ((CNTuple*)(s))->_b;
+            [ret offerPoint:segment->_p0 event:[PGBentleyOttmannPointEvent bentleyOttmannPointEventWithIsStart:YES data:((CNTuple*)(s))->_a segment:segment point:segment->_p0]];
+            [ret offerPoint:segment->_p1 event:[PGBentleyOttmannPointEvent bentleyOttmannPointEventWithIsStart:NO data:((CNTuple*)(s))->_a segment:segment point:segment->_p1]];
         }
-        sweepLine.queue = ret;
+        sweepLine->_queue = ret;
     }
     return ret;
 }
@@ -321,7 +321,7 @@ static CNClassType* _PGBentleyOttmannEventQueue_type;
 }
 
 - (id<CNSeq>)poll {
-    return ((CNTuple*)(nonnil([_events pollFirst]))).b;
+    return ((CNTuple*)(nonnil([_events pollFirst])))->_b;
 }
 
 - (NSString*)description {
@@ -391,8 +391,8 @@ static CNClassType* _PGSweepLine_type;
         [self sweepToEvent:event];
         PGBentleyOttmannPointEvent* pe = ((PGBentleyOttmannPointEvent*)(event));
         if([pe isVertical]) {
-            float minY = pe.segment.p0.y;
-            float maxY = pe.segment.p1.y;
+            float minY = pe->_segment->_p0.y;
+            float maxY = pe->_segment->_p1.y;
             id<CNIterator> i = [_events iteratorHigherThanItem:pe];
             while([i hasNext]) {
                 PGBentleyOttmannPointEvent* e = [i next];
@@ -445,14 +445,14 @@ static CNClassType* _PGSweepLine_type;
         PGBentleyOttmannPointEvent* aa = ((PGBentleyOttmannPointEvent*)(a));
         PGBentleyOttmannPointEvent* bb = ((PGBentleyOttmannPointEvent*)(b));
         {
-            id _ = [aa.segment intersectionWithSegment:bb.segment];
+            id _ = [aa->_segment intersectionWithSegment:bb->_segment];
             if(_ != nil) [self registerIntersectionA:aa b:bb point:uwrap(PGVec2, _)];
         }
     }
 }
 
 - (void)registerIntersectionA:(PGBentleyOttmannPointEvent*)a b:(PGBentleyOttmannPointEvent*)b point:(PGVec2)point {
-    if(!([a.segment endingsContainPoint:point]) || !([b.segment endingsContainPoint:point])) {
+    if(!([a->_segment endingsContainPoint:point]) || !([b->_segment endingsContainPoint:point])) {
         id<CNMSet> existing = [_intersections applyKey:wrap(PGVec2, point) orUpdateWith:^CNMHashSet*() {
             return [CNMHashSet hashSet];
         }];
@@ -479,7 +479,7 @@ static CNClassType* _PGSweepLine_type;
             } else {
                 c = floatCompareTo([a slope], [b slope]);
                 if(ay > _currentEventPoint.y) c = -c;
-                if(c == 0) c = float4CompareTo(a.point.x, b.point.x);
+                if(c == 0) c = float4CompareTo(a->_point.x, b->_point.x);
             }
         }
     }

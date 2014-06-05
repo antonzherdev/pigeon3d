@@ -30,7 +30,7 @@
 
 
 @interface PGBackgroundSoundPlayer : PGSoundPlayer_impl {
-@protected
+@public
     PGSimpleSound* _sound;
 }
 @property (nonatomic, readonly) PGSimpleSound* sound;
@@ -48,7 +48,7 @@
 
 
 @interface PGSoundPlayersCollection : PGSoundPlayer_impl {
-@protected
+@public
     NSArray* _players;
 }
 @property (nonatomic, readonly) NSArray* players;
@@ -67,7 +67,7 @@
 
 
 @interface PGSporadicSoundPlayer : PGSoundPlayer_impl {
-@protected
+@public
     PGSound* _sound;
     CGFloat _secondsBetween;
     CGFloat __timeToNextPlaying;
@@ -90,7 +90,7 @@
 
 
 @interface PGSignalSoundPlayer : PGSoundPlayer_impl {
-@protected
+@public
     PGSound* _sound;
     id<CNObservableBase> _signal;
     BOOL(^_condition)(id);

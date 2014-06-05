@@ -26,7 +26,7 @@ static CNClassType* _PGGlobal_type;
         _PGGlobal_type = [CNClassType classTypeWithCls:[PGGlobal class]];
         _PGGlobal_context = [PGContext context];
         _PGGlobal_settings = [PGSettings settings];
-        _PGGlobal_matrix = _PGGlobal_context.matrixStack;
+        _PGGlobal_matrix = _PGGlobal_context->_matrixStack;
     }
 }
 
@@ -154,7 +154,7 @@ static CNClassType* _PGContext_type;
         _ttf = YES;
         _textureCache = [CNMHashMap hashMap];
         _fontCache = [CNMHashMap hashMap];
-        _environment = PGEnvironment.aDefault;
+        _environment = [PGEnvironment aDefault];
         _matrixStack = [PGMatrixStack matrixStack];
         _renderTarget = [PGSceneRenderTarget sceneRenderTarget];
         _considerShadows = YES;
@@ -280,7 +280,7 @@ static CNClassType* _PGContext_type;
 }
 
 - (void)bindShaderProgramProgram:(PGShaderProgram*)program {
-    unsigned int id = program.handle;
+    unsigned int id = program->_handle;
     if(id != __lastShaderProgram) {
         __lastShaderProgram = id;
         glUseProgram(id);
@@ -681,7 +681,7 @@ static CNClassType* _PGShadowRenderTarget_type;
     [super initialize];
     if(self == [PGShadowRenderTarget class]) {
         _PGShadowRenderTarget_type = [CNClassType classTypeWithCls:[PGShadowRenderTarget class]];
-        _PGShadowRenderTarget_default = [PGShadowRenderTarget shadowRenderTargetWithShadowLight:PGLight.aDefault];
+        _PGShadowRenderTarget_default = [PGShadowRenderTarget shadowRenderTargetWithShadowLight:[PGLight aDefault]];
     }
 }
 
@@ -729,12 +729,12 @@ static CNClassType* _PGEnvironment_type;
     if(self) {
         _ambientColor = ambientColor;
         _lights = lights;
-        _directLights = [[[lights chain] filterCastTo:PGDirectLight.type] toArray];
-        _directLightsWithShadows = [[[[lights chain] filterCastTo:PGDirectLight.type] filterWhen:^BOOL(PGDirectLight* _) {
-            return ((PGDirectLight*)(_)).hasShadows;
+        _directLights = [[[lights chain] filterCastTo:[PGDirectLight type]] toArray];
+        _directLightsWithShadows = [[[[lights chain] filterCastTo:[PGDirectLight type]] filterWhen:^BOOL(PGDirectLight* _) {
+            return ((PGDirectLight*)(_))->_hasShadows;
         }] toArray];
-        _directLightsWithoutShadows = [[[[lights chain] filterCastTo:PGDirectLight.type] filterWhen:^BOOL(PGDirectLight* _) {
-            return !(((PGDirectLight*)(_)).hasShadows);
+        _directLightsWithoutShadows = [[[[lights chain] filterCastTo:[PGDirectLight type]] filterWhen:^BOOL(PGDirectLight* _) {
+            return !(((PGDirectLight*)(_))->_hasShadows);
         }] toArray];
     }
     

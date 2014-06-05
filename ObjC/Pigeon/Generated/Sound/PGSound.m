@@ -179,7 +179,7 @@ static CNClassType* _PGParSound_type;
 }
 
 - (void)play {
-    [CNDispatchQueue.aDefault asyncF:^void() {
+    [[CNDispatchQueue aDefault] asyncF:^void() {
         @synchronized(self) {
             [((PGSimpleSound*)([self sound])) play];
         }
@@ -187,7 +187,7 @@ static CNClassType* _PGParSound_type;
 }
 
 - (void)playLoops:(NSUInteger)loops {
-    [CNDispatchQueue.aDefault asyncF:^void() {
+    [[CNDispatchQueue aDefault] asyncF:^void() {
         @synchronized(self) {
             [((PGSimpleSound*)([self sound])) playLoops:loops];
         }
@@ -195,7 +195,7 @@ static CNClassType* _PGParSound_type;
 }
 
 - (void)playAlways {
-    [CNDispatchQueue.aDefault asyncF:^void() {
+    [[CNDispatchQueue aDefault] asyncF:^void() {
         @synchronized(self) {
             [((PGSimpleSound*)([self sound])) playAlways];
         }
@@ -203,7 +203,7 @@ static CNClassType* _PGParSound_type;
 }
 
 - (void)pause {
-    [CNDispatchQueue.aDefault asyncF:^void() {
+    [[CNDispatchQueue aDefault] asyncF:^void() {
         @synchronized(self) {
             for(PGSimpleSound* sound in _sounds) {
                 if([((PGSimpleSound*)(sound)) isPlaying]) {
@@ -216,7 +216,7 @@ static CNClassType* _PGParSound_type;
 }
 
 - (void)resume {
-    [CNDispatchQueue.aDefault asyncF:^void() {
+    [[CNDispatchQueue aDefault] asyncF:^void() {
         @synchronized(self) {
             {
                 id<CNIterator> __il__0rp0_0i = [_paused iterator];
@@ -247,7 +247,7 @@ static CNClassType* _PGParSound_type;
 }
 
 - (void)playWithVolume:(float)volume {
-    [CNDispatchQueue.aDefault asyncF:^void() {
+    [[CNDispatchQueue aDefault] asyncF:^void() {
         @synchronized(self) {
             PGSimpleSound* s = [self sound];
             if(s != nil) {

@@ -14,7 +14,7 @@
 @class PGTextShadow;
 
 @interface PGText : NSObject {
-@protected
+@public
     CNReact* _visible;
     CNReact* _font;
     CNReact* _text;
@@ -55,7 +55,7 @@
 
 
 @interface PGTextShadow : NSObject {
-@protected
+@public
     PGVec4 _color;
     PGVec2 _shift;
 }

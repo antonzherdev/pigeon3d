@@ -4,7 +4,7 @@
 @class PGSoundDirector;
 
 @interface PGSoundDirector : NSObject {
-@protected
+@public
     BOOL __enabled;
     CNSignal* _enabledChanged;
     CGFloat __timeSpeed;

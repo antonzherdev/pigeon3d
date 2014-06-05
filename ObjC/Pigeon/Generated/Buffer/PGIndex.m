@@ -55,9 +55,9 @@ static CNClassType* _PGIBO_type;
 }
 
 + (PGImmutableIndexBuffer*)applyData:(CNPArray*)data {
-    PGImmutableIndexBuffer* ib = [PGImmutableIndexBuffer immutableIndexBufferWithHandle:egGenBuffer() mode:GL_TRIANGLES length:data.length count:data.count];
+    PGImmutableIndexBuffer* ib = [PGImmutableIndexBuffer immutableIndexBufferWithHandle:egGenBuffer() mode:GL_TRIANGLES length:data->_length count:data->_count];
     [ib bind];
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ((int)(data.length)), data.bytes, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ((int)(data->_length)), data->_bytes, GL_STATIC_DRAW);
     return ib;
 }
 
@@ -96,14 +96,14 @@ static CNClassType* _PGIBO_type;
 }
 
 - (void)draw {
-    [PGGlobal.context draw];
+    [[PGGlobal context] draw];
     NSUInteger n = [self count];
     if(n > 0) glDrawElements([self mode], ((int)(n)), GL_UNSIGNED_INT, NULL);
     egCheckError();
 }
 
 - (void)drawWithStart:(NSUInteger)start count:(NSUInteger)count {
-    [PGGlobal.context draw];
+    [[PGGlobal context] draw];
     if(count > 0) glDrawElements([self mode], ((int)(count)), GL_UNSIGNED_INT, ((unsigned int*)(4 * start)));
     egCheckError();
 }
@@ -153,7 +153,7 @@ static CNClassType* _PGImmutableIndexBuffer_type;
 }
 
 - (void)bind {
-    [PGGlobal.context bindIndexBufferHandle:self.handle];
+    [[PGGlobal context] bindIndexBufferHandle:self.handle];
 }
 
 - (NSString*)description {
@@ -161,14 +161,14 @@ static CNClassType* _PGImmutableIndexBuffer_type;
 }
 
 - (void)draw {
-    [PGGlobal.context draw];
+    [[PGGlobal context] draw];
     NSUInteger n = [self count];
     if(n > 0) glDrawElements([self mode], ((int)(n)), GL_UNSIGNED_INT, NULL);
     egCheckError();
 }
 
 - (void)drawWithStart:(NSUInteger)start count:(NSUInteger)count {
-    [PGGlobal.context draw];
+    [[PGGlobal context] draw];
     if(count > 0) glDrawElements([self mode], ((int)(count)), GL_UNSIGNED_INT, ((unsigned int*)(4 * start)));
     egCheckError();
 }
@@ -220,7 +220,7 @@ static CNClassType* _PGMutableIndexBuffer_type;
 }
 
 - (void)bind {
-    [PGGlobal.context bindIndexBufferHandle:self.handle];
+    [[PGGlobal context] bindIndexBufferHandle:self.handle];
 }
 
 - (BOOL)isEmpty {
@@ -232,14 +232,14 @@ static CNClassType* _PGMutableIndexBuffer_type;
 }
 
 - (void)draw {
-    [PGGlobal.context draw];
+    [[PGGlobal context] draw];
     NSUInteger n = [self count];
     if(n > 0) glDrawElements([self mode], ((int)(n)), GL_UNSIGNED_INT, NULL);
     egCheckError();
 }
 
 - (void)drawWithStart:(NSUInteger)start count:(NSUInteger)count {
-    [PGGlobal.context draw];
+    [[PGGlobal context] draw];
     if(count > 0) glDrawElements([self mode], ((int)(count)), GL_UNSIGNED_INT, ((unsigned int*)(4 * start)));
     egCheckError();
 }
@@ -333,13 +333,13 @@ static CNClassType* _PGEmptyIndexSource_type;
 }
 
 - (void)draw {
-    [PGGlobal.context draw];
-    glDrawArrays(_mode, 0, ((int)([PGGlobal.context vertexBufferCount])));
+    [[PGGlobal context] draw];
+    glDrawArrays(_mode, 0, ((int)([[PGGlobal context] vertexBufferCount])));
     egCheckError();
 }
 
 - (void)drawWithStart:(NSUInteger)start count:(NSUInteger)count {
-    [PGGlobal.context draw];
+    [[PGGlobal context] draw];
     if(count > 0) glDrawArrays(_mode, ((int)(start)), ((int)(count)));
     egCheckError();
 }
@@ -403,15 +403,15 @@ static CNClassType* _PGArrayIndexSource_type;
 }
 
 - (void)draw {
-    [PGGlobal.context bindIndexBufferHandle:0];
-    NSUInteger n = _array.count;
-    if(n > 0) glDrawElements(_mode, ((int)(n)), GL_UNSIGNED_INT, _array.bytes);
+    [[PGGlobal context] bindIndexBufferHandle:0];
+    NSUInteger n = _array->_count;
+    if(n > 0) glDrawElements(_mode, ((int)(n)), GL_UNSIGNED_INT, _array->_bytes);
     egCheckError();
 }
 
 - (void)drawWithStart:(NSUInteger)start count:(NSUInteger)count {
-    [PGGlobal.context bindIndexBufferHandle:0];
-    if(count > 0) glDrawElements(_mode, ((int)(count)), GL_UNSIGNED_INT, _array.bytes + 4 * start);
+    [[PGGlobal context] bindIndexBufferHandle:0];
+    if(count > 0) glDrawElements(_mode, ((int)(count)), GL_UNSIGNED_INT, _array->_bytes + 4 * start);
     egCheckError();
 }
 

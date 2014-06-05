@@ -14,7 +14,7 @@
 @class PGCameraIsoMove;
 
 @interface PGCameraIso : PGCamera_impl {
-@protected
+@public
     PGVec2 _tilesOnScreen;
     PGCameraReserve _reserve;
     CGFloat _viewportRatio;
@@ -42,7 +42,7 @@
 
 
 @interface PGCameraIsoMove : PGInputProcessor_impl {
-@protected
+@public
     PGCameraIso* _base;
     CGFloat _minScale;
     CGFloat _maxScale;

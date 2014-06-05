@@ -118,7 +118,7 @@ static CNClassType* _PGDirector_type;
 - (void)reshapeWithSize:(PGVec2)size {
     if(!(pgVec2IsEqualTo(__lastViewSize, size))) {
         autoreleasePoolStart();
-        [PGGlobal.context.viewSize setValue:wrap(PGVec2i, pgVec2iApplyVec2(size))];
+        [[PGGlobal context]->_viewSize setValue:wrap(PGVec2i, pgVec2iApplyVec2(size))];
         __lastViewSize = size;
         [((PGScene*)(__scene)) reshapeWithViewSize:size];
         autoreleasePoolEnd();
@@ -152,8 +152,8 @@ static CNClassType* _PGDirector_type;
         if(sc != nil) {
             egPushGroupMarker(@"Prepare");
             _PGDirector__current = self;
-            [PGGlobal.context clear];
-            [PGGlobal.context.depthTest enable];
+            [[PGGlobal context] clear];
+            [[PGGlobal context]->_depthTest enable];
             [((PGScene*)(sc)) prepareWithViewSize:__lastViewSize];
             egCheckError();
             egPopGroupMarker();
@@ -167,16 +167,16 @@ static CNClassType* _PGDirector_type;
         PGScene* sc = __scene;
         if(sc != nil) {
             egPushGroupMarker(@"Draw");
-            [PGGlobal.context clear];
-            [PGGlobal.context.depthTest enable];
-            [PGGlobal.context clearColorColor:((PGScene*)(sc)).backgroundColor];
-            [PGGlobal.context setViewport:pgRectIApplyRect((PGRectMake((PGVec2Make(0.0, 0.0)), __lastViewSize)))];
+            [[PGGlobal context] clear];
+            [[PGGlobal context]->_depthTest enable];
+            [[PGGlobal context] clearColorColor:((PGScene*)(sc))->_backgroundColor];
+            [[PGGlobal context] setViewport:pgRectIApplyRect((PGRectMake((PGVec2Make(0.0, 0.0)), __lastViewSize)))];
             glClear(GL_COLOR_BUFFER_BIT + GL_DEPTH_BUFFER_BIT);
             [((PGScene*)(sc)) drawWithViewSize:__lastViewSize];
             {
                 PGStat* stat = __stat;
                 if(stat != nil) {
-                    [PGGlobal.context.depthTest disable];
+                    [[PGGlobal context]->_depthTest disable];
                     [((PGStat*)(stat)) draw];
                 }
             }
@@ -236,7 +236,7 @@ static CNClassType* _PGDirector_type;
 - (void)setTimeSpeed:(CGFloat)timeSpeed {
     if(!(eqf(__timeSpeed, timeSpeed))) {
         __timeSpeed = timeSpeed;
-        [PGSoundDirector.instance setTimeSpeed:__timeSpeed];
+        [[PGSoundDirector instance] setTimeSpeed:__timeSpeed];
     }
 }
 

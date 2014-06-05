@@ -28,7 +28,7 @@ static CNClassType* _PGScheduleEvent_type;
 }
 
 - (NSInteger)compareTo:(PGScheduleEvent*)to {
-    return floatCompareTo(_time, ((PGScheduleEvent*)(to)).time);
+    return floatCompareTo(_time, ((PGScheduleEvent*)(to))->_time);
 }
 
 - (NSString*)description {
@@ -116,7 +116,7 @@ static CNClassType* _PGMSchedule_type;
 
 - (void)scheduleAfter:(CGFloat)after event:(void(^)())event {
     __events = [__events insertItem:[PGScheduleEvent scheduleEventWithTime:__current + after f:event]];
-    __next = ((PGScheduleEvent*)(nonnil([__events head]))).time;
+    __next = ((PGScheduleEvent*)(nonnil([__events head])))->_time;
 }
 
 - (void)updateWithDelta:(CGFloat)delta {
@@ -124,7 +124,7 @@ static CNClassType* _PGMSchedule_type;
     while(__next >= 0 && __current > __next) {
         PGScheduleEvent* e = [__events head];
         __events = [__events tail];
-        ((PGScheduleEvent*)(e)).f();
+        ((PGScheduleEvent*)(e))->_f();
         [self updateNext];
     }
 }
@@ -142,14 +142,14 @@ static CNClassType* _PGMSchedule_type;
 }
 
 - (void)assignImSchedule:(PGImSchedule*)imSchedule {
-    __events = imSchedule.events;
-    __current = ((CGFloat)(imSchedule.time));
+    __events = imSchedule->_events;
+    __current = ((CGFloat)(imSchedule->_time));
     [self updateNext];
 }
 
 - (void)updateNext {
     PGScheduleEvent* __tmp_0 = [__events head];
-    if(__tmp_0 != nil) __next = ((PGScheduleEvent*)([__events head])).time;
+    if(__tmp_0 != nil) __next = ((PGScheduleEvent*)([__events head]))->_time;
     else __next = -1.0;
 }
 

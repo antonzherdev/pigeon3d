@@ -35,7 +35,7 @@ static CNClassType* _PGCollision_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGCollision class]])) return NO;
     PGCollision* o = ((PGCollision*)(to));
-    return [_bodies isEqual:o.bodies] && [_contacts isEqual:o.contacts];
+    return [_bodies isEqual:o->_bodies] && [_contacts isEqual:o->_contacts];
 }
 
 - (NSUInteger)hash {
@@ -85,7 +85,7 @@ static CNClassType* _PGDynamicCollision_type;
 
 - (float)impulse {
     id __tmp = [[[_contacts chain] mapF:^id(PGContact* _) {
-        return numf4(((PGContact*)(_)).impulse);
+        return numf4(((PGContact*)(_))->_impulse);
     }] max];
     if(__tmp != nil) return unumf4(__tmp);
     else return 0.0;
@@ -99,7 +99,7 @@ static CNClassType* _PGDynamicCollision_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGDynamicCollision class]])) return NO;
     PGDynamicCollision* o = ((PGDynamicCollision*)(to));
-    return [_bodies isEqual:o.bodies] && [_contacts isEqual:o.contacts];
+    return [_bodies isEqual:o->_bodies] && [_contacts isEqual:o->_contacts];
 }
 
 - (NSUInteger)hash {
@@ -155,7 +155,7 @@ static CNClassType* _PGCrossPoint_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGCrossPoint class]])) return NO;
     PGCrossPoint* o = ((PGCrossPoint*)(to));
-    return [_body isEqual:o.body] && pgVec3IsEqualTo(_point, o.point);
+    return [_body isEqual:o->_body] && pgVec3IsEqualTo(_point, o->_point);
 }
 
 - (NSUInteger)hash {
@@ -217,7 +217,7 @@ static CNClassType* _PGContact_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGContact class]])) return NO;
     PGContact* o = ((PGContact*)(to));
-    return pgVec3IsEqualTo(_a, o.a) && pgVec3IsEqualTo(_b, o.b) && eqf4(_distance, o.distance) && eqf4(_impulse, o.impulse) && _lifeTime == o.lifeTime;
+    return pgVec3IsEqualTo(_a, o->_a) && pgVec3IsEqualTo(_b, o->_b) && eqf4(_distance, o->_distance) && eqf4(_impulse, o->_impulse) && _lifeTime == o->_lifeTime;
 }
 
 - (NSUInteger)hash {

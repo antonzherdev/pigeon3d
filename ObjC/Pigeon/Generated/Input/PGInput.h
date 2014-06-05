@@ -39,7 +39,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGRecognizer : NSObject {
-@protected
+@public
     PGRecognizerType* _tp;
 }
 @property (nonatomic, readonly) PGRecognizerType* tp;
@@ -57,7 +57,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGLongRecognizer : PGRecognizer {
-@protected
+@public
     BOOL(^_began)(id<PGEvent>);
     void(^_changed)(id<PGEvent>);
     void(^_ended)(id<PGEvent>);
@@ -77,7 +77,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGShortRecognizer : PGRecognizer {
-@protected
+@public
     BOOL(^_on)(id<PGEvent>);
 }
 @property (nonatomic, readonly) BOOL(^on)(id<PGEvent>);
@@ -104,7 +104,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGRecognizers : NSObject {
-@protected
+@public
     NSArray* _items;
 }
 @property (nonatomic, readonly) NSArray* items;
@@ -124,7 +124,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGRecognizersState : NSObject {
-@protected
+@public
     PGRecognizers* _recognizers;
     CNMHashMap* _longMap;
 }
@@ -154,7 +154,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGPan : PGRecognizerType {
-@protected
+@public
     NSUInteger _fingers;
 }
 @property (nonatomic, readonly) NSUInteger fingers;
@@ -173,7 +173,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGTap : PGRecognizerType {
-@protected
+@public
     NSUInteger _fingers;
     NSUInteger _taps;
 }
@@ -205,7 +205,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGPinchParameter : NSObject {
-@protected
+@public
     CGFloat _scale;
     CGFloat _velocity;
 }
@@ -246,7 +246,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGViewEvent : PGEvent_impl {
-@protected
+@public
     PGRecognizerType* _recognizerType;
     PGEventPhaseR _phase;
     PGVec2 _locationInView;
@@ -268,7 +268,7 @@ typedef enum PGEventPhaseR {
 
 
 @interface PGCameraEvent : PGEvent_impl {
-@protected
+@public
     id<PGEvent> _event;
     PGMatrixModel* _matrixModel;
     PGRect _viewport;

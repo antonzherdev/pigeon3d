@@ -7,7 +7,7 @@
 @class PGBMFont;
 
 @interface PGBMFont : PGFont {
-@protected
+@public
     NSString* _name;
     PGFileTexture* _texture;
     id<CNMap> _symbols;

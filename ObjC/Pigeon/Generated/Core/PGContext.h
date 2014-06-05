@@ -73,7 +73,7 @@ typedef enum PGShadowTypeR {
 
 
 @interface PGContext : NSObject {
-@protected
+@public
     CNVar* _viewSize;
     CNReact* _scaledViewSize;
     BOOL _ttf;
@@ -155,7 +155,7 @@ typedef enum PGShadowTypeR {
 
 
 @interface PGEnablingState : NSObject {
-@protected
+@public
     unsigned int _tp;
     BOOL __last;
     BOOL __coming;
@@ -175,7 +175,7 @@ typedef enum PGShadowTypeR {
 
 
 @interface PGCullFace : NSObject {
-@protected
+@public
     unsigned int __lastActiveValue;
     unsigned int __value;
     unsigned int __comingValue;
@@ -212,7 +212,7 @@ typedef enum PGShadowTypeR {
 
 
 @interface PGShadowRenderTarget : PGRenderTarget {
-@protected
+@public
     PGLight* _shadowLight;
 }
 @property (nonatomic, readonly) PGLight* shadowLight;
@@ -228,7 +228,7 @@ typedef enum PGShadowTypeR {
 
 
 @interface PGEnvironment : NSObject {
-@protected
+@public
     PGVec4 _ambientColor;
     NSArray* _lights;
     NSArray* _directLights;
@@ -253,7 +253,7 @@ typedef enum PGShadowTypeR {
 
 
 @interface PGLight : NSObject {
-@protected
+@public
     PGVec4 _color;
     BOOL _hasShadows;
     CNLazy* __lazy_shadowMap;
@@ -273,7 +273,7 @@ typedef enum PGShadowTypeR {
 
 
 @interface PGDirectLight : PGLight {
-@protected
+@public
     PGVec3 _direction;
     PGMat4* _shadowsProjectionMatrix;
 }
@@ -292,7 +292,7 @@ typedef enum PGShadowTypeR {
 
 
 @interface PGSettings : NSObject {
-@protected
+@public
     CNSignal* _shadowTypeChanged;
     PGShadowTypeR __shadowType;
 }

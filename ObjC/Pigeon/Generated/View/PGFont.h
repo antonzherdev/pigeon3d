@@ -51,7 +51,7 @@ CNPType* pgTextAlignmentType();
 
 
 @interface PGFont : NSObject {
-@protected
+@public
     CNSignal* _symbolsChanged;
 }
 @property (nonatomic, readonly) CNSignal* symbolsChanged;
@@ -79,7 +79,7 @@ CNPType* pgTextAlignmentType();
 
 
 @interface PGFontSymbolDesc : NSObject {
-@protected
+@public
     float _width;
     PGVec2 _offset;
     PGVec2 _size;

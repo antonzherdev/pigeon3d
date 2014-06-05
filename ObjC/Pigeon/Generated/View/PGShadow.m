@@ -32,10 +32,10 @@ static CNClassType* _PGShadowMap_type;
         _texture = ({
             glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
             PGEmptyTexture* t = [PGEmptyTexture emptyTextureWithSize:pgVec2ApplyVec2i(size)];
-            [PGGlobal.context bindTextureTexture:t];
+            [[PGGlobal context] bindTextureTexture:t];
             egInitShadowTexture(size);
             egCheckError();
-            egFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, t.id, 0);
+            egFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, t->_id, 0);
             int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
             if(status != GL_FRAMEBUFFER_COMPLETE) @throw [NSString stringWithFormat:@"Error in shadow map frame buffer: %d", status];
             t;
@@ -76,7 +76,7 @@ static CNClassType* _PGShadowMap_type;
 
 - (void)bind {
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    [PGGlobal.context setViewport:pgRectIApplyXYWidthHeight(0.0, 0.0, ((float)(self.size.x)), ((float)(self.size.y)))];
+    [[PGGlobal context] setViewport:pgRectIApplyXYWidthHeight(0.0, 0.0, ((float)(self.size.x)), ((float)(self.size.y)))];
 }
 
 - (void)unbind {
@@ -84,7 +84,7 @@ static CNClassType* _PGShadowMap_type;
 }
 
 - (void)draw {
-    PGCullFace* __tmp__il__0self = PGGlobal.context.cullFace;
+    PGCullFace* __tmp__il__0self = [PGGlobal context]->_cullFace;
     {
         unsigned int __il__0oldValue = [__tmp__il__0self disable];
         [[self vao] drawParam:[PGColorSource applyTexture:_texture]];
@@ -183,12 +183,12 @@ static CNClassType* _PGShadowSurfaceShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.model))];
+    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_model))];
 }
 
 - (void)loadUniformsParam:(PGColorSource*)param {
-    PGTexture* _ = ((PGColorSource*)(param)).texture;
-    if(_ != nil) [PGGlobal.context bindTextureTexture:_];
+    PGTexture* _ = ((PGColorSource*)(param))->_texture;
+    if(_ != nil) [[PGGlobal context] bindTextureTexture:_];
 }
 
 - (NSString*)description {
@@ -232,12 +232,12 @@ static CNClassType* _PGShadowShaderSystem_type;
 }
 
 - (PGShadowShader*)shaderForParam:(PGColorSource*)param renderTarget:(PGRenderTarget*)renderTarget {
-    if([PGShadowShaderSystem isColorShaderForParam:param]) return PGShadowShader.instanceForColor;
-    else return PGShadowShader.instanceForTexture;
+    if([PGShadowShaderSystem isColorShaderForParam:param]) return [PGShadowShader instanceForColor];
+    else return [PGShadowShader instanceForTexture];
 }
 
 + (BOOL)isColorShaderForParam:(PGColorSource*)param {
-    return param.texture == nil || param.alphaTestLevel < 0;
+    return param->_texture == nil || param->_alphaTestLevel < 0;
 }
 
 - (NSString*)description {
@@ -371,17 +371,17 @@ static CNClassType* _PGShadowShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.position))];
-    if(_texture) [((PGShaderAttribute*)(_uvSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.uv))];
+    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_position))];
+    if(_texture) [((PGShaderAttribute*)(_uvSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_uv))];
 }
 
 - (void)loadUniformsParam:(PGColorSource*)param {
-    [_mvpUniform applyMatrix:[[PGGlobal.matrix value] mwcp]];
+    [_mvpUniform applyMatrix:[[[PGGlobal matrix] value] mwcp]];
     if(_texture) {
-        [((PGShaderUniformF4*)(_alphaTestLevelUniform)) applyF4:((PGColorSource*)(param)).alphaTestLevel];
+        [((PGShaderUniformF4*)(_alphaTestLevelUniform)) applyF4:((PGColorSource*)(param))->_alphaTestLevel];
         {
-            PGTexture* _ = ((PGColorSource*)(param)).texture;
-            if(_ != nil) [PGGlobal.context bindTextureTexture:_];
+            PGTexture* _ = ((PGColorSource*)(param))->_texture;
+            if(_ != nil) [[PGGlobal context] bindTextureTexture:_];
         }
     }
 }
@@ -475,7 +475,7 @@ static CNClassType* _PGShadowDrawShaderSystem_type;
     if(self == [PGShadowDrawShaderSystem class]) {
         _PGShadowDrawShaderSystem_type = [CNClassType classTypeWithCls:[PGShadowDrawShaderSystem class]];
         _PGShadowDrawShaderSystem_instance = [PGShadowDrawShaderSystem shadowDrawShaderSystem];
-        _PGShadowDrawShaderSystem_settingsChangeObs = [PGGlobal.settings.shadowTypeChanged observeF:^void(PGShadowType* _) {
+        _PGShadowDrawShaderSystem_settingsChangeObs = [[PGGlobal settings]->_shadowTypeChanged observeF:^void(PGShadowType* _) {
             [_PGShadowDrawShaderSystem_shaders clear];
         }];
         _PGShadowDrawShaderSystem_shaders = [CNMHashMap hashMap];
@@ -483,11 +483,11 @@ static CNClassType* _PGShadowDrawShaderSystem_type;
 }
 
 - (PGShadowDrawShader*)shaderForParam:(PGShadowDrawParam*)param renderTarget:(PGRenderTarget*)renderTarget {
-    NSArray* lights = PGGlobal.context.environment.lights;
+    NSArray* lights = [PGGlobal context]->_environment->_lights;
     NSUInteger directLightsCount = [[[lights chain] filterWhen:^BOOL(PGLight* _) {
-        return [((PGLight*)(_)) isKindOfClass:[PGDirectLight class]] && ((PGLight*)(_)).hasShadows;
+        return [((PGLight*)(_)) isKindOfClass:[PGDirectLight class]] && ((PGLight*)(_))->_hasShadows;
     }] count];
-    PGShadowDrawShaderKey* key = [PGShadowDrawShaderKey shadowDrawShaderKeyWithDirectLightCount:directLightsCount viewportSurface:((PGShadowDrawParam*)(param)).viewportSurface != nil];
+    PGShadowDrawShaderKey* key = [PGShadowDrawShaderKey shadowDrawShaderKeyWithDirectLightCount:directLightsCount viewportSurface:((PGShadowDrawParam*)(param))->_viewportSurface != nil];
     return [_PGShadowDrawShaderSystem_shaders applyKey:key orUpdateWith:^PGShadowDrawShader*() {
         return [key shader];
     }];
@@ -574,21 +574,21 @@ static CNClassType* _PGShadowDrawShaderKey_type;
 }
 
 - (NSString*)lightsVertexUniform {
-    if([[PGShadowType value:[PGGlobal.settings shadowType]] isOff]) return @"";
+    if([[PGShadowType value:[[PGGlobal settings] shadowType]] isOff]) return @"";
     else return [[[uintRange(_directLightCount) chain] mapF:^NSString*(id i) {
         return [NSString stringWithFormat:@"uniform mat4 dirLightDepthMwcp%@;", i];
     }] toStringDelimiter:@"\n"];
 }
 
 - (NSString*)lightsIn {
-    if([[PGShadowType value:[PGGlobal.settings shadowType]] isOff]) return @"";
+    if([[PGShadowType value:[[PGGlobal settings] shadowType]] isOff]) return @"";
     else return [[[uintRange(_directLightCount) chain] mapF:^NSString*(id i) {
         return [NSString stringWithFormat:@"%@ mediump vec3 dirLightShadowCoord%@;", [self in], i];
     }] toStringDelimiter:@"\n"];
 }
 
 - (NSString*)lightsOut {
-    if([[PGShadowType value:[PGGlobal.settings shadowType]] isOff]) return @"";
+    if([[PGShadowType value:[[PGGlobal settings] shadowType]] isOff]) return @"";
     else return [[[uintRange(_directLightCount) chain] mapF:^NSString*(id i) {
         return [NSString stringWithFormat:@"%@ mediump vec3 dirLightShadowCoord%@;", [self out], i];
     }] toStringDelimiter:@"\n"];
@@ -596,14 +596,14 @@ static CNClassType* _PGShadowDrawShaderKey_type;
 
 - (NSString*)lightsCalculateVaryings {
     return [[[uintRange(_directLightCount) chain] mapF:^NSString*(id i) {
-        if([[PGShadowType value:[PGGlobal.settings shadowType]] isOff]) return @"";
+        if([[PGShadowType value:[[PGGlobal settings] shadowType]] isOff]) return @"";
         else return [NSString stringWithFormat:@"dirLightShadowCoord%@ = (dirLightDepthMwcp%@ * vec4(position, 1)).xyz;\n"
             "dirLightShadowCoord%@.z -= 0.005;", i, i, i];
     }] toStringDelimiter:@"\n"];
 }
 
 - (NSString*)lightsFragmentUniform {
-    if([[PGShadowType value:[PGGlobal.settings shadowType]] isOff]) return @"";
+    if([[PGShadowType value:[[PGGlobal settings] shadowType]] isOff]) return @"";
     else return [[[uintRange(_directLightCount) chain] mapF:^NSString*(id i) {
         return [NSString stringWithFormat:@"uniform lowp float dirLightPercent%@;\n"
             "uniform mediump %@ dirLightShadow%@;", i, [self sampler2DShadow], i];
@@ -624,7 +624,7 @@ static CNClassType* _PGShadowDrawShaderKey_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGShadowDrawShaderKey class]])) return NO;
     PGShadowDrawShaderKey* o = ((PGShadowDrawShaderKey*)(to));
-    return _directLightCount == o.directLightCount && _viewportSurface == o.viewportSurface;
+    return _directLightCount == o->_directLightCount && _viewportSurface == o->_viewportSurface;
 }
 
 - (NSUInteger)hash {
@@ -667,13 +667,13 @@ static CNClassType* _PGShadowDrawShader_type;
         _key = key;
         _positionSlot = [self attributeForName:@"position"];
         _mwcpUniform = [self uniformMat4Name:@"mwcp"];
-        _directLightPercents = [[[uintRange(key.directLightCount) chain] mapF:^PGShaderUniformF4*(id i) {
+        _directLightPercents = [[[uintRange(key->_directLightCount) chain] mapF:^PGShaderUniformF4*(id i) {
             return [self uniformF4Name:[NSString stringWithFormat:@"dirLightPercent%@", i]];
         }] toArray];
-        _directLightDepthMwcp = [[[uintRange(key.directLightCount) chain] mapF:^PGShaderUniformMat4*(id i) {
+        _directLightDepthMwcp = [[[uintRange(key->_directLightCount) chain] mapF:^PGShaderUniformMat4*(id i) {
             return [self uniformMat4Name:[NSString stringWithFormat:@"dirLightDepthMwcp%@", i]];
         }] toArray];
-        _directLightShadows = [[[uintRange(key.directLightCount) chain] mapF:^PGShaderUniformI4*(id i) {
+        _directLightShadows = [[[uintRange(key->_directLightCount) chain] mapF:^PGShaderUniformI4*(id i) {
             return [self uniformI4Name:[NSString stringWithFormat:@"dirLightShadow%@", i]];
         }] toArray];
     }
@@ -687,25 +687,25 @@ static CNClassType* _PGShadowDrawShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.position))];
+    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_position))];
 }
 
 - (void)loadUniformsParam:(PGShadowDrawParam*)param {
-    [_mwcpUniform applyMatrix:[[PGGlobal.matrix value] mwcp]];
-    PGEnvironment* env = PGGlobal.context.environment;
+    [_mwcpUniform applyMatrix:[[[PGGlobal matrix] value] mwcp]];
+    PGEnvironment* env = [PGGlobal context]->_environment;
     {
-        PGViewportSurface* _ = ((PGShadowDrawParam*)(param)).viewportSurface;
-        if(_ != nil) [PGGlobal.context bindTextureTexture:[((PGViewportSurface*)(_)) texture]];
+        PGViewportSurface* _ = ((PGShadowDrawParam*)(param))->_viewportSurface;
+        if(_ != nil) [[PGGlobal context] bindTextureTexture:[((PGViewportSurface*)(_)) texture]];
     }
     __block unsigned int i = 0;
-    [[[env.lights chain] filterWhen:^BOOL(PGLight* _) {
-        return [((PGLight*)(_)) isKindOfClass:[PGDirectLight class]] && ((PGLight*)(_)).hasShadows;
+    [[[env->_lights chain] filterWhen:^BOOL(PGLight* _) {
+        return [((PGLight*)(_)) isKindOfClass:[PGDirectLight class]] && ((PGLight*)(_))->_hasShadows;
     }] forEach:^void(PGLight* light) {
-        float p = ((float)(unumf(nonnil([((PGShadowDrawParam*)(param)).percents applyIndex:((NSUInteger)(i))]))));
+        float p = ((float)(unumf(nonnil([((PGShadowDrawParam*)(param))->_percents applyIndex:((NSUInteger)(i))]))));
         [((PGShaderUniformF4*)([_directLightPercents applyIndex:i])) applyF4:p];
-        [((PGShaderUniformMat4*)([_directLightDepthMwcp applyIndex:i])) applyMatrix:[[((PGLight*)(light)) shadowMap].biasDepthCp mulMatrix:[PGGlobal.matrix mw]]];
+        [((PGShaderUniformMat4*)([_directLightDepthMwcp applyIndex:i])) applyMatrix:[[((PGLight*)(light)) shadowMap]->_biasDepthCp mulMatrix:[[PGGlobal matrix] mw]]];
         [((PGShaderUniformI4*)([_directLightShadows applyIndex:i])) applyI4:((int)(i + 1))];
-        [PGGlobal.context bindTextureSlot:GL_TEXTURE0 + i + 1 target:GL_TEXTURE_2D texture:[((PGLight*)(light)) shadowMap].texture];
+        [[PGGlobal context] bindTextureSlot:GL_TEXTURE0 + i + 1 target:GL_TEXTURE_2D texture:[((PGLight*)(light)) shadowMap]->_texture];
         i++;
     }];
 }

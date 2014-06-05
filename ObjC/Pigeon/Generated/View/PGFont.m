@@ -134,16 +134,16 @@ static CNClassType* _PGFont_type;
 
 - (PGVec2)measureInPointsText:(NSString*)text {
     CNTuple* pair = [self buildSymbolArrayHasGL:NO text:text];
-    NSArray* symbolsArr = pair.a;
-    NSInteger newLines = unumi(pair.b);
+    NSArray* symbolsArr = pair->_a;
+    NSInteger newLines = unumi(pair->_b);
     __block NSInteger fullWidth = 0;
     __block NSInteger lineWidth = 0;
     for(PGFontSymbolDesc* s in symbolsArr) {
-        if(((PGFontSymbolDesc*)(s)).isNewLine) {
+        if(((PGFontSymbolDesc*)(s))->_isNewLine) {
             if(lineWidth > fullWidth) fullWidth = lineWidth;
             lineWidth = 0;
         } else {
-            lineWidth += ((NSInteger)(((PGFontSymbolDesc*)(s)).width));
+            lineWidth += ((NSInteger)(((PGFontSymbolDesc*)(s))->_width));
         }
     }
     if(lineWidth > fullWidth) fullWidth = lineWidth;
@@ -155,11 +155,11 @@ static CNClassType* _PGFont_type;
 }
 
 - (PGVec2)measurePText:(NSString*)text {
-    return pgVec2DivVec2((pgVec2MulF([self measureInPointsText:text], 2.0)), (uwrap(PGVec2, [PGGlobal.context.scaledViewSize value])));
+    return pgVec2DivVec2((pgVec2MulF([self measureInPointsText:text], 2.0)), (uwrap(PGVec2, [[PGGlobal context]->_scaledViewSize value])));
 }
 
 - (PGVec2)measureCText:(NSString*)text {
-    return pgVec4Xy(([[PGGlobal.matrix p] divBySelfVec4:pgVec4ApplyVec2ZW([self measurePText:text], 0.0, 0.0)]));
+    return pgVec4Xy(([[[PGGlobal matrix] p] divBySelfVec4:pgVec4ApplyVec2ZW([self measurePText:text], 0.0, 0.0)]));
 }
 
 - (BOOL)resymbolHasGL:(BOOL)hasGL {
@@ -186,14 +186,14 @@ static CNClassType* _PGFont_type;
 }
 
 - (PGSimpleVertexArray*)vaoText:(NSString*)text at:(PGVec3)at alignment:(PGTextAlignment)alignment {
-    PGVec2 pos = pgVec2AddVec2((pgVec4Xy(([[PGGlobal.matrix wcp] mulVec4:pgVec4ApplyVec3W(at, 1.0)]))), (pgVec2MulI((pgVec2DivVec2(alignment.shift, (uwrap(PGVec2, [PGGlobal.context.scaledViewSize value])))), 2)));
+    PGVec2 pos = pgVec2AddVec2((pgVec4Xy(([[[PGGlobal matrix] wcp] mulVec4:pgVec4ApplyVec3W(at, 1.0)]))), (pgVec2MulI((pgVec2DivVec2(alignment.shift, (uwrap(PGVec2, [[PGGlobal context]->_scaledViewSize value])))), 2)));
     CNTuple* pair = [self buildSymbolArrayHasGL:YES text:text];
-    NSArray* symbolsArr = pair.a;
-    NSInteger newLines = unumi(pair.b);
+    NSArray* symbolsArr = pair->_a;
+    NSInteger newLines = unumi(pair->_b);
     NSUInteger symbolsCount = [symbolsArr count] - newLines;
     PGFontPrintData* vertexes = cnPointerApplyTpCount(pgFontPrintDataType(), symbolsCount * 4);
     unsigned int* indexes = cnPointerApplyTpCount(cnuInt4Type(), symbolsCount * 6);
-    PGVec2 vpSize = pgVec2iDivF([PGGlobal.context viewport].size, 2.0);
+    PGVec2 vpSize = pgVec2iDivF([[PGGlobal context] viewport].size, 2.0);
     __block PGFontPrintData* vp = vertexes;
     __block unsigned int* ip = indexes;
     __block unsigned int n = 0;
@@ -203,11 +203,11 @@ static CNClassType* _PGFont_type;
     if(!(eqf4(alignment.x, -1))) {
         __block NSInteger lineWidth = 0;
         for(PGFontSymbolDesc* s in symbolsArr) {
-            if(((PGFontSymbolDesc*)(s)).isNewLine) {
+            if(((PGFontSymbolDesc*)(s))->_isNewLine) {
                 [linesWidth appendItem:numi(lineWidth)];
                 lineWidth = 0;
             } else {
-                lineWidth += ((NSInteger)(((PGFontSymbolDesc*)(s)).width));
+                lineWidth += ((NSInteger)(((PGFontSymbolDesc*)(s))->_width));
             }
         }
         [linesWidth appendItem:numi(lineWidth)];
@@ -217,13 +217,13 @@ static CNClassType* _PGFont_type;
     float hh = ((float)([self height])) / vpSize.y;
     __block float y = ((alignment.baseline) ? pos.y + ((float)([self size])) / vpSize.y : pos.y - hh * (newLines + 1) * (alignment.y / 2 - 0.5));
     for(PGFontSymbolDesc* s in symbolsArr) {
-        if(((PGFontSymbolDesc*)(s)).isNewLine) {
+        if(((PGFontSymbolDesc*)(s))->_isNewLine) {
             x = ((eqf4(alignment.x, -1)) ? pos.x : pos.x - unumi([((id<CNIterator>)(nonnil(linesWidthIterator))) next]) / vpSize.x * (alignment.x / 2 + 0.5));
             y -= hh;
         } else {
-            PGVec2 size = pgVec2DivVec2(((PGFontSymbolDesc*)(s)).size, vpSize);
-            PGRect tr = ((PGFontSymbolDesc*)(s)).textureRect;
-            PGVec2 v0 = PGVec2Make(x + ((PGFontSymbolDesc*)(s)).offset.x / vpSize.x, y - ((PGFontSymbolDesc*)(s)).offset.y / vpSize.y);
+            PGVec2 size = pgVec2DivVec2(((PGFontSymbolDesc*)(s))->_size, vpSize);
+            PGRect tr = ((PGFontSymbolDesc*)(s))->_textureRect;
+            PGVec2 v0 = PGVec2Make(x + ((PGFontSymbolDesc*)(s))->_offset.x / vpSize.x, y - ((PGFontSymbolDesc*)(s))->_offset.y / vpSize.y);
             vp->position = v0;
             vp->uv = tr.p;
             vp++;
@@ -243,7 +243,7 @@ static CNClassType* _PGFont_type;
             *(ip + 4) = n + 3;
             *(ip + 5) = n;
             ip += 6;
-            x += ((PGFontSymbolDesc*)(s)).width / vpSize.x;
+            x += ((PGFontSymbolDesc*)(s))->_width / vpSize.x;
             n += 4;
         }
     }
@@ -251,13 +251,13 @@ static CNClassType* _PGFont_type;
     PGImmutableIndexBuffer* ib = [PGIBO applyPointer:indexes count:((unsigned int)(symbolsCount * 6))];
     cnPointerFree(vertexes);
     cnPointerFree(indexes);
-    return [PGFontShader.instance vaoVbo:vb ibo:ib];
+    return [[PGFontShader instance] vaoVbo:vb ibo:ib];
 }
 
 - (void)drawText:(NSString*)text at:(PGVec3)at alignment:(PGTextAlignment)alignment color:(PGVec4)color {
     PGSimpleVertexArray* vao = [self vaoText:text at:at alignment:alignment];
     {
-        PGCullFace* __tmp__il__1self = PGGlobal.context.cullFace;
+        PGCullFace* __tmp__il__1self = [PGGlobal context]->_cullFace;
         {
             unsigned int __il__1oldValue = [__tmp__il__1self disable];
             [vao drawParam:[PGFontShaderParam fontShaderParamWithTexture:[self texture] color:color shift:PGVec2Make(0.0, 0.0)]];
@@ -341,7 +341,7 @@ static CNClassType* _PGFontSymbolDesc_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGFontSymbolDesc class]])) return NO;
     PGFontSymbolDesc* o = ((PGFontSymbolDesc*)(to));
-    return eqf4(_width, o.width) && pgVec2IsEqualTo(_offset, o.offset) && pgVec2IsEqualTo(_size, o.size) && pgRectIsEqualTo(_textureRect, o.textureRect) && _isNewLine == o.isNewLine;
+    return eqf4(_width, o->_width) && pgVec2IsEqualTo(_offset, o->_offset) && pgVec2IsEqualTo(_size, o->_size) && pgRectIsEqualTo(_textureRect, o->_textureRect) && _isNewLine == o->_isNewLine;
 }
 
 - (NSUInteger)hash {

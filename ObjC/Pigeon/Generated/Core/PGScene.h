@@ -49,7 +49,7 @@
 
 
 @interface PGScene : NSObject {
-@protected
+@public
     PGVec4 _backgroundColor;
     id<PGController> _controller;
     PGLayers* _layers;
@@ -80,7 +80,7 @@
 
 
 @interface PGLayers : NSObject {
-@protected
+@public
     NSArray* __viewports;
     NSArray* __viewportsRevers;
 }
@@ -103,7 +103,7 @@
 
 
 @interface PGSingleLayer : PGLayers {
-@protected
+@public
     PGLayer* _layer;
     NSArray* _layers;
 }
@@ -120,7 +120,7 @@
 
 
 @interface PGLayer : PGUpdatable_impl {
-@protected
+@public
     id<PGLayerView> _view;
     id<PGInputProcessor> _inputProcessor;
     BOOL _iOS6;

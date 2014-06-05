@@ -31,7 +31,7 @@
 @class PGShadowDrawShader;
 
 @interface PGShadowMap : PGSurface {
-@protected
+@public
     unsigned int _frameBuffer;
     PGMat4* _biasDepthCp;
     PGTexture* _texture;
@@ -66,7 +66,7 @@
 
 
 @interface PGShadowSurfaceShader : PGShader {
-@protected
+@public
     PGShaderAttribute* _positionSlot;
 }
 @property (nonatomic, readonly) PGShaderAttribute* positionSlot;
@@ -94,7 +94,7 @@
 
 
 @interface PGShadowShaderText : PGShaderTextBuilder_impl {
-@protected
+@public
     BOOL _texture;
 }
 @property (nonatomic, readonly) BOOL texture;
@@ -111,7 +111,7 @@
 
 
 @interface PGShadowShader : PGShader {
-@protected
+@public
     BOOL _texture;
     PGShaderAttribute* _uvSlot;
     PGShaderAttribute* _positionSlot;
@@ -137,7 +137,7 @@
 
 
 @interface PGShadowDrawParam : NSObject {
-@protected
+@public
     id<CNSeq> _percents;
     PGViewportSurface* _viewportSurface;
 }
@@ -165,7 +165,7 @@
 
 
 @interface PGShadowDrawShaderKey : PGShaderTextBuilder_impl {
-@protected
+@public
     NSUInteger _directLightCount;
     BOOL _viewportSurface;
 }
@@ -190,7 +190,7 @@
 
 
 @interface PGShadowDrawShader : PGShader {
-@protected
+@public
     PGShadowDrawShaderKey* _key;
     PGShaderAttribute* _positionSlot;
     PGShaderUniformMat4* _mwcpUniform;

@@ -10,7 +10,7 @@
 @class PGButton;
 
 @interface PGButton : NSObject {
-@protected
+@public
     PGSprite* _sprite;
     PGText* _text;
 }

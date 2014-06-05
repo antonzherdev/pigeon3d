@@ -36,7 +36,7 @@ static CNClassType* _PGMapSsoTest_type;
 - (void)testFullTiles {
     PGMapSso* map = [PGMapSso mapSsoWithSize:PGVec2iMake(2, 3)];
     id<CNSet> exp = [[(@[tuple(@-1, @1), tuple(@0, @0), tuple(@0, @1), tuple(@0, @2), tuple(@1, @0), tuple(@1, @1), tuple(@1, @2), tuple(@2, @1)]) chain] toSet];
-    id<CNSet> tiles = [[[map.fullTiles chain] mapF:^CNTuple*(id v) {
+    id<CNSet> tiles = [[[map->_fullTiles chain] mapF:^CNTuple*(id v) {
         return tuple((numi((uwrap(PGVec2i, v).x))), (numi((uwrap(PGVec2i, v).y))));
     }] toSet];
     assertEquals(exp, tiles);
@@ -45,7 +45,7 @@ static CNClassType* _PGMapSsoTest_type;
 - (void)testPartialTiles {
     PGMapSso* map = [PGMapSso mapSsoWithSize:PGVec2iMake(2, 3)];
     id<CNSet> exp = [[(@[tuple(@-2, @1), tuple(@-1, @0), tuple(@-1, @2), tuple(@0, @-1), tuple(@0, @3), tuple(@1, @-1), tuple(@1, @3), tuple(@2, @0), tuple(@2, @2), tuple(@3, @1)]) chain] toSet];
-    id<CNSet> tiles = [[[map.partialTiles chain] mapF:^CNTuple*(id v) {
+    id<CNSet> tiles = [[[map->_partialTiles chain] mapF:^CNTuple*(id v) {
         return tuple((numi((uwrap(PGVec2i, v).x))), (numi((uwrap(PGVec2i, v).y))));
     }] toSet];
     assertEquals(exp, tiles);

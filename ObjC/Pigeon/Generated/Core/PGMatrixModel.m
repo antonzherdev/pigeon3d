@@ -367,10 +367,10 @@ static CNClassType* _PGMMatrixModel_type;
 
 + (PGMMatrixModel*)applyM:(PGMat4*)m w:(PGMat4*)w c:(PGMat4*)c p:(PGMat4*)p {
     PGMMatrixModel* mm = [PGMMatrixModel matrixModel];
-    mm._m = m;
-    mm._w = w;
-    mm._c = c;
-    mm._p = p;
+    mm->__m = m;
+    mm->__w = w;
+    mm->__c = c;
+    mm->__p = p;
     return mm;
 }
 

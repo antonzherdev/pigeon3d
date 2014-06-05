@@ -144,7 +144,7 @@ static CNClassType* _PGSlopeLine_type;
         return [line xIntersectionWithLine:self];
     } else {
         PGSlopeLine* that = ((PGSlopeLine*)(line));
-        return (that.constant - _constant) / (_slope - that.slope);
+        return (that->_constant - _constant) / (_slope - that->_slope);
     }
 }
 
@@ -153,7 +153,7 @@ static CNClassType* _PGSlopeLine_type;
 }
 
 - (id)intersectionWithLine:(PGLine*)line {
-    if(!([line isVertical]) && eqf(((PGSlopeLine*)(line)).slope, _slope)) {
+    if(!([line isVertical]) && eqf(((PGSlopeLine*)(line))->_slope, _slope)) {
         return nil;
     } else {
         CGFloat xInt = [self xIntersectionWithLine:line];
@@ -189,7 +189,7 @@ static CNClassType* _PGSlopeLine_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGSlopeLine class]])) return NO;
     PGSlopeLine* o = ((PGSlopeLine*)(to));
-    return eqf(_slope, o.slope) && eqf(_constant, o.constant);
+    return eqf(_slope, o->_slope) && eqf(_constant, o->_constant);
 }
 
 - (NSUInteger)hash {
@@ -282,7 +282,7 @@ static CNClassType* _PGVerticalLine_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGVerticalLine class]])) return NO;
     PGVerticalLine* o = ((PGVerticalLine*)(to));
-    return eqf(_x, o.x);
+    return eqf(_x, o->_x);
 }
 
 - (NSUInteger)hash {
@@ -393,17 +393,17 @@ static CNClassType* _PGLineSegment_type;
 }
 
 - (id)intersectionWithSegment:(PGLineSegment*)segment {
-    if(pgVec2IsEqualTo(_p0, segment.p1)) {
+    if(pgVec2IsEqualTo(_p0, segment->_p1)) {
         return wrap(PGVec2, _p0);
     } else {
-        if(pgVec2IsEqualTo(_p1, segment.p0)) {
+        if(pgVec2IsEqualTo(_p1, segment->_p0)) {
             return wrap(PGVec2, _p0);
         } else {
-            if(pgVec2IsEqualTo(_p0, segment.p0)) {
+            if(pgVec2IsEqualTo(_p0, segment->_p0)) {
                 if([[self line] isEqual:[segment line]]) return nil;
                 else return wrap(PGVec2, _p0);
             } else {
-                if(pgVec2IsEqualTo(_p1, segment.p1)) {
+                if(pgVec2IsEqualTo(_p1, segment->_p1)) {
                     if([[self line] isEqual:[segment line]]) return nil;
                     else return wrap(PGVec2, _p1);
                 } else {
@@ -476,7 +476,7 @@ static CNClassType* _PGLineSegment_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGLineSegment class]])) return NO;
     PGLineSegment* o = ((PGLineSegment*)(to));
-    return pgVec2IsEqualTo(_p0, o.p0) && pgVec2IsEqualTo(_p1, o.p1);
+    return pgVec2IsEqualTo(_p0, o->_p0) && pgVec2IsEqualTo(_p1, o->_p1);
 }
 
 - (NSUInteger)hash {
@@ -514,7 +514,7 @@ static CNClassType* _PGPolygon_type;
     if(self) {
         _points = points;
         _segments = [[[[points chain] neighboursRing] mapF:^PGLineSegment*(CNTuple* ps) {
-            return [PGLineSegment newWithP0:uwrap(PGVec2, ((CNTuple*)(ps)).a) p1:uwrap(PGVec2, ((CNTuple*)(ps)).b)];
+            return [PGLineSegment newWithP0:uwrap(PGVec2, ((CNTuple*)(ps))->_a) p1:uwrap(PGVec2, ((CNTuple*)(ps))->_b)];
         }] toArray];
     }
     
@@ -548,7 +548,7 @@ static CNClassType* _PGPolygon_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGPolygon class]])) return NO;
     PGPolygon* o = ((PGPolygon*)(to));
-    return [_points isEqual:o.points];
+    return [_points isEqual:o->_points];
 }
 
 - (NSUInteger)hash {
@@ -598,7 +598,7 @@ static CNClassType* _PGThickLineSegment_type;
 }
 
 - (PGRect)boundingRect {
-    return pgRectThickenHalfSize(_segment.boundingRect, (PGVec2Make((([_segment isHorizontal]) ? ((float)(0.0)) : ((float)(_thickness_2))), (([_segment isVertical]) ? ((float)(0.0)) : ((float)(_thickness_2))))));
+    return pgRectThickenHalfSize(_segment->_boundingRect, (PGVec2Make((([_segment isHorizontal]) ? ((float)(0.0)) : ((float)(_thickness_2))), (([_segment isVertical]) ? ((float)(0.0)) : ((float)(_thickness_2))))));
 }
 
 - (NSArray*)segments {
@@ -620,8 +620,8 @@ static CNClassType* _PGThickLineSegment_type;
         }
         PGLineSegment* line1 = [_segment moveWithX:-dx y:dy];
         PGLineSegment* line2 = [_segment moveWithX:dx y:-dy];
-        PGLineSegment* line3 = [PGLineSegment newWithP0:line1.p0 p1:line2.p0];
-        __segments = (@[line1, line2, line3, [line3 moveWithPoint:pgVec2SubVec2(_segment.p1, _segment.p0)]]);
+        PGLineSegment* line3 = [PGLineSegment newWithP0:line1->_p0 p1:line2->_p0];
+        __segments = (@[line1, line2, line3, [line3 moveWithPoint:pgVec2SubVec2(_segment->_p1, _segment->_p0)]]);
         return ((NSArray*)(nonnil(__segments)));
     } else {
         return __segments;
@@ -636,7 +636,7 @@ static CNClassType* _PGThickLineSegment_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGThickLineSegment class]])) return NO;
     PGThickLineSegment* o = ((PGThickLineSegment*)(to));
-    return [_segment isEqual:o.segment] && eqf(_thickness, o.thickness);
+    return [_segment isEqual:o->_segment] && eqf(_thickness, o->_thickness);
 }
 
 - (NSUInteger)hash {

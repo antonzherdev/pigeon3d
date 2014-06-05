@@ -19,7 +19,7 @@ typedef enum PGInAppTransactionStateR {
 
 
 @interface PGInAppProduct : NSObject {
-@protected
+@public
     NSString* _id;
     NSString* _name;
     NSString* _price;
@@ -39,7 +39,7 @@ typedef enum PGInAppTransactionStateR {
 
 
 @interface PGInAppTransaction : NSObject {
-@protected
+@public
     NSString* _productId;
     NSUInteger _quantity;
     PGInAppTransactionStateR _state;

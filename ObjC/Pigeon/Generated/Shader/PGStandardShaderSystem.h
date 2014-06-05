@@ -41,7 +41,7 @@
 
 
 @interface PGStandardShadowShader : PGShader {
-@protected
+@public
     PGShadowShader* _shadowShader;
 }
 @property (nonatomic, readonly) PGShadowShader* shadowShader;
@@ -59,7 +59,7 @@
 
 
 @interface PGStandardShaderKey : PGShaderTextBuilder_impl {
-@protected
+@public
     NSUInteger _directLightWithShadowsCount;
     NSUInteger _directLightWithoutShadowsCount;
     BOOL _texture;
@@ -100,7 +100,7 @@
 
 
 @interface PGStandardShader : PGShader {
-@protected
+@public
     PGStandardShaderKey* _key;
     PGShaderAttribute* _positionSlot;
     PGShaderAttribute* _normalSlot;

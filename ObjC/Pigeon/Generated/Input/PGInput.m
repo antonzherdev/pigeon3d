@@ -157,7 +157,7 @@ static CNClassType* _PGShortRecognizer_type;
 }
 
 - (BOOL)isProcessorActive {
-    return !(unumb([[PGDirector current].isPaused value]));
+    return !(unumb([[PGDirector current]->_isPaused value]));
 }
 
 - (PGRecognizers*)recognizers {
@@ -196,13 +196,13 @@ static CNClassType* _PGRecognizers_type;
 
 - (PGShortRecognizer*)onEvent:(id<PGEvent>)event {
     return ((PGShortRecognizer*)([_items findWhere:^BOOL(PGRecognizer* item) {
-        return [[event recognizerType] isEqual:((PGRecognizer*)(item)).tp] && ((PGShortRecognizer*)(item)).on(event);
+        return [[event recognizerType] isEqual:((PGRecognizer*)(item))->_tp] && ((PGShortRecognizer*)(item))->_on(event);
     }]));
 }
 
 - (PGLongRecognizer*)beganEvent:(id<PGEvent>)event {
     return ((PGLongRecognizer*)([_items findWhere:^BOOL(PGRecognizer* item) {
-        return [[event recognizerType] isEqual:((PGRecognizer*)(item)).tp] && ((PGLongRecognizer*)(item)).began(event);
+        return [[event recognizerType] isEqual:((PGRecognizer*)(item))->_tp] && ((PGLongRecognizer*)(item))->_began(event);
     }]));
 }
 
@@ -211,12 +211,12 @@ static CNClassType* _PGRecognizers_type;
 }
 
 - (PGRecognizers*)addRecognizers:(PGRecognizers*)recognizers {
-    return [PGRecognizers recognizersWithItems:[_items addSeq:recognizers.items]];
+    return [PGRecognizers recognizersWithItems:[_items addSeq:recognizers->_items]];
 }
 
 - (id<CNSet>)types {
     return [[[_items chain] mapF:^PGRecognizerType*(PGRecognizer* _) {
-        return ((PGRecognizer*)(_)).tp;
+        return ((PGRecognizer*)(_))->_tp;
     }] toSet];
 }
 
@@ -294,7 +294,7 @@ static CNClassType* _PGRecognizersState_type;
     {
         PGLongRecognizer* rec = [_longMap applyKey:[event recognizerType]];
         if(rec != nil) {
-            ((PGLongRecognizer*)(rec)).changed(event);
+            ((PGLongRecognizer*)(rec))->_changed(event);
             __tmp = @YES;
         } else {
             __tmp = nil;
@@ -414,7 +414,7 @@ static CNClassType* _PGPan_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGPan class]])) return NO;
     PGPan* o = ((PGPan*)(to));
-    return _fingers == o.fingers;
+    return _fingers == o->_fingers;
 }
 
 - (NSUInteger)hash {
@@ -489,7 +489,7 @@ static CNClassType* _PGTap_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGTap class]])) return NO;
     PGTap* o = ((PGTap*)(to));
-    return _fingers == o.fingers && _taps == o.taps;
+    return _fingers == o->_fingers && _taps == o->_taps;
 }
 
 - (NSUInteger)hash {
@@ -591,7 +591,7 @@ static CNClassType* _PGPinchParameter_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGPinchParameter class]])) return NO;
     PGPinchParameter* o = ((PGPinchParameter*)(to));
-    return eqf(_scale, o.scale) && eqf(_velocity, o.velocity);
+    return eqf(_scale, o->_scale) && eqf(_velocity, o->_velocity);
 }
 
 - (NSUInteger)hash {
@@ -691,7 +691,7 @@ PGEventPhase* PGEventPhase_on_Desc;
 }
 
 - (PGMatrixModel*)matrixModel {
-    return PGMatrixModel.identity;
+    return [PGMatrixModel identity];
 }
 
 - (PGRect)viewport {

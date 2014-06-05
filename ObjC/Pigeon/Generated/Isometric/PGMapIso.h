@@ -33,7 +33,7 @@ CNPType* pgCameraReserveType();
 
 
 @interface PGMapSso : NSObject {
-@protected
+@public
     PGVec2i _size;
     PGRectI _limits;
     NSArray* _fullTiles;

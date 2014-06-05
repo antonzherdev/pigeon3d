@@ -173,7 +173,7 @@ static CNClassType* _PGTexture_type;
 }
 
 - (void)deleteTexture {
-    [PGGlobal.context deleteTextureId:[self id]];
+    [[PGGlobal context] deleteTextureId:[self id]];
 }
 
 - (void)saveToFile:(NSString*)file {
@@ -250,7 +250,7 @@ static CNClassType* _PGEmptyTexture_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGEmptyTexture class]])) return NO;
     PGEmptyTexture* o = ((PGEmptyTexture*)(to));
-    return pgVec2IsEqualTo(_size, o.size);
+    return pgVec2IsEqualTo(_size, o->_size);
 }
 
 - (NSUInteger)hash {
@@ -322,7 +322,7 @@ static CNClassType* _PGFileTexture_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGFileTexture class]])) return NO;
     PGFileTexture* o = ((PGFileTexture*)(to));
-    return [_name isEqual:o.name] && _fileFormat == o.fileFormat && _format == o.format && eqf(_scale, o.scale) && _filter == o.filter;
+    return [_name isEqual:o->_name] && _fileFormat == o->_fileFormat && _format == o->_format && eqf(_scale, o->_scale) && _filter == o->_filter;
 }
 
 - (NSUInteger)hash {
@@ -396,7 +396,7 @@ static CNClassType* _PGTextureRegion_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGTextureRegion class]])) return NO;
     PGTextureRegion* o = ((PGTextureRegion*)(to));
-    return [_texture isEqual:o.texture] && pgRectIsEqualTo(_uv, o.uv);
+    return [_texture isEqual:o->_texture] && pgRectIsEqualTo(_uv, o->_uv);
 }
 
 - (NSUInteger)hash {

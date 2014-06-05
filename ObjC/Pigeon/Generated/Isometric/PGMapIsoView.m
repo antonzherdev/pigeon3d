@@ -26,19 +26,19 @@ static CNClassType* _PGMapSsoView_type;
         _material = material;
         __lazy_axisVertexBuffer = [CNLazy lazyWithF:^id<PGVertexBuffer>() {
             return ({
-                PGMat4* mi = [PGCameraIso.m inverse];
+                PGMat4* mi = [[PGCameraIso m] inverse];
                 [PGVBO vec4Data:[ arrs(PGVec4, 4) {[mi mulVec4:PGVec4Make(0.0, 0.0, 0.0, 1.0)], [mi mulVec4:PGVec4Make(1.0, 0.0, 0.0, 1.0)], [mi mulVec4:PGVec4Make(0.0, 1.0, 0.0, 1.0)], [mi mulVec4:PGVec4Make(0.0, 0.0, 1.0, 1.0)]}]];
             });
         }];
         _plane = ({
-            PGRectI limits = map.limits;
-            CGFloat l = (pgRectIX(limits) - map.size.x) - 0.5;
+            PGRectI limits = map->_limits;
+            CGFloat l = (pgRectIX(limits) - map->_size.x) - 0.5;
             CGFloat r = pgRectIX2(limits) + 1.5;
-            CGFloat t = (pgRectIY(limits) - map.size.y) - 0.5;
+            CGFloat t = (pgRectIY(limits) - map->_size.y) - 0.5;
             CGFloat b = pgRectIY2(limits) + 1.5;
             NSInteger w = pgRectIWidth(limits) + 7;
             NSInteger h = pgRectIHeight(limits) + 7;
-            [PGMesh meshWithVertex:[PGVBO meshData:[ arrs(PGMeshData, 4) {PGMeshDataMake((PGVec2Make(0.0, 0.0)), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(l)), 0.0, ((float)(b))))), PGMeshDataMake((PGVec2Make(((float)(w)), 0.0)), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(r)), 0.0, ((float)(b))))), PGMeshDataMake((PGVec2Make(0.0, ((float)(h)))), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(l)), 0.0, ((float)(t))))), PGMeshDataMake((PGVec2Make(((float)(w)), ((float)(h)))), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(r)), 0.0, ((float)(t)))))}]] index:PGEmptyIndexSource.triangleStrip];
+            [PGMesh meshWithVertex:[PGVBO meshData:[ arrs(PGMeshData, 4) {PGMeshDataMake((PGVec2Make(0.0, 0.0)), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(l)), 0.0, ((float)(b))))), PGMeshDataMake((PGVec2Make(((float)(w)), 0.0)), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(r)), 0.0, ((float)(b))))), PGMeshDataMake((PGVec2Make(0.0, ((float)(h)))), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(l)), 0.0, ((float)(t))))), PGMeshDataMake((PGVec2Make(((float)(w)), ((float)(h)))), (PGVec3Make(0.0, 1.0, 0.0)), (PGVec3Make(((float)(r)), 0.0, ((float)(t)))))}]] index:[PGEmptyIndexSource triangleStrip]];
         });
         _planeVao = [_plane vaoMaterial:material shadow:NO];
     }
@@ -62,7 +62,7 @@ static CNClassType* _PGMapSsoView_type;
 }
 
 - (void)draw {
-    PGCullFace* __tmp__il__0self = PGGlobal.context.cullFace;
+    PGCullFace* __tmp__il__0self = [PGGlobal context]->_cullFace;
     {
         unsigned int __il__0oldValue = [__tmp__il__0self disable];
         [_planeVao draw];

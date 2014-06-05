@@ -19,7 +19,7 @@ typedef enum PGShareChannelR {
 
 
 @interface PGShareItem : NSObject {
-@protected
+@public
     NSString* _text;
     NSString* _subject;
 }
@@ -38,7 +38,7 @@ typedef enum PGShareChannelR {
 
 
 @interface PGShareContent : NSObject {
-@protected
+@public
     NSString* _text;
     NSString* _image;
     NSDictionary* _items;

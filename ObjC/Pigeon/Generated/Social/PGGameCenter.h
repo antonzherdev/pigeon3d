@@ -3,7 +3,7 @@
 @class PGLocalPlayerScore;
 
 @interface PGLocalPlayerScore : NSObject {
-@protected
+@public
     long _value;
     NSUInteger _rank;
     NSUInteger _maxRank;

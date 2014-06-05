@@ -116,7 +116,7 @@ static CNClassType* _PGRouteVertexArray_type;
 }
 
 - (PGVertexArray*)mesh {
-    if([PGGlobal.context.renderTarget isKindOfClass:[PGShadowRenderTarget class]]) return _shadow;
+    if([[PGGlobal context]->_renderTarget isKindOfClass:[PGShadowRenderTarget class]]) return _shadow;
     else return _standard;
 }
 
@@ -208,18 +208,18 @@ static CNClassType* _PGSimpleVertexArray_type;
 }
 
 - (void)bind {
-    [PGGlobal.context bindVertexArrayHandle:_handle vertexCount:({
+    [[PGGlobal context] bindVertexArrayHandle:_handle vertexCount:({
         id<PGVertexBuffer> __tmp_0rp1 = [_vertexBuffers head];
         ((__tmp_0rp1 != nil) ? ((unsigned int)([((id<PGVertexBuffer>)([_vertexBuffers head])) count])) : ((unsigned int)(0)));
     }) mutable:_isMutable];
 }
 
 - (void)unbind {
-    [PGGlobal.context bindDefaultVertexArray];
+    [[PGGlobal context] bindDefaultVertexArray];
 }
 
 - (void)dealloc {
-    [PGGlobal.context deleteVertexArrayId:_handle];
+    [[PGGlobal context] deleteVertexArrayId:_handle];
 }
 
 - (NSUInteger)count {

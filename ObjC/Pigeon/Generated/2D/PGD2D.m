@@ -29,9 +29,9 @@ static CNClassType* _PGD2D_type;
     if(self == [PGD2D class]) {
         _PGD2D_type = [CNClassType classTypeWithCls:[PGD2D class]];
         _PGD2D_vertexes = cnPointerApplyTpCount(pgBillboardBufferDataType(), 4);
-        _PGD2D_vb = [PGVBO mutDesc:PGSprite.vbDesc usage:GL_STREAM_DRAW];
-        _PGD2D_vaoForColor = [[PGMesh meshWithVertex:_PGD2D_vb index:PGEmptyIndexSource.triangleStrip] vaoShader:[PGBillboardShaderSystem shaderForKey:[PGBillboardShaderKey billboardShaderKeyWithTexture:NO alpha:NO shadow:NO modelSpace:PGBillboardShaderSpace_camera]]];
-        _PGD2D_vaoForTexture = [[PGMesh meshWithVertex:_PGD2D_vb index:PGEmptyIndexSource.triangleStrip] vaoShader:[PGBillboardShaderSystem shaderForKey:[PGBillboardShaderKey billboardShaderKeyWithTexture:YES alpha:NO shadow:NO modelSpace:PGBillboardShaderSpace_camera]]];
+        _PGD2D_vb = [PGVBO mutDesc:[PGSprite vbDesc] usage:GL_STREAM_DRAW];
+        _PGD2D_vaoForColor = [[PGMesh meshWithVertex:_PGD2D_vb index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGBillboardShaderSystem shaderForKey:[PGBillboardShaderKey billboardShaderKeyWithTexture:NO alpha:NO shadow:NO modelSpace:PGBillboardShaderSpace_camera]]];
+        _PGD2D_vaoForTexture = [[PGMesh meshWithVertex:_PGD2D_vb index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGBillboardShaderSystem shaderForKey:[PGBillboardShaderKey billboardShaderKeyWithTexture:YES alpha:NO shadow:NO modelSpace:PGBillboardShaderSpace_camera]]];
         _PGD2D_lineVb = [PGVBO mutMeshUsage:GL_STREAM_DRAW];
         _PGD2D_lineVertexes = ({
             PGMeshData* pp = cnPointerApplyTpCount(pgMeshDataType(), 2);
@@ -43,12 +43,12 @@ static CNClassType* _PGD2D_type;
             p->normal = PGVec3Make(0.0, 0.0, 1.0);
             pp;
         });
-        _PGD2D_lineVao = [[PGMesh meshWithVertex:_PGD2D_lineVb index:PGEmptyIndexSource.lines] vaoShader:[PGSimpleShaderSystem colorShader]];
+        _PGD2D_lineVao = [[PGMesh meshWithVertex:_PGD2D_lineVb index:[PGEmptyIndexSource lines]] vaoShader:[PGSimpleShaderSystem colorShader]];
         _PGD2D__lazy_circleVaoWithSegment = [CNLazy lazyWithF:^PGVertexArray*() {
-            return [[PGMesh meshWithVertex:[PGVBO vec2Data:[ arrs(PGVec2, 4) {PGVec2Make(-1.0, -1.0), PGVec2Make(-1.0, 1.0), PGVec2Make(1.0, -1.0), PGVec2Make(1.0, 1.0)}]] index:PGEmptyIndexSource.triangleStrip] vaoShader:PGCircleShader.withSegment];
+            return [[PGMesh meshWithVertex:[PGVBO vec2Data:[ arrs(PGVec2, 4) {PGVec2Make(-1.0, -1.0), PGVec2Make(-1.0, 1.0), PGVec2Make(1.0, -1.0), PGVec2Make(1.0, 1.0)}]] index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGCircleShader withSegment]];
         }];
         _PGD2D__lazy_circleVaoWithoutSegment = [CNLazy lazyWithF:^PGVertexArray*() {
-            return [[PGMesh meshWithVertex:[PGVBO vec2Data:[ arrs(PGVec2, 4) {PGVec2Make(-1.0, -1.0), PGVec2Make(-1.0, 1.0), PGVec2Make(1.0, -1.0), PGVec2Make(1.0, 1.0)}]] index:PGEmptyIndexSource.triangleStrip] vaoShader:PGCircleShader.withoutSegment];
+            return [[PGMesh meshWithVertex:[PGVBO vec2Data:[ arrs(PGVec2, 4) {PGVec2Make(-1.0, -1.0), PGVec2Make(-1.0, 1.0), PGVec2Make(1.0, -1.0), PGVec2Make(1.0, 1.0)}]] index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGCircleShader withoutSegment]];
         }];
     }
 }
@@ -70,8 +70,8 @@ static CNClassType* _PGD2D_type;
 
 + (void)drawSpriteMaterial:(PGColorSource*)material at:(PGVec3)at quad:(PGQuad)quad {
     [PGD2D drawSpriteMaterial:material at:at quad:quad uv:pgRectUpsideDownStripQuad((({
-        PGTexture* __tmp_0p3l = material.texture;
-        ((__tmp_0p3l != nil) ? [((PGTexture*)(material.texture)) uv] : pgRectApplyXYWidthHeight(0.0, 0.0, 1.0, 1.0));
+        PGTexture* __tmp_0p3l = material->_texture;
+        ((__tmp_0p3l != nil) ? [((PGTexture*)(material->_texture)) uv] : pgRectApplyXYWidthHeight(0.0, 0.0, 1.0, 1.0));
     })))];
 }
 
@@ -80,31 +80,31 @@ static CNClassType* _PGD2D_type;
         PGBillboardBufferData* __il__0v = _PGD2D_vertexes;
         __il__0v->position = at;
         __il__0v->model = quad.p0;
-        __il__0v->color = material.color;
+        __il__0v->color = material->_color;
         __il__0v->uv = uv.p0;
         __il__0v++;
         __il__0v->position = at;
         __il__0v->model = quad.p1;
-        __il__0v->color = material.color;
+        __il__0v->color = material->_color;
         __il__0v->uv = uv.p1;
         __il__0v++;
         __il__0v->position = at;
         __il__0v->model = quad.p2;
-        __il__0v->color = material.color;
+        __il__0v->color = material->_color;
         __il__0v->uv = uv.p2;
         __il__0v++;
         __il__0v->position = at;
         __il__0v->model = quad.p3;
-        __il__0v->color = material.color;
+        __il__0v->color = material->_color;
         __il__0v->uv = uv.p3;
         __il__0v + 1;
     }
     [_PGD2D_vb setArray:_PGD2D_vertexes count:4];
     {
-        PGCullFace* __tmp__il__2self = PGGlobal.context.cullFace;
+        PGCullFace* __tmp__il__2self = [PGGlobal context]->_cullFace;
         {
             unsigned int __il__2oldValue = [__tmp__il__2self disable];
-            if(material.texture == nil) [_PGD2D_vaoForColor drawParam:material];
+            if(material->_texture == nil) [_PGD2D_vaoForColor drawParam:material];
             else [_PGD2D_vaoForTexture drawParam:material];
             if(__il__2oldValue != GL_NONE) [__tmp__il__2self setValue:__il__2oldValue];
         }
@@ -115,22 +115,22 @@ static CNClassType* _PGD2D_type;
     PGBillboardBufferData* v = in;
     v->position = at;
     v->model = quad.p0;
-    v->color = material.color;
+    v->color = material->_color;
     v->uv = uv.p0;
     v++;
     v->position = at;
     v->model = quad.p1;
-    v->color = material.color;
+    v->color = material->_color;
     v->uv = uv.p1;
     v++;
     v->position = at;
     v->model = quad.p2;
-    v->color = material.color;
+    v->color = material->_color;
     v->uv = uv.p2;
     v++;
     v->position = at;
     v->model = quad.p3;
-    v->color = material.color;
+    v->color = material->_color;
     v->uv = uv.p3;
     return v + 1;
 }
@@ -152,7 +152,7 @@ static CNClassType* _PGD2D_type;
     v->position = pgVec3ApplyVec2Z(p1, 0.0);
     [_PGD2D_lineVb setArray:_PGD2D_lineVertexes count:2];
     {
-        PGCullFace* __tmp__il__5self = PGGlobal.context.cullFace;
+        PGCullFace* __tmp__il__5self = [PGGlobal context]->_cullFace;
         {
             unsigned int __il__5oldValue = [__tmp__il__5self disable];
             [_PGD2D_lineVao drawParam:material];
@@ -162,7 +162,7 @@ static CNClassType* _PGD2D_type;
 }
 
 + (void)drawCircleBackColor:(PGVec4)backColor strokeColor:(PGVec4)strokeColor at:(PGVec3)at radius:(float)radius relative:(PGVec2)relative segmentColor:(PGVec4)segmentColor start:(CGFloat)start end:(CGFloat)end {
-    PGCullFace* __tmp__il__0self = PGGlobal.context.cullFace;
+    PGCullFace* __tmp__il__0self = [PGGlobal context]->_cullFace;
     {
         unsigned int __il__0oldValue = [__tmp__il__0self disable];
         [[PGD2D circleVaoWithSegment] drawParam:[PGCircleParam circleParamWithColor:backColor strokeColor:strokeColor position:at radius:[PGD2D radiusPR:radius] relative:relative segment:[PGCircleSegment circleSegmentWithColor:segmentColor start:((float)(start)) end:((float)(end))]]];
@@ -171,7 +171,7 @@ static CNClassType* _PGD2D_type;
 }
 
 + (void)drawCircleBackColor:(PGVec4)backColor strokeColor:(PGVec4)strokeColor at:(PGVec3)at radius:(float)radius relative:(PGVec2)relative {
-    PGCullFace* __tmp__il__0self = PGGlobal.context.cullFace;
+    PGCullFace* __tmp__il__0self = [PGGlobal context]->_cullFace;
     {
         unsigned int __il__0oldValue = [__tmp__il__0self disable];
         [[PGD2D circleVaoWithoutSegment] drawParam:[PGCircleParam circleParamWithColor:backColor strokeColor:strokeColor position:at radius:[PGD2D radiusPR:radius] relative:relative segment:nil]];
@@ -180,8 +180,8 @@ static CNClassType* _PGD2D_type;
 }
 
 + (PGVec2)radiusPR:(float)r {
-    float l = pgVec2Length((pgVec4Xy(([[[PGGlobal.matrix value] wcp] mulVec4:PGVec4Make(r, 0.0, 0.0, 0.0)]))));
-    PGVec2i vps = [PGGlobal.context viewport].size;
+    float l = pgVec2Length((pgVec4Xy(([[[[PGGlobal matrix] value] wcp] mulVec4:PGVec4Make(r, 0.0, 0.0, 0.0)]))));
+    PGVec2i vps = [[PGGlobal context] viewport].size;
     if(vps.y <= vps.x) return PGVec2Make((l * vps.y) / vps.x, l);
     else return PGVec2Make(l, (l * vps.x) / vps.y);
 }

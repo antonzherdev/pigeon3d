@@ -17,7 +17,7 @@
 @class PGDirector;
 
 @interface PGDirector : NSObject {
-@protected
+@public
     PGScene* __scene;
     BOOL __isStarted;
     CNVar* __isPaused;

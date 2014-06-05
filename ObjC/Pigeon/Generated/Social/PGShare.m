@@ -77,7 +77,7 @@ static CNClassType* _PGShareItem_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGShareItem class]])) return NO;
     PGShareItem* o = ((PGShareItem*)(to));
-    return [_text isEqual:o.text] && [_subject isEqual:o.subject];
+    return [_text isEqual:o->_text] && [_subject isEqual:o->_subject];
 }
 
 - (NSUInteger)hash {
@@ -157,7 +157,7 @@ static CNClassType* _PGShareContent_type;
 
 - (NSString*)textChannel:(PGShareChannelR)channel {
     PGShareItem* __tmp = [_items applyKey:[PGShareChannel value:channel]];
-    if(__tmp != nil) return ((PGShareItem*)([_items applyKey:[PGShareChannel value:channel]])).text;
+    if(__tmp != nil) return ((PGShareItem*)([_items applyKey:[PGShareChannel value:channel]]))->_text;
     else return _text;
 }
 
@@ -187,7 +187,7 @@ static CNClassType* _PGShareContent_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGShareContent class]])) return NO;
     PGShareContent* o = ((PGShareContent*)(to));
-    return [_text isEqual:o.text] && [_image isEqual:o.image] && [_items isEqual:o.items];
+    return [_text isEqual:o->_text] && [_image isEqual:o->_image] && [_items isEqual:o->_items];
 }
 
 - (NSUInteger)hash {

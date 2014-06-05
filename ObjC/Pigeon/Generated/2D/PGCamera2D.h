@@ -8,7 +8,7 @@
 @class PGCamera2D;
 
 @interface PGCamera2D : PGCamera_impl {
-@protected
+@public
     PGVec2 _size;
     CGFloat _viewportRatio;
     PGMatrixModel* _matrixModel;

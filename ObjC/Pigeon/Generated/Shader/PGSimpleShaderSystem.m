@@ -31,18 +31,18 @@ static CNClassType* _PGSimpleShaderSystem_type;
 }
 
 + (PGShader*)colorShader {
-    return [_PGSimpleShaderSystem_instance shaderForParam:[PGColorSource applyColor:PGVec4Make(0.0, 0.0, 0.0, 1.0)] renderTarget:PGGlobal.context.renderTarget];
+    return [_PGSimpleShaderSystem_instance shaderForParam:[PGColorSource applyColor:PGVec4Make(0.0, 0.0, 0.0, 1.0)] renderTarget:[PGGlobal context]->_renderTarget];
 }
 
 - (PGShader*)shaderForParam:(PGColorSource*)param renderTarget:(PGRenderTarget*)renderTarget {
     if([renderTarget isKindOfClass:[PGShadowRenderTarget class]]) {
-        return [PGShadowShaderSystem.instance shaderForParam:param];
+        return [[PGShadowShaderSystem instance] shaderForParam:param];
     } else {
-        BOOL t = ((PGColorSource*)(param)).texture != nil;
+        BOOL t = ((PGColorSource*)(param))->_texture != nil;
         PGSimpleShaderKey* key = [PGSimpleShaderKey simpleShaderKeyWithTexture:t region:t && ({
-            PGTexture* __tmpf_1p1b = ((PGColorSource*)(param)).texture;
-            ((__tmpf_1p1b != nil) ? [((PGTexture*)(((PGColorSource*)(param)).texture)) isKindOfClass:[PGTextureRegion class]] : NO);
-        }) blendMode:((PGColorSource*)(param)).blendMode];
+            PGTexture* __tmpf_1p1b = ((PGColorSource*)(param))->_texture;
+            ((__tmpf_1p1b != nil) ? [((PGTexture*)(((PGColorSource*)(param))->_texture)) isKindOfClass:[PGTextureRegion class]] : NO);
+        }) blendMode:((PGColorSource*)(param))->_blendMode];
         return ((PGShader*)([_PGSimpleShaderSystem_shaders applyKey:key orUpdateWith:^PGSimpleShader*() {
             return [PGSimpleShader simpleShaderWithKey:key];
         }]));
@@ -135,7 +135,7 @@ static CNClassType* _PGSimpleShaderKey_type;
     if(self == to) return YES;
     if(to == nil || !([to isKindOfClass:[PGSimpleShaderKey class]])) return NO;
     PGSimpleShaderKey* o = ((PGSimpleShaderKey*)(to));
-    return _texture == o.texture && _region == o.region && _blendMode == o.blendMode;
+    return _texture == o->_texture && _region == o->_region && _blendMode == o->_blendMode;
 }
 
 - (NSUInteger)hash {
@@ -178,12 +178,12 @@ static CNClassType* _PGSimpleShader_type;
     self = [super initWithProgram:[key program]];
     if(self) {
         _key = key;
-        _uvSlot = ((key.texture) ? [self attributeForName:@"vertexUV"] : nil);
+        _uvSlot = ((key->_texture) ? [self attributeForName:@"vertexUV"] : nil);
         _positionSlot = [self attributeForName:@"position"];
         _mvpUniform = [self uniformMat4Name:@"mvp"];
         _colorUniform = [self uniformVec4OptName:@"color"];
-        _uvScale = ((key.region) ? [self uniformVec2Name:@"uvScale"] : nil);
-        _uvShift = ((key.region) ? [self uniformVec2Name:@"uvShift"] : nil);
+        _uvScale = ((key->_region) ? [self uniformVec2Name:@"uvScale"] : nil);
+        _uvShift = ((key->_region) ? [self uniformVec2Name:@"uvShift"] : nil);
     }
     
     return self;
@@ -195,19 +195,19 @@ static CNClassType* _PGSimpleShader_type;
 }
 
 - (void)loadAttributesVbDesc:(PGVertexBufferDesc*)vbDesc {
-    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.position))];
-    if(_key.texture) [((PGShaderAttribute*)(_uvSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc.uv))];
+    [_positionSlot setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:3 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_position))];
+    if(_key->_texture) [((PGShaderAttribute*)(_uvSlot)) setFromBufferWithStride:((NSUInteger)([vbDesc stride])) valuesCount:2 valuesType:GL_FLOAT shift:((NSUInteger)(vbDesc->_uv))];
 }
 
 - (void)loadUniformsParam:(PGColorSource*)param {
-    [_mvpUniform applyMatrix:[[PGGlobal.matrix value] mwcp]];
-    [((PGShaderUniformVec4*)(_colorUniform)) applyVec4:((PGColorSource*)(param)).color];
-    if(_key.texture) {
-        PGTexture* tex = ((PGColorSource*)(param)).texture;
+    [_mvpUniform applyMatrix:[[[PGGlobal matrix] value] mwcp]];
+    [((PGShaderUniformVec4*)(_colorUniform)) applyVec4:((PGColorSource*)(param))->_color];
+    if(_key->_texture) {
+        PGTexture* tex = ((PGColorSource*)(param))->_texture;
         if(tex != nil) {
-            [PGGlobal.context bindTextureTexture:tex];
-            if(_key.region) {
-                PGRect r = ((PGTextureRegion*)(tex)).uv;
+            [[PGGlobal context] bindTextureTexture:tex];
+            if(_key->_region) {
+                PGRect r = ((PGTextureRegion*)(tex))->_uv;
                 [((PGShaderUniformVec2*)(_uvShift)) applyVec2:r.p];
                 [((PGShaderUniformVec2*)(_uvScale)) applyVec2:r.size];
             }

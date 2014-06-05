@@ -13,6 +13,10 @@ public class Vec2Buffer extends Buffer<vec2> {
     public vec2 get() {
         return new vec2(this.bytes.get(), this.bytes.get());
     }
+    public void setXY(final float x, final float y) {
+        this.bytes.put(x);
+        this.bytes.put(y);
+    }
     public void setV(final vec2 v) {
         this.bytes.put(v.x);
         this.bytes.put(v.y);

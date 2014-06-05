@@ -18,7 +18,7 @@
 @class PGMutableCounterArray;
 
 @interface PGScheduleEvent : NSObject<CNComparable> {
-@protected
+@public
     CGFloat _time;
     void(^_f)();
 }
@@ -35,7 +35,7 @@
 
 
 @interface PGImSchedule : NSObject {
-@protected
+@public
     CNImList* _events;
     NSUInteger _time;
 }
@@ -51,7 +51,7 @@
 
 
 @interface PGMSchedule : NSObject {
-@protected
+@public
     CNImList* __events;
     CGFloat __current;
     CGFloat __next;
@@ -107,7 +107,7 @@
 
 
 @interface PGLengthCounter : PGCounter {
-@protected
+@public
     CGFloat _length;
     CNVar* _time;
     CNReact* _isRunning;
@@ -128,7 +128,7 @@
 
 
 @interface PGFinisher : PGCounter {
-@protected
+@public
     PGCounter* _counter;
     void(^_onFinish)();
     CNObserver* _obs;
@@ -150,7 +150,7 @@
 
 
 @interface PGEventCounter : PGCounter {
-@protected
+@public
     PGCounter* _counter;
     CGFloat _eventTime;
     void(^_event)();
@@ -175,7 +175,7 @@
 
 
 @interface PGCounterData : PGCounter {
-@protected
+@public
     PGCounter* _counter;
     id _data;
 }
@@ -196,7 +196,7 @@
 
 
 @interface PGMutableCounterArray : PGUpdatable_impl {
-@protected
+@public
     NSArray* __counters;
 }
 + (instancetype)mutableCounterArray;

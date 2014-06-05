@@ -33,7 +33,7 @@ typedef enum PGBillboardShaderSpaceR {
 
 
 @interface PGBillboardShaderSystem : PGShaderSystem {
-@protected
+@public
     PGBillboardShaderSpaceR _space;
 }
 @property (nonatomic, readonly) PGBillboardShaderSpaceR space;
@@ -51,7 +51,7 @@ typedef enum PGBillboardShaderSpaceR {
 
 
 @interface PGBillboardShaderKey : NSObject {
-@protected
+@public
     BOOL _texture;
     BOOL _alpha;
     BOOL _shadow;
@@ -74,7 +74,7 @@ typedef enum PGBillboardShaderSpaceR {
 
 
 @interface PGBillboardShaderBuilder : PGShaderTextBuilder_impl {
-@protected
+@public
     PGBillboardShaderKey* _key;
 }
 @property (nonatomic, readonly) PGBillboardShaderKey* key;
@@ -91,7 +91,7 @@ typedef enum PGBillboardShaderSpaceR {
 
 
 @interface PGBillboardShader : PGShader {
-@protected
+@public
     PGBillboardShaderKey* _key;
     PGShaderAttribute* _positionSlot;
     PGShaderAttribute* _modelSlot;
