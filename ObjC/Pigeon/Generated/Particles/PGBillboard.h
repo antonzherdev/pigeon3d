@@ -2,6 +2,7 @@
 #import "PGVec.h"
 #import "PGParticleSystem.h"
 
+@class PGBillboardBufferDataBuffer;
 @class PGBillboardParticleSystem_impl;
 @protocol PGBillboardParticleSystem;
 typedef struct PGBillboardBufferData PGBillboardBufferData;
@@ -27,6 +28,15 @@ CNPType* pgBillboardBufferDataType();
 - (id)initWithValue:(PGBillboardBufferData)value;
 @end
 
+
+
+@interface PGBillboardBufferDataBuffer : CNUBuffer
++ (instancetype)billboardBufferDataBufferWithCount:(unsigned int)count;
+- (instancetype)initWithCount:(unsigned int)count;
+- (CNClassType*)type;
+- (NSString*)description;
++ (CNClassType*)type;
+@end
 
 
 struct PGBillboardParticle {

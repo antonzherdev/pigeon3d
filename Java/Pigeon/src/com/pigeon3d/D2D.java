@@ -4,14 +4,16 @@ import objd.lang.*;
 import com.pigeon3d.geometry.vec3;
 import com.pigeon3d.geometry.Rect;
 import com.pigeon3d.geometry.Quad;
+import objd.collection.Buffer;
 import android.opengl.GLES20;
+import objd.collection.Int4Buffer;
 import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.vec4;
 import com.pigeon3d.geometry.vec2i;
 import com.pigeon3d.geometry.Vec2Buffer;
 
 public class D2D {
-    private static final Pointer vertexes;
+    private static final BillboardBufferDataBuffer vertexes;
     private static final MutableVertexBuffer<BillboardBufferData> vb;
     private static final VertexArray<ColorSource> vaoForColor;
     private static final VertexArray<ColorSource> vaoForTexture;
@@ -36,76 +38,162 @@ public class D2D {
         D2D.drawSpriteMaterialAtQuadUv(material, at, quad, Rect.upsideDownStripQuad(((__tmp_0p3l != null) ? (material.texture.uv()) : (Rect.applyXYWidthHeight(((float)(0)), ((float)(0)), ((float)(1)), ((float)(1)))))));
     }
     public static void drawSpriteMaterialAtQuadUv(final ColorSource material, final vec3 at, final Quad quad, final Quad uv) {
+        D2D.vertexes.reset();
         {
-            Pointer __il__0v = D2D.vertexes;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = at;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = quad.p0;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = material.color;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = uv.p0;
-            __il__0v++;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = at;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = quad.p1;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = material.color;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = uv.p1;
-            __il__0v++;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = at;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = quad.p2;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = material.color;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = uv.p2;
-            __il__0v++;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = at;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = quad.p3;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = material.color;
-            ERROR: Unknown <lm>__il__0v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = uv.p3;
-            return __il__0v + 1;
-        }
-        D2D.vb.setArrayCount(D2D.vertexes, ((int)(4)));
-        {
-            final CullFace __tmp__il__2self = Global.context.cullFace;
             {
-                final int __il__2oldValue = __tmp__il__2self.disable();
+                final BillboardBufferData __il__1__tmp__il__0v = new BillboardBufferData(at, quad.p0, material.color, uv.p0);
+                {
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.position.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.position.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.position.z);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.model.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.model.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.color.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.color.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.color.z);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.color.w);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.uv.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__0v.uv.y);
+                }
+            }
+            {
+                final BillboardBufferData __il__1__tmp__il__1v = new BillboardBufferData(at, quad.p1, material.color, uv.p1);
+                {
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.position.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.position.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.position.z);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.model.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.model.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.color.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.color.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.color.z);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.color.w);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.uv.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__1v.uv.y);
+                }
+            }
+            {
+                final BillboardBufferData __il__1__tmp__il__2v = new BillboardBufferData(at, quad.p2, material.color, uv.p2);
+                {
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.position.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.position.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.position.z);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.model.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.model.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.color.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.color.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.color.z);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.color.w);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.uv.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__2v.uv.y);
+                }
+            }
+            {
+                final BillboardBufferData __il__1__tmp__il__3v = new BillboardBufferData(at, quad.p3, material.color, uv.p3);
+                {
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.position.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.position.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.position.z);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.model.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.model.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.color.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.color.y);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.color.z);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.color.w);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.uv.x);
+                    D2D.vertexes.bytes.put(__il__1__tmp__il__3v.uv.y);
+                }
+            }
+        }
+        D2D.vb.setData(((Buffer<BillboardBufferData>)(((Buffer)(D2D.vertexes)))));
+        {
+            final CullFace __tmp__il__3self = Global.context.cullFace;
+            {
+                final int __il__3oldValue = __tmp__il__3self.disable();
                 if(material.texture == null) {
                     D2D.vaoForColor.drawParam(material);
                 } else {
                     D2D.vaoForTexture.drawParam(material);
                 }
-                if(__il__2oldValue != GLES20.GL_NONE) {
-                    __tmp__il__2self.setValue(__il__2oldValue);
+                if(__il__3oldValue != GLES20.GL_NONE) {
+                    __tmp__il__3self.setValue(__il__3oldValue);
                 }
             }
         }
     }
-    public static Pointer writeSpriteInMaterialAtQuadUv(final Pointer in, final ColorSource material, final vec3 at, final Quad quad, final Quad uv) {
-        Pointer v = in;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = at;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = quad.p0;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = material.color;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = uv.p0;
-        v++;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = at;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = quad.p1;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = material.color;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = uv.p1;
-        v++;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = at;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = quad.p2;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = material.color;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = uv.p2;
-        v++;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = at;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = quad.p3;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = material.color;
-        ERROR: Unknown <lm>v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = uv.p3;
-        return v + 1;
+    public static void writeSpriteInMaterialAtQuadUv(final BillboardBufferDataBuffer in, final ColorSource material, final vec3 at, final Quad quad, final Quad uv) {
+        {
+            final BillboardBufferData __tmp__il__0v = new BillboardBufferData(at, quad.p0, material.color, uv.p0);
+            {
+                in.bytes.put(__tmp__il__0v.position.x);
+                in.bytes.put(__tmp__il__0v.position.y);
+                in.bytes.put(__tmp__il__0v.position.z);
+                in.bytes.put(__tmp__il__0v.model.x);
+                in.bytes.put(__tmp__il__0v.model.y);
+                in.bytes.put(__tmp__il__0v.color.x);
+                in.bytes.put(__tmp__il__0v.color.y);
+                in.bytes.put(__tmp__il__0v.color.z);
+                in.bytes.put(__tmp__il__0v.color.w);
+                in.bytes.put(__tmp__il__0v.uv.x);
+                in.bytes.put(__tmp__il__0v.uv.y);
+            }
+        }
+        {
+            final BillboardBufferData __tmp__il__1v = new BillboardBufferData(at, quad.p1, material.color, uv.p1);
+            {
+                in.bytes.put(__tmp__il__1v.position.x);
+                in.bytes.put(__tmp__il__1v.position.y);
+                in.bytes.put(__tmp__il__1v.position.z);
+                in.bytes.put(__tmp__il__1v.model.x);
+                in.bytes.put(__tmp__il__1v.model.y);
+                in.bytes.put(__tmp__il__1v.color.x);
+                in.bytes.put(__tmp__il__1v.color.y);
+                in.bytes.put(__tmp__il__1v.color.z);
+                in.bytes.put(__tmp__il__1v.color.w);
+                in.bytes.put(__tmp__il__1v.uv.x);
+                in.bytes.put(__tmp__il__1v.uv.y);
+            }
+        }
+        {
+            final BillboardBufferData __tmp__il__2v = new BillboardBufferData(at, quad.p2, material.color, uv.p2);
+            {
+                in.bytes.put(__tmp__il__2v.position.x);
+                in.bytes.put(__tmp__il__2v.position.y);
+                in.bytes.put(__tmp__il__2v.position.z);
+                in.bytes.put(__tmp__il__2v.model.x);
+                in.bytes.put(__tmp__il__2v.model.y);
+                in.bytes.put(__tmp__il__2v.color.x);
+                in.bytes.put(__tmp__il__2v.color.y);
+                in.bytes.put(__tmp__il__2v.color.z);
+                in.bytes.put(__tmp__il__2v.color.w);
+                in.bytes.put(__tmp__il__2v.uv.x);
+                in.bytes.put(__tmp__il__2v.uv.y);
+            }
+        }
+        {
+            final BillboardBufferData __tmp__il__3v = new BillboardBufferData(at, quad.p3, material.color, uv.p3);
+            {
+                in.bytes.put(__tmp__il__3v.position.x);
+                in.bytes.put(__tmp__il__3v.position.y);
+                in.bytes.put(__tmp__il__3v.position.z);
+                in.bytes.put(__tmp__il__3v.model.x);
+                in.bytes.put(__tmp__il__3v.model.y);
+                in.bytes.put(__tmp__il__3v.color.x);
+                in.bytes.put(__tmp__il__3v.color.y);
+                in.bytes.put(__tmp__il__3v.color.z);
+                in.bytes.put(__tmp__il__3v.color.w);
+                in.bytes.put(__tmp__il__3v.uv.x);
+                in.bytes.put(__tmp__il__3v.uv.y);
+            }
+        }
     }
-    public static Pointer writeQuadIndexInI(final Pointer in, final int i) {
-        ERROR: Unknown *((<l>in\uint4*\ + 0)) = i;
-        ERROR: Unknown *((<l>in\uint4*\ + 1)) = i + 1;
-        ERROR: Unknown *((<l>in\uint4*\ + 2)) = i + 2;
-        ERROR: Unknown *((<l>in\uint4*\ + 3)) = i + 1;
-        ERROR: Unknown *((<l>in\uint4*\ + 4)) = i + 2;
-        ERROR: Unknown *((<l>in\uint4*\ + 5)) = i + 3;
-        return in + 6;
+    public static void writeQuadIndexInI(final Int4Buffer in, final int i) {
+        in.bytes.put(((int)(i)));
+        in.bytes.put(((int)(i + 1)));
+        in.bytes.put(((int)(i + 2)));
+        in.bytes.put(((int)(i + 1)));
+        in.bytes.put(((int)(i + 2)));
+        in.bytes.put(((int)(i + 3)));
     }
     public static void drawLineMaterialP0P1(final ColorSource material, final vec2 p0, final vec2 p1) {
         Pointer v = D2D.lineVertexes;
@@ -158,7 +246,7 @@ public class D2D {
         }
     }
     static {
-        vertexes = new Pointer<BillboardBufferData>(BillboardBufferData.type, ((int)(4)));
+        vertexes = new BillboardBufferDataBuffer(((int)(4)));
         vb = VBO.<BillboardBufferData>mutDescUsage(Sprite.vbDesc, GLES20.GL_STREAM_DRAW);
         vaoForColor = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.vb)))), EmptyIndexSource.triangleStrip).<ColorSource>vaoShader(((Shader<ColorSource>)(((Shader)(BillboardShaderSystem.shaderForKey(new BillboardShaderKey(false, false, false, BillboardShaderSpace.camera)))))));
         vaoForTexture = new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(D2D.vb)))), EmptyIndexSource.triangleStrip).<ColorSource>vaoShader(((Shader<ColorSource>)(((Shader)(BillboardShaderSystem.shaderForKey(new BillboardShaderKey(true, false, false, BillboardShaderSpace.camera)))))));

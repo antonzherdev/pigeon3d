@@ -23,7 +23,7 @@ class MeshDataBuffer(count : uint, bytes : Pointer<MeshData> =  Pointer<MeshData
 }
 
 @Java
-class MeshDataBuffer(count : uint) extends Buffer<MeshData>(count, 8) {
+class MeshDataBuffer(count : uint) extends Buffer<MeshData>(count, 32) {
     override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
     inline def get : MeshData = MeshData(vec2(bytes.get, bytes.get), vec3(bytes.get, bytes.get, bytes.get), vec3(bytes.get, bytes.get, bytes.get))
     inline def set(v: MeshData) {

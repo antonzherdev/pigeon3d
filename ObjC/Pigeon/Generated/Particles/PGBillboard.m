@@ -58,6 +58,57 @@ CNPType* pgBillboardBufferDataType() {
 @end
 
 
+@implementation PGBillboardBufferDataBuffer
+static CNClassType* _PGBillboardBufferDataBuffer_type;
+
++ (instancetype)billboardBufferDataBufferWithCount:(unsigned int)count {
+    return [[PGBillboardBufferDataBuffer alloc] initWithCount:count];
+}
+
+- (instancetype)initWithCount:(unsigned int)count {
+    self = [super initWithTp:pgBillboardBufferDataType() count:count];
+    
+    return self;
+}
+
++ (void)initialize {
+    [super initialize];
+    if(self == [PGBillboardBufferDataBuffer class]) _PGBillboardBufferDataBuffer_type = [CNClassType classTypeWithCls:[PGBillboardBufferDataBuffer class]];
+}
+
+- (PGBillboardBufferData)get {
+    if(__position >= _count) @throw @"Out of bound";
+    PGBillboardBufferData __il_r = *(((PGBillboardBufferData*)(__pointer)));
+    __pointer = ((PGBillboardBufferData*)(__pointer)) + 1;
+    __position++;
+    return __il_r;
+}
+
+- (void)setV:(PGBillboardBufferData)v {
+    if(__position >= _count) @throw @"Out of bound";
+    *(((PGBillboardBufferData*)(__pointer))) = v;
+    __pointer = ((PGBillboardBufferData*)(__pointer)) + 1;
+    __position++;
+}
+
+- (NSString*)description {
+    return @"BillboardBufferDataBuffer";
+}
+
+- (CNClassType*)type {
+    return [PGBillboardBufferDataBuffer type];
+}
+
++ (CNClassType*)type {
+    return _PGBillboardBufferDataBuffer_type;
+}
+
+- (id)copyWithZone:(NSZone*)zone {
+    return self;
+}
+
+@end
+
 PGBillboardBufferData* pgBillboardParticleWriteToArray(PGBillboardParticle self, PGBillboardBufferData* array) {
     PGBillboardBufferData* pp = array;
     pp->position = self.position;

@@ -27,12 +27,11 @@ class Sprite(val visible : React<bool> = true, val material : React<ColorSource>
             _materialChanged.clear
         }
         if(_changed.value) {
-            val vertexes = Pointer(BillboardBufferData.type, 4)
+            val vertexes = BillboardBufferDataBuffer(4)
             val m = material.value
             D2D.writeSprite(vertexes, m, position.value, (rect.value/context.scaledViewSize.value*2).stripQuad,
                 m.texture?.uv.getOr(Rect(0, 0, 1, 1)).upsideDownStripQuad)
-            vb.set(vertexes, 4)
-            vertexes.free
+            vb.set(vertexes)
             _changed.clear
         }
         context.cullFace.disabled {

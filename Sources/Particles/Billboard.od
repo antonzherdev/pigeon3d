@@ -1,6 +1,40 @@
 package com.pigeon3d
 
+import java.nio._
+
 struct BillboardBufferData(var position : vec3, var model : vec2, var color : vec4, var uv : vec2)
+
+@ObjC
+class BillboardBufferDataBuffer(count : uint4) extends UBuffer<BillboardBufferData>(BillboardBufferData.type, count)
+{
+    inline def get : BillboardBufferData = _get
+    inline def set(v : BillboardBufferData) {
+        _set(v)
+    }
+}
+
+@Java
+class BillboardBufferDataBuffer(count : uint) extends Buffer<BillboardBufferData>(count, 44) {
+    override val bytes : JavaFloatBuffer = JavaFloatBuffer.allocate(count)
+    inline def get : BillboardBufferData = BillboardBufferData(
+        vec3(bytes.get, bytes.get, bytes.get), vec2(bytes.get, bytes.get),
+        vec4(bytes.get, bytes.get, bytes.get, bytes.get), vec2(bytes.get, bytes.get))
+    inline def set(v: BillboardBufferData) {
+        bytes.put(v.position.x)
+        bytes.put(v.position.y)
+        bytes.put(v.position.z)
+        bytes.put(v.model.x)
+        bytes.put(v.model.y)
+        bytes.put(v.color.x)
+        bytes.put(v.color.y)
+        bytes.put(v.color.z)
+        bytes.put(v.color.w)
+        bytes.put(v.uv.x)
+        bytes.put(v.uv.y)
+    }
+}
+
+
 
 struct BillboardParticle(var position : vec3, var uv : Quad, var model : Quad, var color : vec4)  {
     inline def writeTo(array : Pointer<BillboardBufferData>) : Pointer<BillboardBufferData> = {

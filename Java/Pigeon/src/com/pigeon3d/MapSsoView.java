@@ -2,7 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import com.pigeon3d.geometry.vec4;
-import objd.collection.ImArray;
+import objd.collection.Int4Buffer;
 import android.opengl.GLES20;
 import com.pigeon3d.geometry.mat4;
 import com.pigeon3d.geometry.Vec4Buffer;
@@ -20,9 +20,18 @@ public class MapSsoView {
     public final Mesh plane;
     private final VertexArray<Material> planeVao;
     public void drawLayout() {
-        ColorSource.applyColor(new vec4(((float)(1)), ((float)(0)), ((float)(0)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 1))), GLES20.GL_LINES));
-        ColorSource.applyColor(new vec4(((float)(0)), ((float)(1)), ((float)(0)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 2))), GLES20.GL_LINES));
-        ColorSource.applyColor(new vec4(((float)(0)), ((float)(0)), ((float)(1)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(((int[0])(ImArray.fromObjects(0, 3))), GLES20.GL_LINES));
+        final Int4Buffer b1 = new Int4Buffer(((int)(2)));
+        b1.bytes.put(((int)(0)));
+        b1.bytes.put(((int)(1)));
+        ColorSource.applyColor(new vec4(((float)(1)), ((float)(0)), ((float)(0)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(b1, GLES20.GL_LINES));
+        final Int4Buffer b2 = new Int4Buffer(((int)(2)));
+        b2.bytes.put(((int)(0)));
+        b2.bytes.put(((int)(2)));
+        ColorSource.applyColor(new vec4(((float)(0)), ((float)(1)), ((float)(0)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(b2, GLES20.GL_LINES));
+        final Int4Buffer b3 = new Int4Buffer(((int)(2)));
+        b3.bytes.put(((int)(0)));
+        b3.bytes.put(((int)(3)));
+        ColorSource.applyColor(new vec4(((float)(0)), ((float)(0)), ((float)(1)), ((float)(1)))).drawVertexIndex(((VertexBuffer<Object>)(((VertexBuffer)(this.axisVertexBuffer())))), new ArrayIndexSource(b3, GLES20.GL_LINES));
     }
     public void draw() {
         {

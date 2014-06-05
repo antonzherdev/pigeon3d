@@ -2,6 +2,7 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import android.opengl.GLES20;
+import java.nio.Buffer;
 import com.pigeon3d.gl.eg;
 
 public class ImmutableIndexBuffer extends GlBuffer<Integer> implements IndexBuffer {
@@ -38,7 +39,7 @@ public class ImmutableIndexBuffer extends GlBuffer<Integer> implements IndexBuff
         Global.context.draw();
         final int n = this.count();
         if(n > 0) {
-            GLES20.glDrawElements(this.mode(), ((int)(n)), GLES20.GL_UNSIGNED_INT, null);
+            GLES20.glDrawElements(this.mode(), ((int)(n)), GLES20.GL_UNSIGNED_INT, ((Buffer)(null)));
         }
         eg.egCheckError();
     }
@@ -46,7 +47,7 @@ public class ImmutableIndexBuffer extends GlBuffer<Integer> implements IndexBuff
     public void drawWithStartCount(final int start, final int count) {
         Global.context.draw();
         if(count > 0) {
-            GLES20.glDrawElements(this.mode(), ((int)(count)), GLES20.GL_UNSIGNED_INT, ((Pointer)(4 * start)));
+            GLES20.glDrawElements(this.mode(), ((int)(count)), GLES20.GL_UNSIGNED_INT, ((Buffer)(((Pointer)(4 * start)))));
         }
         eg.egCheckError();
     }

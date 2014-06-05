@@ -3,7 +3,7 @@ package com.pigeon3d;
 import objd.lang.*;
 import android.opengl.GLES20;
 import com.pigeon3d.gl.eg;
-import objd.collection.PArray;
+import objd.collection.Buffer;
 
 public abstract class MutableGlBuffer<T> extends GlBuffer<T> {
     public final int usage;
@@ -21,12 +21,12 @@ public abstract class MutableGlBuffer<T> extends GlBuffer<T> {
     public boolean isEmpty() {
         return this._count > 0;
     }
-    public MutableGlBuffer<T> setData(final PArray<T> data) {
+    public MutableGlBuffer<T> setData(final Buffer<T> data) {
         this.bind();
-        GLES20.glBufferData(this.bufferType, ((long)(data.length())), data.bytes(), this.usage);
+        GLES20.glBufferData(this.bufferType, ((long)(data.length)), data.bytes(), this.usage);
         eg.egCheckError();
-        this._length = data.length();
-        this._count = data.count();
+        this._length = ((int)(data.length));
+        this._count = ((int)(data.count));
         return this;
     }
     public MutableGlBuffer<T> setArrayCount(final Pointer array, final int count) {

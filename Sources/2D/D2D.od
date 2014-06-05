@@ -2,7 +2,7 @@ package com.pigeon3d
 
 object D2D {
     def install {}
-    private val vertexes = Pointer(BillboardBufferData.type, 4)
+    private val vertexes = BillboardBufferDataBuffer(4)
     private val vb = VBO.mut(Sprite.vbDesc, GL_STREAM_DRAW)
     private val vaoForColor = Mesh(vb, EmptyIndexSource.triangleStrip).vao(BillboardShaderSystem.shaderFor(key = BillboardShaderKey(
         texture = false, alpha = false, shadow = false, modelSpace = BillboardShaderSpace.camera
@@ -20,46 +20,29 @@ object D2D {
 
     def drawSprite(material : ColorSource, at : vec3, quad : Quad, uv : Quad) {
         //        if(true) return nil
+        vertexes.reset
         writeSprite(vertexes, material, at, quad, uv)
-        vb.set(vertexes, 4)
+        vb.set(vertexes)
         context.cullFace.disabled {
             if(material.texture == nil) vaoForColor.draw(material)
             else vaoForTexture.draw(material)
         }
     }
 
-    inline def writeSprite(in : Pointer<BillboardBufferData>, material : ColorSource, at : vec3, quad : Quad, uv : Quad) : Pointer<BillboardBufferData> = {
-        var v = in
-        v.position = at
-        v.model = quad.p0
-        v.color = material.color
-        v.uv = uv.p0
-        v++
-        v.position = at
-        v.model = quad.p1
-        v.color = material.color
-        v.uv = uv.p1
-        v++
-        v.position = at
-        v.model = quad.p2
-        v.color = material.color
-        v.uv = uv.p2
-        v++
-        v.position = at
-        v.model = quad.p3
-        v.color = material.color
-        v.uv = uv.p3
-        v + 1
+    inline def writeSprite(in : BillboardBufferDataBuffer, material : ColorSource, at : vec3, quad : Quad, uv : Quad) {
+        in.set(BillboardBufferData(at, quad.p0, material.color, uv.p0))
+        in.set(BillboardBufferData(at, quad.p1, material.color, uv.p1))
+        in.set(BillboardBufferData(at, quad.p2, material.color, uv.p2))
+        in.set(BillboardBufferData(at, quad.p3, material.color, uv.p3))
     }
 
-    inline def writeQuadIndex(in : Pointer<uint4>, i : uint4) : Pointer<uint4> = {
-        in.set(0, i)
-        in.set(1, i + 1)
-        in.set(2, i + 2)
-        in.set(3, i + 1)
-        in.set(4, i + 2)
-        in.set(5, i + 3)
-        in + 6
+    inline def writeQuadIndex(in : Int4Buffer, i : uint4) {
+        in.set(i)
+        in.set(i + 1)
+        in.set(i + 2)
+        in.set(i + 1)
+        in.set(i + 2)
+        in.set(i + 3)
     }
 
     private val lineVb = VBO.mutMesh(GL_STREAM_DRAW)

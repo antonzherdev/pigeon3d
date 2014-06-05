@@ -8,6 +8,7 @@ import objd.react.ReactFlag;
 import objd.react.Signal;
 import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.Quad;
+import objd.collection.Buffer;
 import android.opengl.GLES20;
 import com.pigeon3d.geometry.vec4;
 import objd.react.Observable;
@@ -54,7 +55,7 @@ public class Sprite {
             this._materialChanged.clear();
         }
         if(this._changed.value()) {
-            final Pointer vertexes = new Pointer<BillboardBufferData>(BillboardBufferData.type, ((int)(4)));
+            final BillboardBufferDataBuffer vertexes = new BillboardBufferDataBuffer(((int)(4)));
             final ColorSource m = this.material.value();
             {
                 final vec3 __tmp__il__2t_2at = this.position.value();
@@ -62,31 +63,73 @@ public class Sprite {
                 final Texture __tmp_2t_2rp4l = m.texture;
                 final Quad __tmp__il__2t_2uv = Rect.upsideDownStripQuad(((__tmp_2t_2rp4l != null) ? (m.texture.uv()) : (Rect.applyXYWidthHeight(((float)(0)), ((float)(0)), ((float)(1)), ((float)(1))))));
                 {
-                    Pointer __il__2t_2v = vertexes;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = __tmp__il__2t_2at;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = __tmp__il__2t_2quad.p0;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = m.color;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = __tmp__il__2t_2uv.p0;
-                    __il__2t_2v++;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = __tmp__il__2t_2at;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = __tmp__il__2t_2quad.p1;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = m.color;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = __tmp__il__2t_2uv.p1;
-                    __il__2t_2v++;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = __tmp__il__2t_2at;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = __tmp__il__2t_2quad.p2;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = m.color;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = __tmp__il__2t_2uv.p2;
-                    __il__2t_2v++;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>position\vec3#S\ = __tmp__il__2t_2at;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>model\vec2#S\ = __tmp__il__2t_2quad.p3;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>color\vec4#S\ = m.color;
-                    ERROR: Unknown <lm>__il__2t_2v\BillboardBufferData#S*\-><fIUms>uv\vec2#S\ = __tmp__il__2t_2uv.p3;
-                    return __il__2t_2v + 1;
+                    {
+                        final BillboardBufferData __il__2t_2__tmp__il__0v = new BillboardBufferData(__tmp__il__2t_2at, __tmp__il__2t_2quad.p0, m.color, __tmp__il__2t_2uv.p0);
+                        {
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.position.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.position.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.position.z);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.model.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.model.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.color.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.color.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.color.z);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.color.w);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.uv.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__0v.uv.y);
+                        }
+                    }
+                    {
+                        final BillboardBufferData __il__2t_2__tmp__il__1v = new BillboardBufferData(__tmp__il__2t_2at, __tmp__il__2t_2quad.p1, m.color, __tmp__il__2t_2uv.p1);
+                        {
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.position.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.position.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.position.z);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.model.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.model.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.color.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.color.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.color.z);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.color.w);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.uv.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__1v.uv.y);
+                        }
+                    }
+                    {
+                        final BillboardBufferData __il__2t_2__tmp__il__2v = new BillboardBufferData(__tmp__il__2t_2at, __tmp__il__2t_2quad.p2, m.color, __tmp__il__2t_2uv.p2);
+                        {
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.position.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.position.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.position.z);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.model.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.model.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.color.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.color.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.color.z);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.color.w);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.uv.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__2v.uv.y);
+                        }
+                    }
+                    {
+                        final BillboardBufferData __il__2t_2__tmp__il__3v = new BillboardBufferData(__tmp__il__2t_2at, __tmp__il__2t_2quad.p3, m.color, __tmp__il__2t_2uv.p3);
+                        {
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.position.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.position.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.position.z);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.model.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.model.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.color.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.color.y);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.color.z);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.color.w);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.uv.x);
+                            vertexes.bytes.put(__il__2t_2__tmp__il__3v.uv.y);
+                        }
+                    }
                 }
             }
-            this.vb.setArrayCount(vertexes, ((int)(4)));
-            Pointer.free(vertexes);
+            this.vb.setData(((Buffer<BillboardBufferData>)(((Buffer)(vertexes)))));
             this._changed.clear();
         }
         {

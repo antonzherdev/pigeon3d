@@ -13,7 +13,7 @@
 #import "PGMatrixModel.h"
 #import "PGMat4.h"
 @implementation PGD2D
-static PGBillboardBufferData* _PGD2D_vertexes;
+static PGBillboardBufferDataBuffer* _PGD2D_vertexes;
 static PGMutableVertexBuffer* _PGD2D_vb;
 static PGVertexArray* _PGD2D_vaoForColor;
 static PGVertexArray* _PGD2D_vaoForTexture;
@@ -28,7 +28,7 @@ static CNClassType* _PGD2D_type;
     [super initialize];
     if(self == [PGD2D class]) {
         _PGD2D_type = [CNClassType classTypeWithCls:[PGD2D class]];
-        _PGD2D_vertexes = cnPointerApplyTpCount(pgBillboardBufferDataType(), 4);
+        _PGD2D_vertexes = [PGBillboardBufferDataBuffer billboardBufferDataBufferWithCount:4];
         _PGD2D_vb = [PGVBO mutDesc:[PGSprite vbDesc] usage:GL_STREAM_DRAW];
         _PGD2D_vaoForColor = [[PGMesh meshWithVertex:_PGD2D_vb index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGBillboardShaderSystem shaderForKey:[PGBillboardShaderKey billboardShaderKeyWithTexture:NO alpha:NO shadow:NO modelSpace:PGBillboardShaderSpace_camera]]];
         _PGD2D_vaoForTexture = [[PGMesh meshWithVertex:_PGD2D_vb index:[PGEmptyIndexSource triangleStrip]] vaoShader:[PGBillboardShaderSystem shaderForKey:[PGBillboardShaderKey billboardShaderKeyWithTexture:YES alpha:NO shadow:NO modelSpace:PGBillboardShaderSpace_camera]]];
@@ -138,73 +138,63 @@ static CNClassType* _PGD2D_type;
 }
 
 + (void)drawSpriteMaterial:(PGColorSource*)material at:(PGVec3)at quad:(PGQuad)quad uv:(PGQuad)uv {
+    [_PGD2D_vertexes reset];
     {
-        PGBillboardBufferData* __il__0v = _PGD2D_vertexes;
-        __il__0v->position = at;
-        __il__0v->model = quad.p0;
-        __il__0v->color = material->_color;
-        __il__0v->uv = uv.p0;
-        __il__0v++;
-        __il__0v->position = at;
-        __il__0v->model = quad.p1;
-        __il__0v->color = material->_color;
-        __il__0v->uv = uv.p1;
-        __il__0v++;
-        __il__0v->position = at;
-        __il__0v->model = quad.p2;
-        __il__0v->color = material->_color;
-        __il__0v->uv = uv.p2;
-        __il__0v++;
-        __il__0v->position = at;
-        __il__0v->model = quad.p3;
-        __il__0v->color = material->_color;
-        __il__0v->uv = uv.p3;
-        __il__0v + 1;
+        if(_PGD2D_vertexes->__position >= _PGD2D_vertexes->_count) @throw @"Out of bound";
+        *(((PGBillboardBufferData*)(_PGD2D_vertexes->__pointer))) = PGBillboardBufferDataMake(at, quad.p0, material->_color, uv.p0);
+        _PGD2D_vertexes->__pointer = ((PGBillboardBufferData*)(_PGD2D_vertexes->__pointer)) + 1;
+        _PGD2D_vertexes->__position++;
+        if(_PGD2D_vertexes->__position >= _PGD2D_vertexes->_count) @throw @"Out of bound";
+        *(((PGBillboardBufferData*)(_PGD2D_vertexes->__pointer))) = PGBillboardBufferDataMake(at, quad.p1, material->_color, uv.p1);
+        _PGD2D_vertexes->__pointer = ((PGBillboardBufferData*)(_PGD2D_vertexes->__pointer)) + 1;
+        _PGD2D_vertexes->__position++;
+        if(_PGD2D_vertexes->__position >= _PGD2D_vertexes->_count) @throw @"Out of bound";
+        *(((PGBillboardBufferData*)(_PGD2D_vertexes->__pointer))) = PGBillboardBufferDataMake(at, quad.p2, material->_color, uv.p2);
+        _PGD2D_vertexes->__pointer = ((PGBillboardBufferData*)(_PGD2D_vertexes->__pointer)) + 1;
+        _PGD2D_vertexes->__position++;
+        if(_PGD2D_vertexes->__position >= _PGD2D_vertexes->_count) @throw @"Out of bound";
+        *(((PGBillboardBufferData*)(_PGD2D_vertexes->__pointer))) = PGBillboardBufferDataMake(at, quad.p3, material->_color, uv.p3);
+        _PGD2D_vertexes->__pointer = ((PGBillboardBufferData*)(_PGD2D_vertexes->__pointer)) + 1;
+        _PGD2D_vertexes->__position++;
     }
-    [_PGD2D_vb setArray:_PGD2D_vertexes count:4];
+    [_PGD2D_vb setData:_PGD2D_vertexes];
     {
-        PGCullFace* __tmp__il__2self = [PGGlobal context]->_cullFace;
+        PGCullFace* __tmp__il__3self = [PGGlobal context]->_cullFace;
         {
-            unsigned int __il__2oldValue = [__tmp__il__2self disable];
+            unsigned int __il__3oldValue = [__tmp__il__3self disable];
             if(material->_texture == nil) [_PGD2D_vaoForColor drawParam:material];
             else [_PGD2D_vaoForTexture drawParam:material];
-            if(__il__2oldValue != GL_NONE) [__tmp__il__2self setValue:__il__2oldValue];
+            if(__il__3oldValue != GL_NONE) [__tmp__il__3self setValue:__il__3oldValue];
         }
     }
 }
 
-+ (PGBillboardBufferData*)writeSpriteIn:(PGBillboardBufferData*)in material:(PGColorSource*)material at:(PGVec3)at quad:(PGQuad)quad uv:(PGQuad)uv {
-    PGBillboardBufferData* v = in;
-    v->position = at;
-    v->model = quad.p0;
-    v->color = material->_color;
-    v->uv = uv.p0;
-    v++;
-    v->position = at;
-    v->model = quad.p1;
-    v->color = material->_color;
-    v->uv = uv.p1;
-    v++;
-    v->position = at;
-    v->model = quad.p2;
-    v->color = material->_color;
-    v->uv = uv.p2;
-    v++;
-    v->position = at;
-    v->model = quad.p3;
-    v->color = material->_color;
-    v->uv = uv.p3;
-    return v + 1;
++ (void)writeSpriteIn:(PGBillboardBufferDataBuffer*)in material:(PGColorSource*)material at:(PGVec3)at quad:(PGQuad)quad uv:(PGQuad)uv {
+    if(in->__position >= in->_count) @throw @"Out of bound";
+    *(((PGBillboardBufferData*)(in->__pointer))) = PGBillboardBufferDataMake(at, quad.p0, material->_color, uv.p0);
+    in->__pointer = ((PGBillboardBufferData*)(in->__pointer)) + 1;
+    in->__position++;
+    if(in->__position >= in->_count) @throw @"Out of bound";
+    *(((PGBillboardBufferData*)(in->__pointer))) = PGBillboardBufferDataMake(at, quad.p1, material->_color, uv.p1);
+    in->__pointer = ((PGBillboardBufferData*)(in->__pointer)) + 1;
+    in->__position++;
+    if(in->__position >= in->_count) @throw @"Out of bound";
+    *(((PGBillboardBufferData*)(in->__pointer))) = PGBillboardBufferDataMake(at, quad.p2, material->_color, uv.p2);
+    in->__pointer = ((PGBillboardBufferData*)(in->__pointer)) + 1;
+    in->__position++;
+    if(in->__position >= in->_count) @throw @"Out of bound";
+    *(((PGBillboardBufferData*)(in->__pointer))) = PGBillboardBufferDataMake(at, quad.p3, material->_color, uv.p3);
+    in->__pointer = ((PGBillboardBufferData*)(in->__pointer)) + 1;
+    in->__position++;
 }
 
-+ (unsigned int*)writeQuadIndexIn:(unsigned int*)in i:(unsigned int)i {
-    *(in + 0) = i;
-    *(in + 1) = i + 1;
-    *(in + 2) = i + 2;
-    *(in + 3) = i + 1;
-    *(in + 4) = i + 2;
-    *(in + 5) = i + 3;
-    return in + 6;
++ (void)writeQuadIndexIn:(CNInt4Buffer*)in i:(unsigned int)i {
+    [in setV:((int)(i))];
+    [in setV:((int)(i + 1))];
+    [in setV:((int)(i + 2))];
+    [in setV:((int)(i + 1))];
+    [in setV:((int)(i + 2))];
+    [in setV:((int)(i + 3))];
 }
 
 + (void)drawLineMaterial:(PGColorSource*)material p0:(PGVec2)p0 p1:(PGVec2)p1 {

@@ -76,7 +76,7 @@ static CNClassType* _PGSprite_type;
         [__materialChanged clear];
     }
     if(unumb([__changed value])) {
-        PGBillboardBufferData* vertexes = cnPointerApplyTpCount(pgBillboardBufferDataType(), 4);
+        PGBillboardBufferDataBuffer* vertexes = [PGBillboardBufferDataBuffer billboardBufferDataBufferWithCount:4];
         PGColorSource* m = [_material value];
         {
             PGVec3 __tmp__il__2t_2at = uwrap(PGVec3, [_position value]);
@@ -86,31 +86,25 @@ static CNClassType* _PGSprite_type;
                 ((__tmp_2t_2rp4l != nil) ? [((PGTexture*)(m->_texture)) uv] : pgRectApplyXYWidthHeight(0.0, 0.0, 1.0, 1.0));
             })));
             {
-                PGBillboardBufferData* __il__2t_2v = vertexes;
-                __il__2t_2v->position = __tmp__il__2t_2at;
-                __il__2t_2v->model = __tmp__il__2t_2quad.p0;
-                __il__2t_2v->color = m->_color;
-                __il__2t_2v->uv = __tmp__il__2t_2uv.p0;
-                __il__2t_2v++;
-                __il__2t_2v->position = __tmp__il__2t_2at;
-                __il__2t_2v->model = __tmp__il__2t_2quad.p1;
-                __il__2t_2v->color = m->_color;
-                __il__2t_2v->uv = __tmp__il__2t_2uv.p1;
-                __il__2t_2v++;
-                __il__2t_2v->position = __tmp__il__2t_2at;
-                __il__2t_2v->model = __tmp__il__2t_2quad.p2;
-                __il__2t_2v->color = m->_color;
-                __il__2t_2v->uv = __tmp__il__2t_2uv.p2;
-                __il__2t_2v++;
-                __il__2t_2v->position = __tmp__il__2t_2at;
-                __il__2t_2v->model = __tmp__il__2t_2quad.p3;
-                __il__2t_2v->color = m->_color;
-                __il__2t_2v->uv = __tmp__il__2t_2uv.p3;
-                __il__2t_2v + 1;
+                if(vertexes->__position >= vertexes->_count) @throw @"Out of bound";
+                *(((PGBillboardBufferData*)(vertexes->__pointer))) = PGBillboardBufferDataMake(__tmp__il__2t_2at, __tmp__il__2t_2quad.p0, m->_color, __tmp__il__2t_2uv.p0);
+                vertexes->__pointer = ((PGBillboardBufferData*)(vertexes->__pointer)) + 1;
+                vertexes->__position++;
+                if(vertexes->__position >= vertexes->_count) @throw @"Out of bound";
+                *(((PGBillboardBufferData*)(vertexes->__pointer))) = PGBillboardBufferDataMake(__tmp__il__2t_2at, __tmp__il__2t_2quad.p1, m->_color, __tmp__il__2t_2uv.p1);
+                vertexes->__pointer = ((PGBillboardBufferData*)(vertexes->__pointer)) + 1;
+                vertexes->__position++;
+                if(vertexes->__position >= vertexes->_count) @throw @"Out of bound";
+                *(((PGBillboardBufferData*)(vertexes->__pointer))) = PGBillboardBufferDataMake(__tmp__il__2t_2at, __tmp__il__2t_2quad.p2, m->_color, __tmp__il__2t_2uv.p2);
+                vertexes->__pointer = ((PGBillboardBufferData*)(vertexes->__pointer)) + 1;
+                vertexes->__position++;
+                if(vertexes->__position >= vertexes->_count) @throw @"Out of bound";
+                *(((PGBillboardBufferData*)(vertexes->__pointer))) = PGBillboardBufferDataMake(__tmp__il__2t_2at, __tmp__il__2t_2quad.p3, m->_color, __tmp__il__2t_2uv.p3);
+                vertexes->__pointer = ((PGBillboardBufferData*)(vertexes->__pointer)) + 1;
+                vertexes->__position++;
             }
         }
-        [_vb setArray:vertexes count:4];
-        cnPointerFree(vertexes);
+        [_vb setData:vertexes];
         [__changed clear];
     }
     {

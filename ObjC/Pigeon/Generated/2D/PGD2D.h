@@ -1,8 +1,8 @@
 #import "objd.h"
-#import "PGBillboard.h"
 #import "PGBillboardView.h"
 #import "PGMesh.h"
 #import "PGVec.h"
+#import "PGBillboard.h"
 @class PGMutableVertexBuffer;
 @class PGSprite;
 @class PGVBO;

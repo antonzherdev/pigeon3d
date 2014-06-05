@@ -34,7 +34,7 @@ public class MeshDataBuffer extends Buffer<MeshData> {
         }
     }
     public MeshDataBuffer(final int count) {
-        super(((int)(count)), ((int)(8)));
+        super(((int)(count)), ((int)(32)));
         this.bytes = FloatBuffer.allocate(((int)(count)));
     }
     public String toString() {
