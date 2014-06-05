@@ -2,27 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a7c15b5a-059d-414f-8f9d-9167b840a701" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/ArrayIndexSource.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/ArrayIndexSource.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Particles/Billboard.od" afterPath="$PROJECT_DIR$/../Sources/Particles/Billboard.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/D2D.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/D2D.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/2D/D2D.od" afterPath="$PROJECT_DIR$/../Sources/2D/D2D.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/ImmutableIndexBuffer.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/ImmutableIndexBuffer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/IndexBuffer_impl.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/IndexBuffer_impl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/MapSsoView.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/MapSsoView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/Buffer/Mesh.od" afterPath="$PROJECT_DIR$/../Sources/Buffer/Mesh.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/MeshDataBuffer.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/MeshDataBuffer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/MutableGlBuffer.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/MutableGlBuffer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/MutableIndexBuffer.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/MutableIndexBuffer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/Generated/Particles/PGBillboard.h" afterPath="$PROJECT_DIR$/Pigeon/Generated/Particles/PGBillboard.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/Generated/Particles/PGBillboard.m" afterPath="$PROJECT_DIR$/Pigeon/Generated/Particles/PGBillboard.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/Generated/2D/PGD2D.h" afterPath="$PROJECT_DIR$/Pigeon/Generated/2D/PGD2D.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/Generated/2D/PGD2D.m" afterPath="$PROJECT_DIR$/Pigeon/Generated/2D/PGD2D.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pigeon/Generated/2D/PGSprite.m" afterPath="$PROJECT_DIR$/Pigeon/Generated/2D/PGSprite.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/Sprite.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/Sprite.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Sources/2D/Sprite.od" afterPath="$PROJECT_DIR$/../Sources/2D/Sprite.od" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/VBO.java" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/VBO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Java/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../Java/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../Java/Pigeon/src/com/pigeon3d/BillboardBufferDataBuffer.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../Java/.idea/workspace.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../.gitignore" afterPath="$PROJECT_DIR$/../.gitignore" />
     </list>
     <ignored path="ObjC.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -48,8 +31,8 @@
       <file leaf-file-name="D2D.od" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../Sources/2D/D2D.od">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.030737706" vertical-offset="375" max-vertical-offset="1785">
-              <caret line="24" column="23" selection-start-line="24" selection-start-column="23" selection-end-line="24" selection-end-column="23" />
+            <state vertical-scroll-proportion="1.1065574" vertical-offset="0" max-vertical-offset="1785">
+              <caret line="36" column="16" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -394,7 +377,13 @@
       <option name="project" value="LOCAL" />
       <updated>1401968650258</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="pointer">
+      <created>1401969819515</created>
+      <option name="number" value="00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1401969819515</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -468,7 +457,8 @@
     <MESSAGE value="fix" />
     <MESSAGE value="buffers" />
     <MESSAGE value="remove PArray" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove PArray" />
+    <MESSAGE value="pointer" />
+    <option name="LAST_COMMIT_MESSAGE" value="pointer" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -851,8 +841,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../Sources/2D/D2D.od">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.030737706" vertical-offset="375" max-vertical-offset="1785">
-          <caret line="24" column="23" selection-start-line="24" selection-start-column="23" selection-end-line="24" selection-end-column="23" />
+        <state vertical-scroll-proportion="1.1065574" vertical-offset="0" max-vertical-offset="1785">
+          <caret line="36" column="16" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
           <folding />
         </state>
       </provider>
