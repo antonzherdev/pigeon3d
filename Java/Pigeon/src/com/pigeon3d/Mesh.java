@@ -2,20 +2,21 @@ package com.pigeon3d;
 
 import objd.lang.*;
 import com.pigeon3d.geometry.Vec2Buffer;
-import objd.collection.PArray;
+import objd.collection.Int4Buffer;
+import objd.collection.Buffer;
 import com.pigeon3d.geometry.vec4;
 
 public class Mesh {
     public final VertexBuffer<Object> vertex;
     public final IndexSource index;
-    public static Mesh vec2VertexDataIndexData(final Vec2Buffer vertexData, final PArray<Integer> indexData) {
+    public static Mesh vec2VertexDataIndexData(final Vec2Buffer vertexData, final Int4Buffer indexData) {
         return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.vec2Data(vertexData))))), IBO.applyData(indexData));
     }
-    public static Mesh applyVertexDataIndexData(final MeshDataBuffer vertexData, final PArray<Integer> indexData) {
+    public static Mesh applyVertexDataIndexData(final MeshDataBuffer vertexData, final Int4Buffer indexData) {
         return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.meshData(vertexData))))), IBO.applyData(indexData));
     }
-    public static <T> Mesh applyDescVertexDataIndexData(final VertexBufferDesc<T> desc, final PArray<T> vertexData, final PArray<Integer> indexData) {
-        return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.<T>applyDescData(desc, vertexData))))), IBO.applyData(indexData));
+    public static <T> Mesh applyDescVertexDataIndexData(final VertexBufferDesc<T> desc, final Buffer<T> vertexData, final Int4Buffer indexData) {
+        return new Mesh(((VertexBuffer<Object>)(((VertexBuffer)(VBO.<T>applyDescBuffer(desc, vertexData))))), IBO.applyData(indexData));
     }
     public <N> VertexArray<N> vaoShader(final Shader<N> shader) {
         return shader.vaoVboIbo(((VertexBuffer<Object>)(((VertexBuffer)(this.vertex)))), ((IndexBuffer)(this.index)));

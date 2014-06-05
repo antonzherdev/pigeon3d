@@ -154,11 +154,11 @@ static CNClassType* _PGMeshDataModel_type;
 @synthesize vertex = _vertex;
 @synthesize index = _index;
 
-+ (instancetype)meshDataModelWithVertex:(PGMeshDataBuffer*)vertex index:(CNPArray*)index {
++ (instancetype)meshDataModelWithVertex:(PGMeshDataBuffer*)vertex index:(CNInt4Buffer*)index {
     return [[PGMeshDataModel alloc] initWithVertex:vertex index:index];
 }
 
-- (instancetype)initWithVertex:(PGMeshDataBuffer*)vertex index:(CNPArray*)index {
+- (instancetype)initWithVertex:(PGMeshDataBuffer*)vertex index:(CNInt4Buffer*)index {
     self = [super init];
     if(self) {
         _vertex = vertex;
@@ -215,16 +215,16 @@ static CNClassType* _PGMesh_type;
     if(self == [PGMesh class]) _PGMesh_type = [CNClassType classTypeWithCls:[PGMesh class]];
 }
 
-+ (PGMesh*)vec2VertexData:(PGVec2Buffer*)vertexData indexData:(CNPArray*)indexData {
++ (PGMesh*)vec2VertexData:(PGVec2Buffer*)vertexData indexData:(CNInt4Buffer*)indexData {
     return [PGMesh meshWithVertex:[PGVBO vec2Data:vertexData] index:[PGIBO applyData:indexData]];
 }
 
-+ (PGMesh*)applyVertexData:(PGMeshDataBuffer*)vertexData indexData:(CNPArray*)indexData {
++ (PGMesh*)applyVertexData:(PGMeshDataBuffer*)vertexData indexData:(CNInt4Buffer*)indexData {
     return [PGMesh meshWithVertex:[PGVBO meshData:vertexData] index:[PGIBO applyData:indexData]];
 }
 
-+ (PGMesh*)applyDesc:(PGVertexBufferDesc*)desc vertexData:(CNPArray*)vertexData indexData:(CNPArray*)indexData {
-    return [PGMesh meshWithVertex:[PGVBO applyDesc:desc data:vertexData] index:[PGIBO applyData:indexData]];
++ (PGMesh*)applyDesc:(PGVertexBufferDesc*)desc vertexData:(CNBuffer*)vertexData indexData:(CNInt4Buffer*)indexData {
+    return [PGMesh meshWithVertex:[PGVBO applyDesc:desc buffer:vertexData] index:[PGIBO applyData:indexData]];
 }
 
 - (PGVertexArray*)vaoShader:(PGShader*)shader {
@@ -346,11 +346,11 @@ static CNClassType* _PGMeshUnite_type;
 @synthesize mesh = _mesh;
 @synthesize vao = _vao;
 
-+ (instancetype)meshUniteWithVertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNPArray*)indexSample createVao:(PGVertexArray*(^)(PGMesh*))createVao {
++ (instancetype)meshUniteWithVertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNInt4Buffer*)indexSample createVao:(PGVertexArray*(^)(PGMesh*))createVao {
     return [[PGMeshUnite alloc] initWithVertexSample:vertexSample indexSample:indexSample createVao:createVao];
 }
 
-- (instancetype)initWithVertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNPArray*)indexSample createVao:(PGVertexArray*(^)(PGMesh*))createVao {
+- (instancetype)initWithVertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNInt4Buffer*)indexSample createVao:(PGVertexArray*(^)(PGMesh*))createVao {
     self = [super init];
     if(self) {
         _vertexSample = vertexSample;
@@ -436,11 +436,11 @@ static CNClassType* _PGMeshWriter_type;
 @synthesize vertexSample = _vertexSample;
 @synthesize indexSample = _indexSample;
 
-+ (instancetype)meshWriterWithVbo:(PGMutableVertexBuffer*)vbo ibo:(PGMutableIndexBuffer*)ibo count:(unsigned int)count vertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNPArray*)indexSample {
++ (instancetype)meshWriterWithVbo:(PGMutableVertexBuffer*)vbo ibo:(PGMutableIndexBuffer*)ibo count:(unsigned int)count vertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNInt4Buffer*)indexSample {
     return [[PGMeshWriter alloc] initWithVbo:vbo ibo:ibo count:count vertexSample:vertexSample indexSample:indexSample];
 }
 
-- (instancetype)initWithVbo:(PGMutableVertexBuffer*)vbo ibo:(PGMutableIndexBuffer*)ibo count:(unsigned int)count vertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNPArray*)indexSample {
+- (instancetype)initWithVbo:(PGMutableVertexBuffer*)vbo ibo:(PGMutableIndexBuffer*)ibo count:(unsigned int)count vertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNInt4Buffer*)indexSample {
     self = [super init];
     if(self) {
         _vbo = vbo;
@@ -449,7 +449,7 @@ static CNClassType* _PGMeshWriter_type;
         _vertexSample = vertexSample;
         _indexSample = indexSample;
         _vertex = cnPointerApplyTpCount(pgMeshDataType(), ((NSUInteger)(vertexSample->_count * count)));
-        _index = cnPointerApplyTpCount(cnuInt4Type(), indexSample->_count * count);
+        _index = cnPointerApplyTpCount(cnuInt4Type(), ((NSUInteger)(indexSample->_count * count)));
         __vp = _vertex;
         __ip = _index;
         __indexShift = 0;
@@ -471,7 +471,7 @@ static CNClassType* _PGMeshWriter_type;
     [self writeVertex:vertex index:_indexSample mat4:mat4];
 }
 
-- (void)writeVertex:(PGMeshDataBuffer*)vertex index:(CNPArray*)index mat4:(PGMat4*)mat4 {
+- (void)writeVertex:(PGMeshDataBuffer*)vertex index:(CNInt4Buffer*)index mat4:(PGMat4*)mat4 {
     PGMeshData* __il__0__il__0p = ((PGMeshData*)(vertex->_bytes));
     NSInteger __il__0__il__0i = 0;
     while(__il__0__il__0i < vertex->_count) {
@@ -485,17 +485,18 @@ static CNClassType* _PGMeshWriter_type;
         __il__0__il__0p++;
         __il__0__il__0i++;
     }
-    {
-        unsigned int* __il__1__b = index->_bytes;
-        NSInteger __il__1__i = 0;
-        while(__il__1__i < index->_count) {
+    int* __il__1__il__0p = ((int*)(index->_bytes));
+    NSInteger __il__1__il__0i = 0;
+    while(__il__1__il__0i < index->_count) {
+        {
+            int r = *(__il__1__il__0p);
             {
-                *(__ip) = *(__il__1__b) + __indexShift;
+                *(__ip) = r + __indexShift;
                 __ip++;
             }
-            __il__1__i++;
-            __il__1__b++;
         }
+        __il__1__il__0p++;
+        __il__1__il__0i++;
     }
     __indexShift += vertex->_count;
 }
@@ -508,7 +509,7 @@ static CNClassType* _PGMeshWriter_type;
     [self writeVertex:vertex index:_indexSample map:map];
 }
 
-- (void)writeVertex:(PGMeshDataBuffer*)vertex index:(CNPArray*)index map:(PGMeshData(^)(PGMeshData))map {
+- (void)writeVertex:(PGMeshDataBuffer*)vertex index:(CNInt4Buffer*)index map:(PGMeshData(^)(PGMeshData))map {
     PGMeshData* __il__0__il__0p = ((PGMeshData*)(vertex->_bytes));
     NSInteger __il__0__il__0i = 0;
     while(__il__0__il__0i < vertex->_count) {
@@ -522,24 +523,25 @@ static CNClassType* _PGMeshWriter_type;
         __il__0__il__0p++;
         __il__0__il__0i++;
     }
-    {
-        unsigned int* __il__1__b = index->_bytes;
-        NSInteger __il__1__i = 0;
-        while(__il__1__i < index->_count) {
+    int* __il__1__il__0p = ((int*)(index->_bytes));
+    NSInteger __il__1__il__0i = 0;
+    while(__il__1__il__0i < index->_count) {
+        {
+            int r = *(__il__1__il__0p);
             {
-                *(__ip) = *(__il__1__b) + __indexShift;
+                *(__ip) = r + __indexShift;
                 __ip++;
             }
-            __il__1__i++;
-            __il__1__b++;
         }
+        __il__1__il__0p++;
+        __il__1__il__0i++;
     }
     __indexShift += vertex->_count;
 }
 
 - (void)flush {
     [_vbo setArray:_vertex count:_vertexSample->_count * _count];
-    [_ibo setArray:_index count:((unsigned int)(_indexSample->_count * _count))];
+    [_ibo setArray:_index count:_indexSample->_count * _count];
 }
 
 - (void)dealloc {

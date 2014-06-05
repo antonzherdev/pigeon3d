@@ -94,9 +94,18 @@ static CNClassType* _PGMapSsoView_type;
 }
 
 - (void)drawLayout {
-    [[PGColorSource applyColor:PGVec4Make(1.0, 0.0, 0.0, 1.0)] drawVertex:[self axisVertexBuffer] index:[PGArrayIndexSource arrayIndexSourceWithArray:[ arrui4(2) {0, 1}] mode:GL_LINES]];
-    [[PGColorSource applyColor:PGVec4Make(0.0, 1.0, 0.0, 1.0)] drawVertex:[self axisVertexBuffer] index:[PGArrayIndexSource arrayIndexSourceWithArray:[ arrui4(2) {0, 2}] mode:GL_LINES]];
-    [[PGColorSource applyColor:PGVec4Make(0.0, 0.0, 1.0, 1.0)] drawVertex:[self axisVertexBuffer] index:[PGArrayIndexSource arrayIndexSourceWithArray:[ arrui4(2) {0, 3}] mode:GL_LINES]];
+    CNInt4Buffer* b1 = [CNInt4Buffer int4BufferWithCount:2];
+    [b1 setV:0];
+    [b1 setV:1];
+    [[PGColorSource applyColor:PGVec4Make(1.0, 0.0, 0.0, 1.0)] drawVertex:[self axisVertexBuffer] index:[PGArrayIndexSource arrayIndexSourceWithArray:b1 mode:GL_LINES]];
+    CNInt4Buffer* b2 = [CNInt4Buffer int4BufferWithCount:2];
+    [b2 setV:0];
+    [b2 setV:2];
+    [[PGColorSource applyColor:PGVec4Make(0.0, 1.0, 0.0, 1.0)] drawVertex:[self axisVertexBuffer] index:[PGArrayIndexSource arrayIndexSourceWithArray:b2 mode:GL_LINES]];
+    CNInt4Buffer* b3 = [CNInt4Buffer int4BufferWithCount:2];
+    [b3 setV:0];
+    [b3 setV:3];
+    [[PGColorSource applyColor:PGVec4Make(0.0, 0.0, 1.0, 1.0)] drawVertex:[self axisVertexBuffer] index:[PGArrayIndexSource arrayIndexSourceWithArray:b3 mode:GL_LINES]];
 }
 
 - (void)draw {

@@ -69,13 +69,13 @@ CNPType* pgMeshDataType();
 @interface PGMeshDataModel : NSObject {
 @public
     PGMeshDataBuffer* _vertex;
-    CNPArray* _index;
+    CNInt4Buffer* _index;
 }
 @property (nonatomic, readonly) PGMeshDataBuffer* vertex;
-@property (nonatomic, readonly) CNPArray* index;
+@property (nonatomic, readonly) CNInt4Buffer* index;
 
-+ (instancetype)meshDataModelWithVertex:(PGMeshDataBuffer*)vertex index:(CNPArray*)index;
-- (instancetype)initWithVertex:(PGMeshDataBuffer*)vertex index:(CNPArray*)index;
++ (instancetype)meshDataModelWithVertex:(PGMeshDataBuffer*)vertex index:(CNInt4Buffer*)index;
+- (instancetype)initWithVertex:(PGMeshDataBuffer*)vertex index:(CNInt4Buffer*)index;
 - (CNClassType*)type;
 - (NSString*)description;
 + (CNClassType*)type;
@@ -93,9 +93,9 @@ CNPType* pgMeshDataType();
 + (instancetype)meshWithVertex:(id<PGVertexBuffer>)vertex index:(id<PGIndexSource>)index;
 - (instancetype)initWithVertex:(id<PGVertexBuffer>)vertex index:(id<PGIndexSource>)index;
 - (CNClassType*)type;
-+ (PGMesh*)vec2VertexData:(PGVec2Buffer*)vertexData indexData:(CNPArray*)indexData;
-+ (PGMesh*)applyVertexData:(PGMeshDataBuffer*)vertexData indexData:(CNPArray*)indexData;
-+ (PGMesh*)applyDesc:(PGVertexBufferDesc*)desc vertexData:(CNPArray*)vertexData indexData:(CNPArray*)indexData;
++ (PGMesh*)vec2VertexData:(PGVec2Buffer*)vertexData indexData:(CNInt4Buffer*)indexData;
++ (PGMesh*)applyVertexData:(PGMeshDataBuffer*)vertexData indexData:(CNInt4Buffer*)indexData;
++ (PGMesh*)applyDesc:(PGVertexBufferDesc*)desc vertexData:(CNBuffer*)vertexData indexData:(CNInt4Buffer*)indexData;
 - (PGVertexArray*)vaoShader:(PGShader*)shader;
 - (PGVertexArray*)vaoShadow;
 - (PGVertexArray*)vaoShadowMaterial:(PGColorSource*)material;
@@ -128,7 +128,7 @@ CNPType* pgMeshDataType();
 @interface PGMeshUnite : NSObject {
 @public
     PGMeshDataBuffer* _vertexSample;
-    CNPArray* _indexSample;
+    CNInt4Buffer* _indexSample;
     PGVertexArray*(^_createVao)(PGMesh*);
     PGMutableVertexBuffer* _vbo;
     PGMutableIndexBuffer* _ibo;
@@ -137,13 +137,13 @@ CNPType* pgMeshDataType();
     unsigned int __count;
 }
 @property (nonatomic, readonly) PGMeshDataBuffer* vertexSample;
-@property (nonatomic, readonly) CNPArray* indexSample;
+@property (nonatomic, readonly) CNInt4Buffer* indexSample;
 @property (nonatomic, readonly) PGVertexArray*(^createVao)(PGMesh*);
 @property (nonatomic, readonly) PGMesh* mesh;
 @property (nonatomic, readonly) PGVertexArray* vao;
 
-+ (instancetype)meshUniteWithVertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNPArray*)indexSample createVao:(PGVertexArray*(^)(PGMesh*))createVao;
-- (instancetype)initWithVertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNPArray*)indexSample createVao:(PGVertexArray*(^)(PGMesh*))createVao;
++ (instancetype)meshUniteWithVertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNInt4Buffer*)indexSample createVao:(PGVertexArray*(^)(PGMesh*))createVao;
+- (instancetype)initWithVertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNInt4Buffer*)indexSample createVao:(PGVertexArray*(^)(PGMesh*))createVao;
 - (CNClassType*)type;
 + (PGMeshUnite*)applyMeshModel:(PGMeshDataModel*)meshModel createVao:(PGVertexArray*(^)(PGMesh*))createVao;
 - (void)writeCount:(unsigned int)count f:(void(^)(PGMeshWriter*))f;
@@ -161,7 +161,7 @@ CNPType* pgMeshDataType();
     PGMutableIndexBuffer* _ibo;
     unsigned int _count;
     PGMeshDataBuffer* _vertexSample;
-    CNPArray* _indexSample;
+    CNInt4Buffer* _indexSample;
     PGMeshData* _vertex;
     unsigned int* _index;
     PGMeshData* __vp;
@@ -172,17 +172,17 @@ CNPType* pgMeshDataType();
 @property (nonatomic, readonly) PGMutableIndexBuffer* ibo;
 @property (nonatomic, readonly) unsigned int count;
 @property (nonatomic, readonly) PGMeshDataBuffer* vertexSample;
-@property (nonatomic, readonly) CNPArray* indexSample;
+@property (nonatomic, readonly) CNInt4Buffer* indexSample;
 
-+ (instancetype)meshWriterWithVbo:(PGMutableVertexBuffer*)vbo ibo:(PGMutableIndexBuffer*)ibo count:(unsigned int)count vertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNPArray*)indexSample;
-- (instancetype)initWithVbo:(PGMutableVertexBuffer*)vbo ibo:(PGMutableIndexBuffer*)ibo count:(unsigned int)count vertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNPArray*)indexSample;
++ (instancetype)meshWriterWithVbo:(PGMutableVertexBuffer*)vbo ibo:(PGMutableIndexBuffer*)ibo count:(unsigned int)count vertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNInt4Buffer*)indexSample;
+- (instancetype)initWithVbo:(PGMutableVertexBuffer*)vbo ibo:(PGMutableIndexBuffer*)ibo count:(unsigned int)count vertexSample:(PGMeshDataBuffer*)vertexSample indexSample:(CNInt4Buffer*)indexSample;
 - (CNClassType*)type;
 - (void)writeMat4:(PGMat4*)mat4;
 - (void)writeVertex:(PGMeshDataBuffer*)vertex mat4:(PGMat4*)mat4;
-- (void)writeVertex:(PGMeshDataBuffer*)vertex index:(CNPArray*)index mat4:(PGMat4*)mat4;
+- (void)writeVertex:(PGMeshDataBuffer*)vertex index:(CNInt4Buffer*)index mat4:(PGMat4*)mat4;
 - (void)writeMap:(PGMeshData(^)(PGMeshData))map;
 - (void)writeVertex:(PGMeshDataBuffer*)vertex map:(PGMeshData(^)(PGMeshData))map;
-- (void)writeVertex:(PGMeshDataBuffer*)vertex index:(CNPArray*)index map:(PGMeshData(^)(PGMeshData))map;
+- (void)writeVertex:(PGMeshDataBuffer*)vertex index:(CNInt4Buffer*)index map:(PGMeshData(^)(PGMeshData))map;
 - (void)flush;
 - (void)dealloc;
 - (NSString*)description;

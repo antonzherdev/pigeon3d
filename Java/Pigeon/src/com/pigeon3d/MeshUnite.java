@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import objd.collection.PArray;
+import objd.collection.Int4Buffer;
 import objd.collection.Iterator;
 import com.pigeon3d.geometry.mat4;
 import objd.collection.Iterable;
@@ -9,7 +9,7 @@ import android.opengl.GLES20;
 
 public class MeshUnite {
     public final MeshDataBuffer vertexSample;
-    public final PArray<Integer> indexSample;
+    public final Int4Buffer indexSample;
     public final F<Mesh, VertexArray<Object>> createVao;
     private final MutableVertexBuffer<MeshData> vbo;
     private final MutableIndexBuffer ibo;
@@ -52,7 +52,7 @@ public class MeshUnite {
             }
         }
     }
-    public MeshUnite(final MeshDataBuffer vertexSample, final PArray<Integer> indexSample, final F<Mesh, VertexArray<Object>> createVao) {
+    public MeshUnite(final MeshDataBuffer vertexSample, final Int4Buffer indexSample, final F<Mesh, VertexArray<Object>> createVao) {
         this.vertexSample = vertexSample;
         this.indexSample = indexSample;
         this.createVao = createVao;

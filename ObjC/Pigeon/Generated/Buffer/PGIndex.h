@@ -35,7 +35,7 @@
 @interface PGIBO : NSObject
 - (CNClassType*)type;
 + (PGImmutableIndexBuffer*)applyPointer:(unsigned int*)pointer count:(unsigned int)count;
-+ (PGImmutableIndexBuffer*)applyData:(CNPArray*)data;
++ (PGImmutableIndexBuffer*)applyData:(CNInt4Buffer*)data;
 + (PGMutableIndexBuffer*)mutMode:(unsigned int)mode usage:(unsigned int)usage;
 + (PGMutableIndexBuffer*)mutUsage:(unsigned int)usage;
 + (CNClassType*)type;
@@ -134,14 +134,14 @@
 
 @interface PGArrayIndexSource : PGIndexSource_impl {
 @public
-    CNPArray* _array;
+    CNInt4Buffer* _array;
     unsigned int _mode;
 }
-@property (nonatomic, readonly) CNPArray* array;
+@property (nonatomic, readonly) CNInt4Buffer* array;
 @property (nonatomic, readonly) unsigned int mode;
 
-+ (instancetype)arrayIndexSourceWithArray:(CNPArray*)array mode:(unsigned int)mode;
-- (instancetype)initWithArray:(CNPArray*)array mode:(unsigned int)mode;
++ (instancetype)arrayIndexSourceWithArray:(CNInt4Buffer*)array mode:(unsigned int)mode;
+- (instancetype)initWithArray:(CNInt4Buffer*)array mode:(unsigned int)mode;
 - (CNClassType*)type;
 - (void)draw;
 - (void)drawWithStart:(NSUInteger)start count:(NSUInteger)count;

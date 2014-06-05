@@ -25,7 +25,7 @@ abstract class MutableGlBuffer<T>(dataType : PType<T>, bufferType : uint4, handl
     override def count : uint = _count
     def isEmpty = _count > 0
 
-    def set(data : PArray<T>) : self = {
+    def set(data : Buffer<T>) : self = {
         bind
         glBufferData(bufferType, data.length, data.bytes, usage)
         egCheckError

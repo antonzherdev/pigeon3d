@@ -54,10 +54,10 @@ static CNClassType* _PGIBO_type;
     return ib;
 }
 
-+ (PGImmutableIndexBuffer*)applyData:(CNPArray*)data {
-    PGImmutableIndexBuffer* ib = [PGImmutableIndexBuffer immutableIndexBufferWithHandle:egGenBuffer() mode:GL_TRIANGLES length:data->_length count:data->_count];
++ (PGImmutableIndexBuffer*)applyData:(CNInt4Buffer*)data {
+    PGImmutableIndexBuffer* ib = [PGImmutableIndexBuffer immutableIndexBufferWithHandle:egGenBuffer() mode:GL_TRIANGLES length:[data length] count:((NSUInteger)(data->_count))];
     [ib bind];
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ((int)(data->_length)), data->_bytes, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ((int)([data length])), data->_bytes, GL_STATIC_DRAW);
     return ib;
 }
 
@@ -383,11 +383,11 @@ static CNClassType* _PGArrayIndexSource_type;
 @synthesize array = _array;
 @synthesize mode = _mode;
 
-+ (instancetype)arrayIndexSourceWithArray:(CNPArray*)array mode:(unsigned int)mode {
++ (instancetype)arrayIndexSourceWithArray:(CNInt4Buffer*)array mode:(unsigned int)mode {
     return [[PGArrayIndexSource alloc] initWithArray:array mode:mode];
 }
 
-- (instancetype)initWithArray:(CNPArray*)array mode:(unsigned int)mode {
+- (instancetype)initWithArray:(CNInt4Buffer*)array mode:(unsigned int)mode {
     self = [super init];
     if(self) {
         _array = array;
@@ -404,7 +404,7 @@ static CNClassType* _PGArrayIndexSource_type;
 
 - (void)draw {
     [[PGGlobal context] bindIndexBufferHandle:0];
-    NSUInteger n = _array->_count;
+    unsigned int n = _array->_count;
     if(n > 0) glDrawElements(_mode, ((int)(n)), GL_UNSIGNED_INT, _array->_bytes);
     egCheckError();
 }

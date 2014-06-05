@@ -16,7 +16,7 @@ object IBO {
         ib
     }
 
-    static def apply(data : PArray<uint4>) : ImmutableIndexBuffer = {
+    static def apply(data : Int4Buffer) : ImmutableIndexBuffer = {
         val ib = ImmutableIndexBuffer(egGenBuffer, GL_TRIANGLES, data.length, data.count)
         ib.bind
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.length, data.bytes, GL_STATIC_DRAW)
@@ -88,7 +88,8 @@ class EmptyIndexSource(val mode : uint4) extends IndexSource {
     }
 }
 
-class ArrayIndexSource(val array : PArray<uint4>, val mode : uint4) extends IndexSource {
+@ObjC
+class ArrayIndexSource(val array : Int4Buffer, val mode : uint4) extends IndexSource {
     override def draw {
         context.bindIndexBuffer(0)
         val n = array.count
@@ -99,6 +100,22 @@ class ArrayIndexSource(val array : PArray<uint4>, val mode : uint4) extends Inde
     override def drawWith(start : uint, count : uint) {
         context.bindIndexBuffer(0)
         if(count > 0) glDrawElements(mode, count, GL_UNSIGNED_INT, array.bytes + 4*start)
+        egCheckError
+    }
+}
+
+@Java
+class ArrayIndexSource(val array : Int4Buffer, val mode : uint4) extends IndexSource {
+    override def draw {
+        context.bindIndexBuffer(0)
+        val n = array.count
+        if(n > 0) glDrawElements(mode, n, GL_UNSIGNED_INT, array.bytes)
+        egCheckError
+    }
+
+    override def drawWith(start : uint, count : uint) {
+        context.bindIndexBuffer(0)
+        if(count > 0) glDrawElements(mode, count, GL_UNSIGNED_INT, array.bytes)
         egCheckError
     }
 }

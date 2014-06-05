@@ -20,13 +20,6 @@ object VBO {
         vb
     }
 
-    static def apply<T>(desc : VertexBufferDesc<T>, data : PArray<T>) : VertexBuffer<T> = {
-        val vb = ImmutableVertexBuffer<T>(desc, egGenBuffer, data.length, data.count)
-        vb.bind
-        glBufferData(GL_ARRAY_BUFFER, data.length, data.bytes, GL_STATIC_DRAW)
-        vb
-    }
-
     static def apply<T>(desc : VertexBufferDesc<T>, buffer : Buffer<T>) : VertexBuffer<T> = {
         val vb = ImmutableVertexBuffer<T>(desc, egGenBuffer, buffer.length, buffer.count)
         vb.bind

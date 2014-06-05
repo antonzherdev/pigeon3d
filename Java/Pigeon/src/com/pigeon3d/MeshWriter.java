@@ -1,7 +1,7 @@
 package com.pigeon3d;
 
 import objd.lang.*;
-import objd.collection.PArray;
+import objd.collection.Int4Buffer;
 import com.pigeon3d.geometry.mat4;
 import com.pigeon3d.geometry.vec2;
 import com.pigeon3d.geometry.vec3;
@@ -11,7 +11,7 @@ public class MeshWriter {
     public final MutableIndexBuffer ibo;
     public final int count;
     public final MeshDataBuffer vertexSample;
-    public final PArray<Integer> indexSample;
+    public final Int4Buffer indexSample;
     private final Pointer vertex;
     private final Pointer index;
     private Pointer _vp;
@@ -23,7 +23,7 @@ public class MeshWriter {
     public void writeVertexMat4(final MeshDataBuffer vertex, final mat4 mat4) {
         writeVertexIndexMat4(vertex, this.indexSample, mat4);
     }
-    public void writeVertexIndexMat4(final MeshDataBuffer vertex, final PArray<Integer> index, final mat4 mat4) {
+    public void writeVertexIndexMat4(final MeshDataBuffer vertex, final Int4Buffer index, final mat4 mat4) {
         {
             int __il__0i = 0;
             vertex.bytes.clear();
@@ -38,13 +38,20 @@ public class MeshWriter {
                 __il__0i++;
             }
         }
-        index.forRefEach(new P<Pointer>() {
-            @Override
-            public void apply(final Pointer r) {
-                ERROR: Unknown *(<MeshWriter#C>self.<fmp>_ip\§^uint4§*\) = ERROR: Unknown *(<l>r\^uint4*\) + MeshWriter.this._indexShift;
-                MeshWriter.this._ip++;
+        {
+            int __il__1i = 0;
+            index.bytes.clear();
+            while(__il__1i < index.count) {
+                {
+                    final int r = index.bytes.get();
+                    {
+                        ERROR: Unknown *(<MeshWriter#C>self.<fmp>_ip\§^uint4§*\) = r + this._indexShift;
+                        this._ip++;
+                    }
+                }
+                __il__1i++;
             }
-        });
+        }
         this._indexShift += vertex.count;
     }
     public void writeMap(final F<MeshData, MeshData> map) {
@@ -53,7 +60,7 @@ public class MeshWriter {
     public void writeVertexMap(final MeshDataBuffer vertex, final F<MeshData, MeshData> map) {
         writeVertexIndexMap(vertex, this.indexSample, map);
     }
-    public void writeVertexIndexMap(final MeshDataBuffer vertex, final PArray<Integer> index, final F<MeshData, MeshData> map) {
+    public void writeVertexIndexMap(final MeshDataBuffer vertex, final Int4Buffer index, final F<MeshData, MeshData> map) {
         {
             int __il__0i = 0;
             vertex.bytes.clear();
@@ -68,18 +75,25 @@ public class MeshWriter {
                 __il__0i++;
             }
         }
-        index.forRefEach(new P<Pointer>() {
-            @Override
-            public void apply(final Pointer r) {
-                ERROR: Unknown *(<MeshWriter#C>self.<fmp>_ip\§^uint4§*\) = ERROR: Unknown *(<l>r\^uint4*\) + MeshWriter.this._indexShift;
-                MeshWriter.this._ip++;
+        {
+            int __il__1i = 0;
+            index.bytes.clear();
+            while(__il__1i < index.count) {
+                {
+                    final int r = index.bytes.get();
+                    {
+                        ERROR: Unknown *(<MeshWriter#C>self.<fmp>_ip\§^uint4§*\) = r + this._indexShift;
+                        this._ip++;
+                    }
+                }
+                __il__1i++;
             }
-        });
+        }
         this._indexShift += vertex.count;
     }
     public void flush() {
         this.vbo.setArrayCount(this.vertex, this.vertexSample.count * this.count);
-        this.ibo.setArrayCount(this.index, ((int)(this.indexSample.count() * this.count)));
+        this.ibo.setArrayCount(this.index, this.indexSample.count * this.count);
     }
     @Override
     public void finalize() throws Throwable {
@@ -87,14 +101,14 @@ public class MeshWriter {
         Pointer.free(this.vertex);
         Pointer.free(this.index);
     }
-    public MeshWriter(final MutableVertexBuffer<MeshData> vbo, final MutableIndexBuffer ibo, final int count, final MeshDataBuffer vertexSample, final PArray<Integer> indexSample) {
+    public MeshWriter(final MutableVertexBuffer<MeshData> vbo, final MutableIndexBuffer ibo, final int count, final MeshDataBuffer vertexSample, final Int4Buffer indexSample) {
         this.vbo = vbo;
         this.ibo = ibo;
         this.count = count;
         this.vertexSample = vertexSample;
         this.indexSample = indexSample;
         this.vertex = new Pointer<MeshData>(MeshData.type, ((int)(vertexSample.count * count)));
-        this.index = new Pointer<Integer>(((PType<Integer>)(((PType)(UInt4.type)))), indexSample.count() * count);
+        this.index = new Pointer<Integer>(((PType<Integer>)(((PType)(UInt4.type)))), ((int)(indexSample.count * count)));
         this._vp = this.vertex;
         this._ip = this.index;
         this._indexShift = ((int)(0));

@@ -45,7 +45,6 @@
 @interface PGVBO : NSObject
 - (CNClassType*)type;
 + (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc array:(void*)array count:(unsigned int)count;
-+ (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc data:(CNPArray*)data;
 + (id<PGVertexBuffer>)applyDesc:(PGVertexBufferDesc*)desc buffer:(CNBuffer*)buffer;
 + (id<PGVertexBuffer>)vec4Data:(PGVec4Buffer*)data;
 + (id<PGVertexBuffer>)vec3Data:(PGVec3Buffer*)data;

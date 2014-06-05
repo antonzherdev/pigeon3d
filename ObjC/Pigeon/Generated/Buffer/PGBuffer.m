@@ -103,12 +103,12 @@ static CNClassType* _PGMutableGlBuffer_type;
     return __count > 0;
 }
 
-- (id)setData:(CNPArray*)data {
+- (id)setData:(CNBuffer*)data {
     [self bind];
-    glBufferData(self.bufferType, ((int)(data->_length)), data->_bytes, _usage);
+    glBufferData(self.bufferType, ((int)([data length])), data->_bytes, _usage);
     egCheckError();
-    __length = data->_length;
-    __count = data->_count;
+    __length = [data length];
+    __count = ((NSUInteger)(data->_count));
     return self;
 }
 

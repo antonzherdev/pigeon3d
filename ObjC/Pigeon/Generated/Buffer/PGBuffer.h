@@ -46,7 +46,7 @@
 - (NSUInteger)length;
 - (NSUInteger)count;
 - (BOOL)isEmpty;
-- (id)setData:(CNPArray*)data;
+- (id)setData:(CNBuffer*)data;
 - (id)setArray:(void*)array count:(unsigned int)count;
 - (void)writeCount:(unsigned int)count f:(void(^)(void*))f;
 - (void)mapCount:(unsigned int)count access:(unsigned int)access f:(void(^)(void*))f;
